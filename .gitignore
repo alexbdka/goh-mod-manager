@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Project specific
+config.json
+*.set
+*.log
+
+# Temporary files
+*.bak
+*.tmp
+*~
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
