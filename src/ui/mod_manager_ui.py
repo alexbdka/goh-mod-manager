@@ -150,15 +150,16 @@ class ModManagerUI(QWidget):
         self.installed_list.clear()
         self.activated_list.clear()
         
-        # Sort mods by name for better readability
-        sorted_mods = sorted(installed_mods.items(), key=lambda x: x[1])
+        # First, add all active mods in their original order
+        for mod_id in active_mods:
+            if mod_id in installed_mods:
+                mod_name = installed_mods[mod_id]
+                self.activated_list.addItem(f"{mod_name} ({mod_id})")
         
-        for mod_id, mod_name in sorted_mods:
-            item_text = f"{mod_name} ({mod_id})"
-            if mod_id in active_mods:
-                self.activated_list.addItem(item_text)
-            else:
-                self.installed_list.addItem(item_text)
+        # Then add all remaining mods to the installed list
+        for mod_id, mod_name in installed_mods.items():
+            if mod_id not in active_mods:
+                self.installed_list.addItem(f"{mod_name} ({mod_id})")
     
     def activate_mod(self, item):
         """Activate a mod (double-click)"""
