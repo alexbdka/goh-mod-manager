@@ -1,0 +1,16 @@
+[project]
+name = "goh-mod-manager"
+version = "1.0.0"
+description = "Mod Manager for Call to Arms: Gates of Hell"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "black>=25.1.0",
+    "loguru>=0.7.3",
+    "nuitka>=2.7.11",
+    "packaging>=25.0",
+    "py7zr>=1.0.0",
+    "pyside6>=6.9.1",
+    "rarfile>=4.2",
+    "requests>=2.32.4",
+]

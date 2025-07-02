@@ -1,0 +1,10 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource>
+        <file>../assets/icons/logo.ico</file>
+        <file>../assets/icons/logo.png</file>
+        <file>../assets/icons/refresh-line.svg</file>
+        <file>../assets/styles/style_default.qss</file>
+        <file>../assets/styles/style_dyslexia.qss</file>
+    </qresource>
+</RCC>
