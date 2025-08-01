@@ -36,15 +36,13 @@ uv run -m goh_mod_manager
 
 Precompiled executables are available for Windows and Linux in
 the [Releases](https://github.com/alexbdka/goh-mod-manager/releases) section.
-If you're using macOS and would like a native executable, feel free to contact me — I’d be happy to collaborate or
-help with the compilation process.
 
 ## Building
 
 To compile the application into a standalone executable:
 
 ```bash
-nuitka --standalone --onefile --enable-plugin=pyside6 --windows-icon-from-ico=goh_mod_manager/assets/icons/logo.ico --output-dir=dist --nofollow-import-to=tkinter --windows-console-mode=disable goh_mod_manager/__main__.py
+nuitka --standalone --onefile --enable-plugin=pyside6 --windows-icon-from-ico=goh_mod_manager/assets/icons/logo.ico --output-dir=dist --output-filename=goh_mod_manager.exe --nofollow-import-to=tkinter --windows-console-mode=disable --include-data-dir=goh_mod_manager/assets=assets goh_mod_manager/__main__.py
 ```
 
 The compiled executable will be available in the `dist` directory.

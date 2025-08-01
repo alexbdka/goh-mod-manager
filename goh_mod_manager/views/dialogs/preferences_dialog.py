@@ -1,134 +1,53 @@
 from PySide6.QtWidgets import (
     QDialog,
-    QLineEdit,
-    QPushButton,
-    QVBoxLayout,
-    QHBoxLayout,
-    QLabel,
     QFileDialog,
     QMessageBox,
-    QGroupBox,
-    QGridLayout,
-    QSpacerItem,
-    QSizePolicy,
-    QFrame,
 )
+
+from goh_mod_manager.utils.config_manager import ConfigManager
+from goh_mod_manager.views.ui.preferences_dialog import Ui_PreferencesDialog
 
 
 class PreferencesDialog(QDialog):
-    def __init__(self, config_manager, parent=None):
+    def __init__(self, config: ConfigManager, parent=None):
         super().__init__(parent)
-        self.resize(450, 280)
-        self.setWindowTitle("Preferences")
-        self.setModal(True)
-        self.config = config_manager
+        self.ui = Ui_PreferencesDialog()
+        self.ui.setupUi(self)
+        self._connect_signals()
+        self._config = config
+        self._load()
 
-        # Main layout
-        main_layout = QVBoxLayout()
-        main_layout.setSpacing(15)
-        main_layout.setContentsMargins(20, 20, 20, 20)
+    def _load(self):
+        mods_path = self._config.get_mods_directory()
+        options_path = self._config.get_options_file()
+        self.ui.folderLineEdit.setText(mods_path)
+        self.ui.fileLineEdit.setText(options_path)
 
-        # Title
-        title_label = QLabel("Application Preferences")
-        # title_label.setStyleSheet("font-size: 16px; font-weight: bold;")
-        main_layout.addWidget(title_label)
+    def _connect_signals(self):
+        self.ui.folderBrowseButton.clicked.connect(self._browse_mods)
+        self.ui.fileBrowseButton.clicked.connect(self._browse_options)
+        self.ui.okButton.clicked.connect(self._save)
 
-        # Settings group
-        settings_group = QGroupBox("Configuration Paths")
-        settings_layout = QGridLayout()
-        settings_layout.setSpacing(10)
-        settings_layout.setColumnStretch(1, 1)
-
-        # Mods directory
-        mods_label = QLabel("Mods Directory:")
-        # mods_label.setStyleSheet("font-weight: bold;")
-        self.mods_path_input = QLineEdit(self.config.get_mods_directory())
-        self.mods_path_input.setMinimumHeight(30)
-
-        mods_button = QPushButton("Browse...")
-        mods_button.setMinimumHeight(30)
-        mods_button.setMaximumWidth(100)
-        mods_button.clicked.connect(self.browse_mods)
-
-        settings_layout.addWidget(mods_label, 0, 0)
-        settings_layout.addWidget(self.mods_path_input, 1, 0, 1, 2)
-        settings_layout.addWidget(mods_button, 1, 2)
-
-        # Options file
-        options_label = QLabel("Options File:")
-        # options_label.setStyleSheet("font-weight: bold;")
-        self.options_file_input = QLineEdit(self.config.get_options_file())
-        self.options_file_input.setMinimumHeight(30)
-
-        options_button = QPushButton("Browse...")
-        options_button.setMinimumHeight(30)
-        options_button.setMaximumWidth(100)
-        options_button.clicked.connect(self.browse_options)
-
-        settings_layout.addWidget(options_label, 2, 0)
-        settings_layout.addWidget(self.options_file_input, 3, 0, 1, 2)
-        settings_layout.addWidget(options_button, 3, 2)
-
-        settings_group.setLayout(settings_layout)
-        main_layout.addWidget(settings_group)
-
-        # Spacer
-        main_layout.addItem(
-            QSpacerItem(
-                20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
-            )
-        )
-
-        # Separator line
-        line = QFrame()
-        line.setFrameShape(QFrame.Shape.HLine)
-        line.setFrameShadow(QFrame.Shadow.Sunken)
-        main_layout.addWidget(line)
-
-        # Action buttons
-        action_layout = QHBoxLayout()
-        action_layout.addItem(
-            QSpacerItem(
-                40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-            )
-        )
-
-        cancel_button = QPushButton("Cancel")
-        cancel_button.setMinimumSize(80, 35)
-        cancel_button.clicked.connect(self.reject)
-
-        save_button = QPushButton("Save")
-        save_button.setMinimumSize(80, 35)
-        save_button.setDefault(True)
-        # save_button.setStyleSheet("QPushButton { background-color: #4CAF50; color: white; font-weight: bold; }")
-        save_button.clicked.connect(self.save)
-
-        action_layout.addWidget(cancel_button)
-        action_layout.addWidget(save_button)
-        main_layout.addLayout(action_layout)
-
-        self.setLayout(main_layout)
-
-    def browse_mods(self):
+    def _browse_mods(self):
         path = QFileDialog.getExistingDirectory(
-            self, "Select Mods Directory", self.mods_path_input.text()
+            self, "Select Mods Directory", self.ui.folderLineEdit.text()
         )
         if path:
-            self.mods_path_input.setText(path)
+            self.ui.folderLineEdit.setText(path)
 
-    def browse_options(self):
+    def _browse_options(self):
         path, _ = QFileDialog.getOpenFileName(
             self,
             "Select Options File",
-            self.options_file_input.text(),
-            "Configuration Files (*.set *.cfg *.ini);;All Files (*)",
+            self.ui.fileLineEdit.text(),
+            "Options File (*.set);",
         )
         if path:
-            self.options_file_input.setText(path)
+            self.ui.fileLineEdit.setText(path)
 
-    def save(self):
-        mods_path = self.mods_path_input.text().strip()
-        options_path = self.options_file_input.text().strip()
+    def _save(self):
+        mods_path = self.ui.folderLineEdit.text().strip()
+        options_path = self.ui.fileLineEdit.text().strip()
 
         if not mods_path:
             QMessageBox.warning(
@@ -140,6 +59,6 @@ class PreferencesDialog(QDialog):
             QMessageBox.warning(self, "Invalid Path", "Please specify an options file.")
             return
 
-        self.config.set_mods_directory(mods_path)
-        self.config.set_options_file(options_path)
+        self._config.set_mods_directory(mods_path)
+        self._config.set_options_file(options_path)
         self.accept()

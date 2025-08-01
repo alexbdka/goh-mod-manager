@@ -9,11 +9,9 @@ from goh_mod_manager.views.mod_manager_view import ModManagerView
 
 class App:
     def __init__(self):
-        self.__version__ = "1.0.0"
         self.model = ModManagerModel()
         self.view = ModManagerView()
         self.controller = ModManagerController(self.model, self.view)
-        self.controller.set_version(self.__version__)
 
     def run(self):
         self.controller.show()
@@ -21,6 +19,10 @@ class App:
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
+    app.setApplicationName("Call to Arms: Gates of Hell | Mod Manager")
+    app.setOrganizationName("alex6")
+    app.setOrganizationDomain("alexbdka.github.io")
+    app.setApplicationVersion("1.0.1")
 
     modManager = App()
     modManager.run()

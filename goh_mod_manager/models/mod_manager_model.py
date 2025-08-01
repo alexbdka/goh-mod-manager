@@ -18,21 +18,19 @@ from goh_mod_manager.utils.options_set_parser import OptionsSetParser
 
 
 class ModManagerModel(QObject):
-    # Signals
     mods_updated = Signal()
     presets_updated = Signal()
     active_mods_count_updated = Signal(int)
 
     def __init__(self):
         super().__init__()
+        self._config = None
         self._mods_directory = ""
         self._options_file = ""
         self._installed_mods = []
         self._active_mods = []
         self._presets = {}
-        self._config = None
 
-    # Properties and getters
     def get_mods_directory(self) -> str:
         return self._mods_directory
 
@@ -54,7 +52,7 @@ class ModManagerModel(QObject):
     def get_preset_names(self) -> List[str]:
         return list(self._presets.keys())
 
-    def get_preset_mods(self, preset_name: str) -> list:
+    def get_preset_mods(self, preset_name: str) -> list[str]:
         if preset_name in self._presets:
             return self._presets[preset_name]
         return []
@@ -65,7 +63,6 @@ class ModManagerModel(QObject):
     def set_config(self, config: ConfigManager):
         self._config = config
 
-    # Configuration methods
     def set_mods_directory(self, mods_directory: str):
         self._mods_directory = mods_directory
         self._load_installed_mods()
@@ -81,11 +78,9 @@ class ModManagerModel(QObject):
             self._presets[preset_name] = resolved_mods
         self.presets_updated.emit()
 
-    # Core mod management
     def refresh_all(self):
-        self._load_installed_mods()
-        self._load_active_mods()
-        self._emit_updates()
+        self.refresh_installed_mods()
+        self.refresh_active_mods()
 
     def refresh_installed_mods(self):
         self._load_installed_mods()
@@ -120,7 +115,6 @@ class ModManagerModel(QObject):
             logger.error(f"Error while clearing mods: {e}")
             return False
 
-    # Preset management
     def save_preset(self, preset_name: str) -> bool:
         if not self._active_mods:
             logger.warning("Cannot save empty preset")
@@ -155,7 +149,6 @@ class ModManagerModel(QObject):
         logger.info(f"Preset '{preset_name}' deleted")
         return True
 
-    # Import functionality
     def import_mod(self, path: str) -> bool:
         try:
             if os.path.isdir(path):
@@ -169,7 +162,6 @@ class ModManagerModel(QObject):
             logger.error(f"Error while importing mod: {e}")
             return False
 
-    # Private methods
     def _load_installed_mods(self):
         self._installed_mods = []
 
@@ -276,8 +268,8 @@ class ModManagerModel(QObject):
 
         try:
             if ext == ".zip":
-                with zipfile.ZipFile(archive_path, "r") as zip_ref:
-                    zip_ref.extractall(extract_to)
+                with zipfile.ZipFile(archive_path, "r") as zipf:
+                    zipf.extractall(extract_to)
             elif ext in [".tar", ".gz", ".tgz", ".xz"]:
                 with tarfile.open(archive_path, "r:*") as tar:
                     tar.extractall(path=extract_to)
@@ -285,8 +277,8 @@ class ModManagerModel(QObject):
                 with py7zr.SevenZipFile(archive_path, mode="r") as sevenzip:
                     sevenzip.extractall(path=extract_to)
             elif ext == ".rar":
-                with rarfile.RarFile(archive_path) as rf:
-                    rf.extractall(path=extract_to)
+                with rarfile.RarFile(archive_path) as rarf:
+                    rarf.extractall(path=extract_to)
             else:
                 raise ValueError(f"Unsupported archive format: {ext}")
         except Exception as e:

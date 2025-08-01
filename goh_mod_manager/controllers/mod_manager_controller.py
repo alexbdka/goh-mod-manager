@@ -4,7 +4,8 @@ import time
 from typing import Optional, List, Dict
 
 from PySide6.QtCore import QObject
-from PySide6.QtWidgets import QListWidgetItem, QDialog, QMessageBox
+from PySide6.QtGui import QFont, QFontDatabase
+from PySide6.QtWidgets import QListWidgetItem, QDialog, QMessageBox, QApplication
 
 from goh_mod_manager.models.mod import Mod
 from goh_mod_manager.models.mod_manager_model import ModManagerModel
@@ -21,7 +22,6 @@ from goh_mod_manager.views.mod_manager_view import ModManagerView
 class ModManagerController(QObject):
     def __init__(self, model: ModManagerModel, view: ModManagerView):
         super().__init__()
-        self.app_version = None
         self._model = model
         self._view = view
         self._config = ConfigManager()
@@ -31,15 +31,11 @@ class ModManagerController(QObject):
     def show(self):
         self._view.show()
 
-    # Initialization
     def _initialize(self):
         self._ensure_config_valid()
         self._model.set_config(self._config)
         self._load_data()
-        self._update_presets()
         self._connect_signals()
-        self._view.update_active_mods_count(self._model.get_active_mods_count())
-        self._on_preset_selection_changed(self._view.get_current_preset_name())
         self._change_font(self._config.get_font())
 
     def _ensure_config_valid(self):
@@ -52,21 +48,20 @@ class ModManagerController(QObject):
     def _load_data(self):
         self._model.set_mods_directory(self._config.get_mods_directory())
         self._model.set_options_file(self._config.get_options_file())
-
-        saved_presets = self._config.get_presets()
-        self._model.set_presets(saved_presets)
+        self._model.set_presets(self._config.get_presets())
 
         self._update_view()
+        self._view.update_active_mods_count(self._model.get_active_mods_count())
+        self._on_preset_selection_changed(self._view.get_current_preset_name())
 
+    # noinspection DuplicatedCode
     def _connect_signals(self):
-        # Model signals
         self._model.mods_updated.connect(self._update_view)
-        self._model.presets_updated.connect(self._update_presets)
+        self._model.presets_updated.connect(self._update_view)
         self._model.active_mods_count_updated.connect(
             self._view.update_active_mods_count
         )
 
-        # Menu actions
         self._view.ui.actionExit.triggered.connect(self._view.close)
         self._view.ui.actionRefresh.triggered.connect(self._refresh_all)
         self._view.ui.actionClear_Active_Mods.triggered.connect(self._clear_active_mods)
@@ -83,7 +78,6 @@ class ModManagerController(QObject):
             lambda: self._change_font("dyslexia")
         )
 
-        # Buttons
         self._view.ui.pushButton_refresh_mods.clicked.connect(
             self._refresh_installed_mods
         )
@@ -98,7 +92,6 @@ class ModManagerController(QObject):
         self._view.ui.pushButton_export_config.clicked.connect(self._export_share_code)
         self._view.ui.pushButton_import_config.clicked.connect(self._import_share_code)
 
-        # List interactions
         self._view.ui.listWidget_available_mods.itemDoubleClicked.connect(
             self._enable_mod_from_item
         )
@@ -118,7 +111,6 @@ class ModManagerController(QObject):
             self._on_preset_selection_changed
         )
 
-        # Search signals
         self._view.ui.lineEdit_search_installed.textChanged.connect(
             self._filter_installed_mods
         )
@@ -126,13 +118,8 @@ class ModManagerController(QObject):
             self._filter_active_mods
         )
 
-    # Mod management actions
     def _enable_mod_from_item(self, item: QListWidgetItem):
         mod = self._get_mod_from_item(item)
-        if mod:
-            self._model.enable_mod(mod)
-
-    def _enable_mod_from_data(self, mod: Mod):
         if mod:
             self._model.enable_mod(mod)
 
@@ -140,6 +127,10 @@ class ModManagerController(QObject):
         mod = self._get_mod_from_item(item)
         if mod:
             self._model.disable_mod(mod)
+
+    def _enable_mod_from_data(self, mod: Mod):
+        if mod:
+            self._model.enable_mod(mod)
 
     def _disable_mod_from_data(self, mod: Mod):
         if mod:
@@ -174,7 +165,6 @@ class ModManagerController(QObject):
     def _clear_active_mods(self):
         self._model.clear_active_mods()
 
-    # Refresh operations
     def _refresh_all(self):
         self._model.refresh_all()
         self._clear_search_filters()
@@ -182,11 +172,13 @@ class ModManagerController(QObject):
     def _refresh_installed_mods(self):
         self._model.refresh_installed_mods()
 
-    # UI updates
     def _update_view(self):
-        installed_mods = self._model.get_installed_mods()
-        active_mods = self._model.get_active_mods()
-        self._view.populate_mod_lists(installed_mods, active_mods)
+        self._view.populate_mod_lists(
+            self._model.get_installed_mods(), self._model.get_active_mods()
+        )
+        self._view.update_presets(
+            self._model.get_preset_names(), self._view.get_current_preset_name()
+        )
 
     def _update_presets(self):
         current_selection = self._view.get_current_preset_name()
@@ -200,7 +192,6 @@ class ModManagerController(QObject):
     def _toggle_mod_details(self, checked: bool):
         self._view.ui.groupBox_mod_info.setVisible(checked)
 
-    # Preset management
     def _save_preset(self):
         if self._model.get_active_mods_count() == 0:
             QMessageBox.warning(
@@ -267,40 +258,6 @@ class ModManagerController(QObject):
                     f"Preset '{preset_name}' has been deleted.",
                 )
 
-    def _on_preset_selection_changed(self, preset_name: str):
-        if not preset_name or not self._model.has_preset(preset_name):
-            self._view.ui.listWidget_presets.clear()
-            return
-
-        preset_mods = self._model.get_preset_mods(preset_name)
-        self._view.ui.listWidget_presets.clear()
-
-        for mod in preset_mods:
-            item = QListWidgetItem(mod.name)
-            item.setData(256, mod)
-            self._view.ui.listWidget_presets.addItem(item)
-
-    # Import functionality
-    def _import_mod(self):
-        dialog = ImportDialog(self._view)
-        dialog.mod_import_requested.connect(self._handle_import_mod)
-        dialog.exec()
-
-    def _handle_import_mod(self, archive_path: str):
-        if self._model.import_mod(archive_path):
-            self._update_view()
-
-    # Preferences
-    def _open_preferences(self):
-        dialog = PreferencesDialog(self._config, self._view)
-        if dialog.exec() == QDialog.DialogCode.Accepted:
-            self._load_data()
-            self._model.refresh_all()
-
-    # Helper methods
-    def _get_mod_from_item(self, item: Optional[QListWidgetItem]) -> Optional[Mod]:
-        return item.data(256) if item else None
-
     def _confirm_preset_overwrite(self, preset_name: str) -> bool:
         reply = QMessageBox.question(
             self._view,
@@ -331,6 +288,19 @@ class ModManagerController(QObject):
         )
         return reply == QMessageBox.StandardButton.Yes
 
+    def _on_preset_selection_changed(self, preset_name: str):
+        if not preset_name or not self._model.has_preset(preset_name):
+            self._view.ui.listWidget_presets.clear()
+            return
+
+        preset_mods = self._model.get_preset_mods(preset_name)
+        self._view.ui.listWidget_presets.clear()
+
+        for mod in preset_mods:
+            item = QListWidgetItem(mod.name)
+            item.setData(256, mod)
+            self._view.ui.listWidget_presets.addItem(item)
+
     def _filter_installed_mods(self, search_text: str):
         list_widget = self._view.ui.listWidget_available_mods
         self._filter_list_widget(list_widget, search_text)
@@ -359,7 +329,6 @@ class ModManagerController(QObject):
         self._view.ui.lineEdit_search_installed.clear()
         self._view.ui.lineEdit_search_active.clear()
 
-    # Sharing
     def _export_share_code(self):
         active_mods = self._model.get_active_mods()
 
@@ -422,20 +391,6 @@ class ModManagerController(QObject):
                 self._view, "Import Error", f"Invalid share code: {str(e)}"
             )
 
-    def _validate_share_data(self, data: Dict) -> bool:
-        required_keys = ["version", "mods"]
-        if not all(key in data for key in required_keys):
-            return False
-
-        if not isinstance(data["mods"], list):
-            return False
-
-        for mod_data in data["mods"]:
-            if not isinstance(mod_data, dict) or "name" not in mod_data:
-                return False
-
-        return True
-
     def _apply_share_code(self, mod_list: List[Dict]):
         self._model.clear_active_mods()
 
@@ -466,27 +421,58 @@ class ModManagerController(QObject):
         )
         return reply == QMessageBox.StandardButton.Yes
 
+    def _import_mod(self):
+        dialog = ImportDialog(self._view)
+        dialog.mod_import_requested.connect(self._handle_import_mod)
+        dialog.exec()
+
+    def _handle_import_mod(self, archive_path: str):
+        if self._model.import_mod(archive_path):
+            self._update_view()
+
+    def _open_preferences(self):
+        dialog = PreferencesDialog(self._config, self._view)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self._load_data()
+            self._model.refresh_all()
+
     def _open_user_manual(self):
         dialog = UserManualDialog(self._view)
         dialog.exec()
 
     def _open_about(self):
-        dialog = AboutDialog(self._view, self.app_version)
+        dialog = AboutDialog(self._view, QApplication.applicationVersion())
         dialog.exec()
-
-    def set_version(self, version):
-        self.app_version = version
 
     def _check_app_update(self):
-        dialog = CheckUpdateDialog(self._view, self.app_version)
-        dialog.exec()
+        CheckUpdateDialog(self._view, QApplication.applicationVersion())
 
-    def _change_font(self, font_type):
-        if font_type == "default":
-            self._view.set_style("style_default")
+    def _change_font(self, font_name):
+        if font_name == "default":
+            font = QFont("Inter-Regular", 10)
+            self._view.set_font(font)
             self._config.set_font("default")
-        elif font_type == "dyslexia":
-            self._view.set_style("style_dyslexia")
+        elif font_name == "dyslexia":
+            QFontDatabase.addApplicationFont(":/assets/fonts/OpenDyslexic-Regular.otf")
+            font = QFont("OpenDyslexic", 10)
+            self._view.set_font(font)
             self._config.set_font("dyslexia")
-        else:
-            return
+
+    @staticmethod
+    def _get_mod_from_item(item: Optional[QListWidgetItem]) -> Optional[Mod]:
+        return item.data(256) if item else None
+
+    @staticmethod
+    def _validate_share_data(data: Dict) -> bool:
+        required_keys = ["version", "mods"]
+        if not all(key in data for key in required_keys):
+            return False
+
+        if not isinstance(data["mods"], list):
+            return False
+
+        for mod_data in data["mods"]:
+            if not isinstance(mod_data, dict) or "name" not in mod_data:
+                return False
+
+        return True

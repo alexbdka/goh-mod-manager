@@ -1,10 +1,9 @@
 from typing import List, Optional
 
-from PySide6.QtCore import QFile, QTextStream, QIODevice
-from PySide6.QtWidgets import QMainWindow, QListWidgetItem
+from PySide6.QtGui import QFont
+from PySide6.QtWidgets import QMainWindow, QListWidgetItem, QApplication
 
 from goh_mod_manager.models.mod import Mod
-from goh_mod_manager.utils.mod_manager_logger import logger
 from goh_mod_manager.views.ui.main_window import Ui_MainWindow
 
 
@@ -14,9 +13,6 @@ class ModManagerView(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        # self.set_style("style_default")
-
-    # List management
     def clear_mod_lists(self):
         self.ui.listWidget_available_mods.clear()
         self.ui.listWidget_active_mods.clear()
@@ -46,7 +42,6 @@ class ModManagerView(QMainWindow):
         item.setData(256, mod)
         self.ui.listWidget_active_mods.addItem(item)
 
-    # UI state updates
     def update_active_mods_count(self, count: int):
         self.ui.label_mod_count.setText(f"{count} mods")
 
@@ -70,7 +65,6 @@ class ModManagerView(QMainWindow):
             if index >= 0:
                 self.ui.comboBox_presets.setCurrentIndex(index)
 
-    # Getters for controller interaction
     def get_current_available_mod(self) -> List[QListWidgetItem]:
         return self.ui.listWidget_available_mods.selectedItems()
 
@@ -89,7 +83,6 @@ class ModManagerView(QMainWindow):
                 mods.append(mod)
         return mods
 
-    # List manipulation
     def move_active_mod_up(self) -> bool:
         item = self.ui.listWidget_active_mods.currentItem()
         if not item:
@@ -118,14 +111,6 @@ class ModManagerView(QMainWindow):
         self.ui.listWidget_active_mods.setCurrentItem(item)
         return True
 
-    # Style
-    def set_style(self, style_name: str):
-        qss_path = f":/assets/styles/{style_name}.qss"
-        file = QFile(qss_path)
-        if file.open(QIODevice.OpenModeFlag.ReadOnly | QIODevice.OpenModeFlag.Text):
-            stream = QTextStream(file)
-            qss = stream.readAll()
-            file.close()
-            self.setStyleSheet(qss)
-        else:
-            logger.warning(f"Failed to load style from {qss_path}")
+    @staticmethod
+    def set_font(font: QFont):
+        QApplication.setFont(font)

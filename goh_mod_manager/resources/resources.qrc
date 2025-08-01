@@ -4,7 +4,7 @@
         <file>../assets/icons/logo.ico</file>
         <file>../assets/icons/logo.png</file>
         <file>../assets/icons/refresh-line.svg</file>
-        <file>../assets/styles/style_default.qss</file>
-        <file>../assets/styles/style_dyslexia.qss</file>
+        <file>../assets/fonts/Inter-Regular.otf</file>
+        <file>../assets/fonts/OpenDyslexic-Regular.otf</file>
     </qresource>
 </RCC>

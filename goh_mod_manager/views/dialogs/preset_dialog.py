@@ -25,23 +25,18 @@ class PresetDialog(QDialog):
         self.setModal(True)
         self.resize(400, 180)
 
-        # Main layout
         main_layout = QVBoxLayout()
         main_layout.setSpacing(15)
         main_layout.setContentsMargins(20, 20, 20, 20)
 
-        # Title
         title_label = QLabel("Save Current Configuration as Preset")
-        # title_label.setStyleSheet("font-size: 16px; font-weight: bold;")
         main_layout.addWidget(title_label)
 
-        # Input group
         input_group = QGroupBox("Preset Details")
         input_layout = QVBoxLayout()
         input_layout.setSpacing(8)
 
         name_label = QLabel("Preset Name:")
-        # name_label.setStyleSheet("font-weight: bold;")
         input_layout.addWidget(name_label)
 
         self.line_edit = QLineEdit()
@@ -51,27 +46,23 @@ class PresetDialog(QDialog):
         input_layout.addWidget(self.line_edit)
 
         self.error_label = QLabel()
-        # self.error_label.setStyleSheet("color: #d32f2f; font-styles: italic;")
         self.error_label.setMinimumHeight(20)
         input_layout.addWidget(self.error_label)
 
         input_group.setLayout(input_layout)
         main_layout.addWidget(input_group)
 
-        # Spacer
         main_layout.addItem(
             QSpacerItem(
                 20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
             )
         )
 
-        # Separator line
         line = QFrame()
         line.setFrameShape(QFrame.Shape.HLine)
         line.setFrameShadow(QFrame.Shadow.Sunken)
         main_layout.addWidget(line)
 
-        # Action buttons
         action_layout = QHBoxLayout()
         action_layout.addItem(
             QSpacerItem(
@@ -86,7 +77,6 @@ class PresetDialog(QDialog):
         self.ok_button = QPushButton("Save Preset")
         self.ok_button.setMinimumSize(100, 35)
         self.ok_button.setDefault(True)
-        # self.ok_button.setStyleSheet("QPushButton { background-color: #4CAF50; color: white; font-weight: bold; }")
         self.ok_button.clicked.connect(self.validate_and_accept)
 
         action_layout.addWidget(self.cancel_button)
@@ -95,7 +85,6 @@ class PresetDialog(QDialog):
 
         self.setLayout(main_layout)
 
-        # Focus on input
         self.line_edit.setFocus()
 
     def validate_and_accept(self):

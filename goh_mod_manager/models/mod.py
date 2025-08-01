@@ -6,8 +6,8 @@ class Mod:
     id: str
     name: str
     desc: str
-    minGameVersion: float
-    maxGameVersion: float
+    minGameVersion: str
+    maxGameVersion: str
     manualInstall: bool
 
     def __str__(self):

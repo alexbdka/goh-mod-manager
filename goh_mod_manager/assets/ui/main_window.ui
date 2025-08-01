@@ -166,6 +166,9 @@
                                                     <property name="selectionMode">
                                                         <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
                                                     </property>
+                                                    <property name="layoutMode">
+                                                        <enum>QListView::LayoutMode::SinglePass</enum>
+                                                    </property>
                                                     <property name="uniformItemSizes">
                                                         <bool>true</bool>
                                                     </property>
@@ -870,11 +873,6 @@
             </property>
             <property name="text">
                 <string>Dyslexia</string>
-            </property>
-            <property name="font">
-                <font>
-                    <family>OpenDyslexic</family>
-                </font>
             </property>
         </action>
     </widget>

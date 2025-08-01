@@ -10,10 +10,8 @@ wheels/
 .venv
 
 # Logs
-log/
 logs/
 *.log
-*.logs
 
 # IDE
 .idea

@@ -27,6 +27,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QLineEdit,
+    QListView,
     QListWidget,
     QMenu,
     QMenuBar,
@@ -83,9 +84,6 @@ class Ui_MainWindow(object):
         self.actionDyslexiaFont = QAction(MainWindow)
         self.actionDyslexiaFont.setObjectName("actionDyslexiaFont")
         self.actionDyslexiaFont.setCheckable(False)
-        font = QFont()
-        font.setFamilies(["OpenDyslexic"])
-        self.actionDyslexiaFont.setFont(font)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_main = QHBoxLayout(self.centralwidget)
@@ -148,6 +146,7 @@ class Ui_MainWindow(object):
         self.listWidget_available_mods.setSelectionMode(
             QAbstractItemView.SelectionMode.ExtendedSelection
         )
+        self.listWidget_available_mods.setLayoutMode(QListView.LayoutMode.SinglePass)
         self.listWidget_available_mods.setUniformItemSizes(True)
         self.listWidget_available_mods.setSortingEnabled(True)
 
@@ -257,9 +256,9 @@ class Ui_MainWindow(object):
 
         self.label_drag_info = QLabel(self.groupBox_active_mods)
         self.label_drag_info.setObjectName("label_drag_info")
-        font1 = QFont()
-        font1.setItalic(True)
-        self.label_drag_info.setFont(font1)
+        font = QFont()
+        font.setItalic(True)
+        self.label_drag_info.setFont(font)
         self.label_drag_info.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label_drag_info.setWordWrap(True)
 
@@ -284,9 +283,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_mod_info.setObjectName("verticalLayout_mod_info")
         self.label_mod_name = QLabel(self.groupBox_mod_info)
         self.label_mod_name.setObjectName("label_mod_name")
-        font2 = QFont()
-        font2.setBold(True)
-        self.label_mod_name.setFont(font2)
+        font1 = QFont()
+        font1.setBold(True)
+        self.label_mod_name.setFont(font1)
         self.label_mod_name.setWordWrap(True)
         self.label_mod_name.setTextInteractionFlags(
             Qt.TextInteractionFlag.TextSelectableByMouse
@@ -605,7 +604,11 @@ class Ui_MainWindow(object):
         # if QT_CONFIG(tooltip)
         self.lineEdit_search_installed.setToolTip(
             QCoreApplication.translate(
-                "MainWindow", "Type to search through your installed mods library", None
+                "MainWindow",
+                "Type to search through your installed mods\n"
+                "                                                                    library\n"
+                "                                                                ",
+                None,
             )
         )
         # endif // QT_CONFIG(tooltip)
@@ -617,7 +620,11 @@ class Ui_MainWindow(object):
         # if QT_CONFIG(tooltip)
         self.pushButton_refresh_mods.setToolTip(
             QCoreApplication.translate(
-                "MainWindow", "Scan for newly installed mods and refresh the list", None
+                "MainWindow",
+                "Scan for newly installed mods and refresh the\n"
+                "                                                                    list\n"
+                "                                                                ",
+                None,
             )
         )
         # endif // QT_CONFIG(tooltip)
@@ -626,7 +633,9 @@ class Ui_MainWindow(object):
         self.listWidget_available_mods.setToolTip(
             QCoreApplication.translate(
                 "MainWindow",
-                "Select one or multiple mods to add to your active configuration. Use Ctrl+Click for multiple selection.",
+                "Select one or multiple mods to add to your active\n"
+                "                                                            configuration. Use Ctrl+Click for multiple selection.\n"
+                "                                                        ",
                 None,
             )
         )
@@ -634,7 +643,10 @@ class Ui_MainWindow(object):
         # if QT_CONFIG(tooltip)
         self.pushButton_add_mod.setToolTip(
             QCoreApplication.translate(
-                "MainWindow", "Add the selected mods to your active mod list", None
+                "MainWindow",
+                "Add the selected mods to your active mod list\n"
+                "                                                                ",
+                None,
             )
         )
         # endif // QT_CONFIG(tooltip)
@@ -647,7 +659,10 @@ class Ui_MainWindow(object):
         # if QT_CONFIG(tooltip)
         self.lineEdit_search_active.setToolTip(
             QCoreApplication.translate(
-                "MainWindow", "Quickly find mods in your current load order", None
+                "MainWindow",
+                "Quickly find mods in your current load order\n"
+                "                                                                ",
+                None,
             )
         )
         # endif // QT_CONFIG(tooltip)
@@ -657,7 +672,10 @@ class Ui_MainWindow(object):
         # if QT_CONFIG(tooltip)
         self.label_mod_count.setToolTip(
             QCoreApplication.translate(
-                "MainWindow", "Number of mods currently in your load order", None
+                "MainWindow",
+                "Number of mods currently in your load order\n"
+                "                                                                ",
+                None,
             )
         )
         # endif // QT_CONFIG(tooltip)
@@ -668,7 +686,9 @@ class Ui_MainWindow(object):
         self.listWidget_active_mods.setToolTip(
             QCoreApplication.translate(
                 "MainWindow",
-                "Your active mod configuration. Mods at the top load first. Drag and drop to reorder, or use the buttons below.",
+                "Your active mod configuration. Mods at the top load\n"
+                "                                                            first. Drag and drop to reorder, or use the buttons below.\n"
+                "                                                        ",
                 None,
             )
         )
@@ -677,7 +697,9 @@ class Ui_MainWindow(object):
         self.pushButton_move_up.setToolTip(
             QCoreApplication.translate(
                 "MainWindow",
-                "Move selected mods higher in load order (loads earlier)",
+                "Move selected mods higher in load order (loads\n"
+                "                                                                    earlier)\n"
+                "                                                                ",
                 None,
             )
         )
@@ -689,7 +711,9 @@ class Ui_MainWindow(object):
         self.pushButton_move_down.setToolTip(
             QCoreApplication.translate(
                 "MainWindow",
-                "Move selected mods lower in load order (loads later)",
+                "Move selected mods lower in load order (loads\n"
+                "                                                                    later)\n"
+                "                                                                ",
                 None,
             )
         )
@@ -700,7 +724,11 @@ class Ui_MainWindow(object):
         # if QT_CONFIG(tooltip)
         self.pushButton_remove_mod.setToolTip(
             QCoreApplication.translate(
-                "MainWindow", "Deactivate selected mods (removes from load order)", None
+                "MainWindow",
+                "Deactivate selected mods (removes from load\n"
+                "                                                                    order)\n"
+                "                                                                ",
+                None,
             )
         )
         # endif // QT_CONFIG(tooltip)
@@ -711,7 +739,9 @@ class Ui_MainWindow(object):
         self.pushButton_clear_all.setToolTip(
             QCoreApplication.translate(
                 "MainWindow",
-                "Deactivate all mods and clear the entire load order",
+                "Deactivate all mods and clear the entire load\n"
+                "                                                                    order\n"
+                "                                                                ",
                 None,
             )
         )
@@ -748,7 +778,9 @@ class Ui_MainWindow(object):
         self.textEdit_mod_description.setPlaceholderText(
             QCoreApplication.translate(
                 "MainWindow",
-                "Mod description, version info, and compatibility notes will appear here...",
+                "Mod description, version info, and compatibility notes\n"
+                "                                                            will appear here...\n"
+                "                                                        ",
                 None,
             )
         )
@@ -766,7 +798,9 @@ class Ui_MainWindow(object):
         self.comboBox_presets.setToolTip(
             QCoreApplication.translate(
                 "MainWindow",
-                "Select an existing preset or type a new name to create one",
+                "Select an existing preset or type a new name to create\n"
+                "                                                            one\n"
+                "                                                        ",
                 None,
             )
         )
@@ -784,7 +818,11 @@ class Ui_MainWindow(object):
         # if QT_CONFIG(tooltip)
         self.pushButton_save_preset.setToolTip(
             QCoreApplication.translate(
-                "MainWindow", "Save your current mod configuration as a preset", None
+                "MainWindow",
+                "Save your current mod configuration as a\n"
+                "                                                                    preset\n"
+                "                                                                ",
+                None,
             )
         )
         # endif // QT_CONFIG(tooltip)
@@ -815,7 +853,8 @@ class Ui_MainWindow(object):
         self.lineEdit_share_code.setToolTip(
             QCoreApplication.translate(
                 "MainWindow",
-                "Enter a configuration code shared by another player",
+                "Enter a configuration code shared by another player\n"
+                "                                                        ",
                 None,
             )
         )
@@ -829,7 +868,9 @@ class Ui_MainWindow(object):
         self.pushButton_import_config.setToolTip(
             QCoreApplication.translate(
                 "MainWindow",
-                "Import and apply the configuration from the share code",
+                "Import and apply the configuration from the\n"
+                "                                                                    share code\n"
+                "                                                                ",
                 None,
             )
         )
@@ -841,7 +882,9 @@ class Ui_MainWindow(object):
         self.pushButton_export_config.setToolTip(
             QCoreApplication.translate(
                 "MainWindow",
-                "Generate a shareable code for your current mod setup",
+                "Generate a shareable code for your current mod\n"
+                "                                                                    setup\n"
+                "                                                                ",
                 None,
             )
         )

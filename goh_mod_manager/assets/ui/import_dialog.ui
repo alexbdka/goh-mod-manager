@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>ImportDialog</class>
+    <widget class="QDialog" name="ImportDialog">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>500</width>
+                <height>274</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Import Mod</string>
+        </property>
+        <property name="modal">
+            <bool>true</bool>
+        </property>
+        <layout class="QVBoxLayout" name="main_layout">
+            <property name="spacing">
+                <number>15</number>
+            </property>
+            <property name="leftMargin">
+                <number>20</number>
+            </property>
+            <property name="topMargin">
+                <number>20</number>
+            </property>
+            <property name="rightMargin">
+                <number>20</number>
+            </property>
+            <property name="bottomMargin">
+                <number>20</number>
+            </property>
+            <item>
+                <widget class="QLabel" name="title_label">
+                    <property name="text">
+                        <string>Import Mod</string>
+                    </property>
+                </widget>
+            </item>
+            <item>
+                <widget class="QGroupBox" name="source_group">
+                    <property name="title">
+                        <string>Mod Source</string>
+                    </property>
+                    <layout class="QVBoxLayout" name="source_layout">
+                        <property name="spacing">
+                            <number>8</number>
+                        </property>
+                        <item>
+                            <widget class="QLineEdit" name="path_input">
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>0</width>
+                                        <height>30</height>
+                                    </size>
+                                </property>
+                                <property name="placeholderText">
+                                    <string>Select a mod archive (.zip, .tar, .7z...) or folder</string>
+                                </property>
+                            </widget>
+                        </item>
+                        <item>
+                            <layout class="QHBoxLayout" name="button_layout">
+                                <property name="spacing">
+                                    <number>10</number>
+                                </property>
+                                <item>
+                                    <widget class="QPushButton" name="archive_button">
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>35</height>
+                                            </size>
+                                        </property>
+                                        <property name="text">
+                                            <string>Browse Archive...</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item>
+                                    <widget class="QPushButton" name="folder_button">
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>35</height>
+                                            </size>
+                                        </property>
+                                        <property name="text">
+                                            <string>Browse Folder...</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                            </layout>
+                        </item>
+                    </layout>
+                </widget>
+            </item>
+            <item>
+                <spacer name="vertical_spacer">
+                    <property name="orientation">
+                        <enum>Qt::Orientation::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+            </item>
+            <item>
+                <widget class="QFrame" name="line">
+                    <property name="frameShape">
+                        <enum>QFrame::Shape::HLine</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>QFrame::Shadow::Sunken</enum>
+                    </property>
+                </widget>
+            </item>
+            <item>
+                <layout class="QHBoxLayout" name="action_layout">
+                    <item>
+                        <spacer name="horizontal_spacer">
+                            <property name="orientation">
+                                <enum>Qt::Orientation::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                                <size>
+                                    <width>40</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </item>
+                    <item>
+                        <widget class="QPushButton" name="cancel_button">
+                            <property name="minimumSize">
+                                <size>
+                                    <width>80</width>
+                                    <height>35</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string>Cancel</string>
+                            </property>
+                        </widget>
+                    </item>
+                    <item>
+                        <widget class="QPushButton" name="import_button">
+                            <property name="minimumSize">
+                                <size>
+                                    <width>80</width>
+                                    <height>35</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string>Import</string>
+                            </property>
+                            <property name="default">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                    </item>
+                </layout>
+            </item>
+        </layout>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

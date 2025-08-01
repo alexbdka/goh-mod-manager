@@ -2,12 +2,15 @@ import requests
 from PySide6.QtWidgets import QMessageBox, QDialog
 from packaging import version
 
+from goh_mod_manager.utils.mod_manager_logger import logger
+
 
 class CheckUpdateDialog(QDialog):
     def __init__(self, parent, app_version):
         super().__init__(parent)
         self.parent = parent
         self.version = app_version
+        self.check_for_updates()
 
     def check_for_updates(self):
         current_version = self.version
@@ -17,6 +20,8 @@ class CheckUpdateDialog(QDialog):
             response = requests.get(
                 f"https://api.github.com/repos/{repo}/releases/latest", timeout=5
             )
+            logger.debug(f"Update check response: {response.status_code}")
+
             if response.status_code == 200:
                 data = response.json()
                 latest_version = data["tag_name"].lstrip("v")
