@@ -1,13 +1,13 @@
-# Call to Arms: Gates of Hell | Mod Manager
+# GoH Mod Manager
 
-A Python application built with PySide6 and compiled with Nuitka.  
-A mod manager with a pleasant, intuitive graphical interface featuring mod management, preset management, configuration
-sharing and much more.
+*A modern mod manager for Call to Arms: Gates of Hell, built with PySide6 and compiled with Nuitka.*
+
+A user-friendly graphical interface for managing mods, presets, configuration sharing, and more.
 
 ## Requirements
 
 - Python 3.12
-- uv (Python package manager)
+- [uv](https://github.com/astral-sh/uv) (modern Python package manager)
 
 ## Installation
 
@@ -41,8 +41,14 @@ the [Releases](https://github.com/alexbdka/goh-mod-manager/releases) section.
 
 To compile the application into a standalone executable:
 
+**Windows**
 ```bash
-nuitka --standalone --onefile --enable-plugin=pyside6 --windows-icon-from-ico=goh_mod_manager/assets/icons/logo.ico --output-dir=dist --output-filename=goh_mod_manager.exe --nofollow-import-to=tkinter --windows-console-mode=disable --include-data-dir=goh_mod_manager/assets=assets goh_mod_manager/__main__.py
+nuitka --standalone --onefile --enable-plugin=pyside6 --output-dir=dist --output-filename=goh_mod_manager --nofollow-import-to=tkinter --include-data-dir=goh_mod_manager/assets=assets --windows-icon-from-ico=goh_mod_manager/assets/icons/logo.ico --windows-console-mode=disable goh_mod_manager/__main__.py
+```
+
+**Linux**
+```bash
+nuitka --standalone --onefile --enable-plugin=pyside6 --output-dir=dist --output-filename=goh_mod_manager --nofollow-import-to=tkinter --include-data-dir=goh_mod_manager/assets=assets goh_mod_manager/__main__.py
 ```
 
 The compiled executable will be available in the `dist` directory.
@@ -55,4 +61,4 @@ The compiled executable will be available in the `dist` directory.
 ## Acknowledgments
 
 - Logo design by [awasde](https://www.linkedin.com/in/amélie-rakowiecki-970818350)
-- The very first mod manager created by [Elaindil (MrCookie)](https://github.com/Elaindil/ModManager)
+- Original mod manager by [Elaindil (MrCookie)](https://github.com/Elaindil/ModManager)
