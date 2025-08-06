@@ -22,7 +22,7 @@ if __name__ == "__main__":
     app.setApplicationName("Call to Arms: Gates of Hell | Mod Manager")
     app.setOrganizationName("alex6")
     app.setOrganizationDomain("alexbdka.github.io")
-    app.setApplicationVersion("1.0.1")
+    app.setApplicationVersion("1.1.0")
 
     modManager = App()
     modManager.run()

@@ -28,6 +28,8 @@ class CheckUpdateDialog(QDialog):
 
                 if version.parse(latest_version) > version.parse(current_version):
                     self._show_update_available(latest_version, data["html_url"])
+                elif version.parse(latest_version) < version.parse(current_version):
+                    self._show_secret()
                 else:
                     self._show_up_to_date()
             else:
@@ -49,6 +51,13 @@ class CheckUpdateDialog(QDialog):
             self.parent,
             "Up to Date",
             "You are using the latest version of the application.",
+        )
+
+    def _show_secret(self):
+        QMessageBox.information(
+            self.parent,
+            "You are in the future",
+            "Have a good time deving.",
         )
 
     def _show_error(self, message):

@@ -63,7 +63,7 @@ class OptionsSetParser:
             self.lines = [
                 line
                 for line in self.lines
-                if not re.match(r'^\t\t"mod_(\d+):0"\n$', line)
+                if not re.match(r'^\t\t"(?:(mod_)?\d+):0"\n$', line)
             ]
             return self.save()
 
@@ -78,6 +78,9 @@ class OptionsSetParser:
                 self.clear_mods_section()
             else:
                 for mod in mods:
-                    self.lines.insert(index, f'\t\t"mod_{mod.id}:0"\n')
+                    if mod.manualInstall:
+                        self.lines.insert(index, f'\t\t"{mod.id}:0"\n')
+                    else:
+                        self.lines.insert(index, f'\t\t"mod_{mod.id}:0"\n')
                     index += 1
             return self.save()
