@@ -185,6 +185,8 @@ class ModManagerModel(QObject):
     # Import methods
     def import_mod(self, path: str) -> bool:
         """Import a mod from a directory or archive file."""
+        if not self._placeholder_valid_game_mods_directory():
+            return False
         try:
             if os.path.isdir(path):
                 return self._import_from_directory(path)
@@ -374,3 +376,10 @@ class ModManagerModel(QObject):
         marker = os.path.join(path, ".imported_by_mod_manager")
         with open(marker, "w") as f:
             f.write("Imported by Mod Manager")
+
+    def _placeholder_valid_game_mods_directory(self):
+        """Placeholder method for testing purposes"""
+        if not self._get_game_mods_directory() or self._get_game_mods_directory() == "":
+            return False
+        else:
+            return True
