@@ -185,7 +185,7 @@ class ModManagerModel(QObject):
     # Import methods
     def import_mod(self, path: str) -> bool:
         """Import a mod from a directory or archive file."""
-        if not self._placeholder_valid_game_mods_directory():
+        if not self._is_valid_game_mods_directory(self._get_game_mods_directory()):
             return False
         try:
             if os.path.isdir(path):
@@ -206,13 +206,15 @@ class ModManagerModel(QObject):
         mods_directory = self._config.get_mods_directory()
         game_mods_directory = self._get_game_mods_directory()
 
-        if not os.path.exists(mods_directory) or not os.path.exists(
-            game_mods_directory
-        ):
-            return
+        directories_to_scan = []
 
-        # Load from both directories
-        for directory in [mods_directory, game_mods_directory]:
+        if mods_directory and os.path.exists(mods_directory):
+            directories_to_scan.append(mods_directory)
+
+        if self._is_valid_game_mods_directory(game_mods_directory):
+            directories_to_scan.append(game_mods_directory)
+
+        for directory in directories_to_scan:
             for item in os.listdir(directory):
                 mod_path = os.path.join(directory, item)
                 if os.path.isdir(mod_path):
@@ -305,7 +307,7 @@ class ModManagerModel(QObject):
         parts = mods_directory.parts
 
         if "steamapps" not in parts:
-            raise ValueError("No 'steamapps' directory found in mods directory path")
+            return ""
 
         idx = parts.index("steamapps")
         steam_root = Path(*parts[: idx + 1])
@@ -377,9 +379,7 @@ class ModManagerModel(QObject):
         with open(marker, "w") as f:
             f.write("Imported by Mod Manager")
 
-    def _placeholder_valid_game_mods_directory(self):
-        """Placeholder method for testing purposes"""
-        if not self._get_game_mods_directory() or self._get_game_mods_directory() == "":
-            return False
-        else:
-            return True
+    @staticmethod
+    def _is_valid_game_mods_directory(path: str | None) -> bool:
+        """Return True if the given game_mods_directory path is non-empty and exists."""
+        return bool(path) and os.path.exists(path)
