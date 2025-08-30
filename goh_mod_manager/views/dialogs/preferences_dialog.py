@@ -20,34 +20,34 @@ class PreferencesDialog(QDialog):
     def _load(self):
         mods_path = self._config.get_mods_directory()
         options_path = self._config.get_options_file()
-        self.ui.folderLineEdit.setText(mods_path)
-        self.ui.fileLineEdit.setText(options_path)
+        self.ui.modsFolderLineEdit.setText(mods_path)
+        self.ui.settingsFileLineEdit.setText(options_path)
 
     def _connect_signals(self):
-        self.ui.folderBrowseButton.clicked.connect(self._browse_mods)
-        self.ui.fileBrowseButton.clicked.connect(self._browse_options)
+        self.ui.modsFolderButton.clicked.connect(self._browse_mods)
+        self.ui.settingsFileButton.clicked.connect(self._browse_options)
         self.ui.okButton.clicked.connect(self._save)
 
     def _browse_mods(self):
         path = QFileDialog.getExistingDirectory(
-            self, "Select Mods Directory", self.ui.folderLineEdit.text()
+            self, "Select Mods Directory", self.ui.modsFolderLineEdit.text()
         )
         if path:
-            self.ui.folderLineEdit.setText(path)
+            self.ui.modsFolderLineEdit.setText(path)
 
     def _browse_options(self):
         path, _ = QFileDialog.getOpenFileName(
             self,
             "Select Options File",
-            self.ui.fileLineEdit.text(),
-            "Options File (*.set);",
+            self.ui.settingsFileLineEdit.text(),
+            "Options File (*.set);;All Files (*)",
         )
         if path:
-            self.ui.fileLineEdit.setText(path)
+            self.ui.settingsFileLineEdit.setText(path)
 
     def _save(self):
-        mods_path = self.ui.folderLineEdit.text().strip()
-        options_path = self.ui.fileLineEdit.text().strip()
+        mods_path = self.ui.modsFolderLineEdit.text().strip()
+        options_path = self.ui.settingsFileLineEdit.text().strip()
 
         if not mods_path:
             QMessageBox.warning(

@@ -7,7 +7,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>500</width>
-                <height>208</height>
+                <height>306</height>
             </rect>
         </property>
         <property name="windowTitle">
@@ -29,37 +29,21 @@
                         <string>Required Paths</string>
                     </property>
                     <layout class="QGridLayout" name="gridLayout">
-                        <property name="margin" stdset="0">
-                            <number>15</number>
-                        </property>
                         <property name="spacing">
                             <number>10</number>
                         </property>
-                        <item row="0" column="0">
-                            <widget class="QLabel" name="folderLabel">
-                                <property name="minimumSize">
-                                    <size>
-                                        <width>80</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
-                                <property name="text">
-                                    <string>Mods folder :</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="0" column="1">
-                            <widget class="QLineEdit" name="folderLineEdit">
+                        <item row="1" column="1">
+                            <widget class="QLineEdit" name="modsFolderLineEdit">
                                 <property name="readOnly">
                                     <bool>true</bool>
                                 </property>
                                 <property name="placeholderText">
-                                    <string>Select a folder...</string>
+                                    <string>Select the mods folder...</string>
                                 </property>
                             </widget>
                         </item>
-                        <item row="0" column="2">
-                            <widget class="QPushButton" name="folderBrowseButton">
+                        <item row="2" column="2">
+                            <widget class="QPushButton" name="settingsFileButton">
                                 <property name="maximumSize">
                                     <size>
                                         <width>100</width>
@@ -71,8 +55,18 @@
                                 </property>
                             </widget>
                         </item>
-                        <item row="1" column="0">
-                            <widget class="QLabel" name="fileLabel">
+                        <item row="2" column="1">
+                            <widget class="QLineEdit" name="settingsFileLineEdit">
+                                <property name="readOnly">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="placeholderText">
+                                    <string>Select the options.set file...</string>
+                                </property>
+                            </widget>
+                        </item>
+                        <item row="2" column="0">
+                            <widget class="QLabel" name="settingsFileLabel">
                                 <property name="minimumSize">
                                     <size>
                                         <width>80</width>
@@ -80,28 +74,52 @@
                                     </size>
                                 </property>
                                 <property name="text">
-                                    <string>options.set</string>
+                                    <string>Settings file</string>
                                 </property>
                             </widget>
                         </item>
-                        <item row="1" column="1">
-                            <widget class="QLineEdit" name="fileLineEdit">
-                                <property name="readOnly">
-                                    <bool>true</bool>
+                        <item row="1" column="0">
+                            <widget class="QLabel" name="modsFolderLabel">
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>80</width>
+                                        <height>0</height>
+                                    </size>
                                 </property>
-                                <property name="placeholderText">
-                                    <string>Select the options.set file</string>
+                                <property name="text">
+                                    <string>Mods folder :</string>
                                 </property>
                             </widget>
                         </item>
                         <item row="1" column="2">
-                            <widget class="QPushButton" name="fileBrowseButton">
+                            <widget class="QPushButton" name="modsFolderButton">
                                 <property name="maximumSize">
                                     <size>
                                         <width>100</width>
                                         <height>16777215</height>
                                     </size>
                                 </property>
+                                <property name="text">
+                                    <string>Browse...</string>
+                                </property>
+                            </widget>
+                        </item>
+                        <item row="0" column="1">
+                            <widget class="QLineEdit" name="gameFolderLineEdit">
+                                <property name="placeholderText">
+                                    <string>Select the game folder...</string>
+                                </property>
+                            </widget>
+                        </item>
+                        <item row="0" column="0">
+                            <widget class="QLabel" name="gameFolderLabel">
+                                <property name="text">
+                                    <string>Game folder</string>
+                                </property>
+                            </widget>
+                        </item>
+                        <item row="0" column="2">
+                            <widget class="QPushButton" name="gameFolderButton">
                                 <property name="text">
                                     <string>Browse...</string>
                                 </property>
@@ -125,19 +143,6 @@
             </item>
             <item>
                 <layout class="QHBoxLayout" name="buttonLayout">
-                    <item>
-                        <spacer name="horizontalSpacer">
-                            <property name="orientation">
-                                <enum>Qt::Orientation::Horizontal</enum>
-                            </property>
-                            <property name="sizeHint" stdset="0">
-                                <size>
-                                    <width>40</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </item>
                     <item>
                         <widget class="QPushButton" name="okButton">
                             <property name="minimumSize">

@@ -19,10 +19,10 @@ class App:
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    app.setApplicationName("Call to Arms: Gates of Hell | Mod Manager")
-    app.setOrganizationName("alex6")
+    app.setApplicationName("Call to Arms: Gates of Hell - Mod Manager")
+    app.setOrganizationName("alexbdka")
     app.setOrganizationDomain("alexbdka.github.io")
-    app.setApplicationVersion("1.1.0")
+    app.setApplicationVersion("1.1.1") # TODO: update that shit
 
     modManager = App()
     modManager.run()

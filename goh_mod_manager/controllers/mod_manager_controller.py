@@ -1,10 +1,13 @@
 import base64
 import json
+import os
+import subprocess
+import sys
 import time
 from typing import Dict, List, Optional
 
 from PySide6.QtCore import QObject, QPoint
-from PySide6.QtGui import QFont, QFontDatabase
+from PySide6.QtGui import QFont, QFontDatabase, Qt
 from PySide6.QtWidgets import QApplication, QDialog, QListWidgetItem, QMenu
 
 from goh_mod_manager.models.mod import Mod
@@ -19,63 +22,105 @@ from goh_mod_manager.views.mod_manager_view import ModManagerView
 
 
 class ModManagerController(QObject):
-    """Controller for the mod manager application."""
+    """
+    Controller for the Gates of Hell mod manager application.
+
+    Manages interactions between the model and view, handles user input,
+    and coordinates application functionality including mod management,
+    presets, configuration, and import/export operations.
+    """
 
     def __init__(self, model: ModManagerModel, view: ModManagerView):
+        """
+        Initialize the controller with model and view instances.
+
+        Args:
+            model: The mod manager model instance
+            view: The mod manager view instance
+        """
         super().__init__()
         self._model = model
         self._view = view
-        self._config = self._model.config
+        self._config = self._model.get_config()
         self._initialize()
 
-    def show(self):
-        """Show the main application window."""
+    def show(self) -> None:
+        """Display the main application window."""
         self._view.show()
 
-    def _initialize(self):
-        """Initialize the controller by setting up configuration, loading data and connecting signals."""
+    # ================== INITIALIZATION ==================
+
+    def _initialize(self) -> None:
+        """
+        Initialize the controller by setting up configuration, loading data, and connecting signals.
+
+        This method ensures the application is properly configured before use.
+        """
         self._ensure_config_valid()
-        self._model.set_config(self._config)
         self._load_data()
         self._connect_signals()
-        self._change_font(self._config.get_font())
+        self._apply_user_preferences()
 
-    def _ensure_config_valid(self):
-        """Ensure configuration is valid, open preferences dialog if not."""
+    def _ensure_config_valid(self) -> None:
+        """
+        Ensure configuration is valid, open setup dialogs if not.
+
+        Shows user manual and preferences dialog if required paths are missing.
+        Exits application if user cancels configuration setup.
+        """
         if not self._config.get_mods_directory() or not self._config.get_options_file():
             self._open_user_manual()
             dialog = PreferencesDialog(self._config, self._view)
             if dialog.exec() == QDialog.DialogCode.Rejected:
-                exit(1)
+                sys.exit(1)
 
-    def _load_data(self):
-        """Load configuration data and update the view."""
+    def _load_data(self) -> None:
+        """Load configuration data and update the view with initial state."""
         self._model.set_mods_directory(self._config.get_mods_directory())
         self._model.set_options_file(self._config.get_options_file())
         self._model.set_presets(self._config.get_presets())
         self._update_view()
-        self._view.update_active_mods_count(self._model.active_mods_count)
+        self._view.update_active_mods_count(self._model.get_active_mods_count())
         self._on_preset_selection_changed(self._view.get_current_preset_name())
 
-    def _connect_signals(self):
-        """Connect all signals from model and view to their respective handlers."""
-        # Model signals
-        self._model.mods_updated.connect(self._update_view)
-        self._model.presets_updated.connect(self._update_view)
-        self._model.active_mods_count_updated.connect(
-            self._view.update_active_mods_count
-        )
+    def _apply_user_preferences(self) -> None:
+        """Apply user preferences from configuration."""
+        self._change_font(self._config.get_font())
 
-        # Menu actions
+    def _connect_signals(self) -> None:
+        """Connect all signals from model and view to their respective handlers."""
+        self._connect_model_signals()
+        self._connect_menu_signals()
+        self._connect_button_signals()
+        self._connect_list_signals()
+        self._connect_ui_signals()
+
+    def _connect_model_signals(self) -> None:
+        """Connect model signals to update handlers."""
+        self._model.installed_mods_signal.connect(self._update_view)
+        self._model.presets_signal.connect(self._update_view)
+        self._model.mods_counter_signal.connect(self._view.update_active_mods_count)
+
+    def _connect_menu_signals(self) -> None:
+        """Connect menu action signals to their handlers."""
+        # File menu
         self._view.ui.actionExit.triggered.connect(self._view.close)
-        self._view.ui.actionRefresh.triggered.connect(self._refresh_all)
-        self._view.ui.actionClear_Active_Mods.triggered.connect(self._clear_active_mods)
-        self._view.ui.actionPreferences.triggered.connect(self._open_preferences)
         self._view.ui.actionImport_Mod.triggered.connect(self._import_mod)
+        self._view.ui.actionPreferences.triggered.connect(self._open_preferences)
+
+        # View menu
+        self._view.ui.actionRefresh.triggered.connect(self._refresh_all)
         self._view.ui.actionShow_Mod_Details.triggered.connect(self._toggle_mod_details)
+
+        # Tools menu
+        self._view.ui.actionClear_Active_Mods.triggered.connect(self._clear_active_mods)
+
+        # Help menu
         self._view.ui.actionUser_Manual.triggered.connect(self._open_user_manual)
         self._view.ui.actionCheck_Updates.triggered.connect(self._check_app_update)
         self._view.ui.actionAbout.triggered.connect(self._open_about)
+
+        # Font menu
         self._view.ui.actionDefaultFont.triggered.connect(
             lambda: self._change_font("default")
         )
@@ -83,7 +128,9 @@ class ModManagerController(QObject):
             lambda: self._change_font("dyslexia")
         )
 
-        # Button actions
+    def _connect_button_signals(self) -> None:
+        """Connect button click signals to their handlers."""
+        # Mod management buttons
         self._view.ui.pushButton_refresh_mods.clicked.connect(
             self._refresh_installed_mods
         )
@@ -92,36 +139,52 @@ class ModManagerController(QObject):
         self._view.ui.pushButton_move_up.clicked.connect(self._move_up)
         self._view.ui.pushButton_move_down.clicked.connect(self._move_down)
         self._view.ui.pushButton_clear_all.clicked.connect(self._clear_active_mods)
+
+        # Preset management buttons
         self._view.ui.pushButton_save_preset.clicked.connect(self._save_preset)
         self._view.ui.pushButton_load_preset.clicked.connect(self._load_preset)
         self._view.ui.pushButton_delete_preset.clicked.connect(self._delete_preset)
+
+        # Share code buttons
         self._view.ui.pushButton_export_config.clicked.connect(self._export_share_code)
         self._view.ui.pushButton_import_config.clicked.connect(self._import_share_code)
 
-        # List widget interactions
+    def _connect_list_signals(self) -> None:
+        """Connect list widget signals to their handlers."""
+        # Double-click actions
         self._view.ui.listWidget_available_mods.itemDoubleClicked.connect(
             self._enable_mod_from_item
         )
         self._view.ui.listWidget_active_mods.itemDoubleClicked.connect(
             self._disable_mod_from_item
         )
-        self._view.ui.listWidget_active_mods.model().rowsMoved.connect(
-            self._save_mods_order
-        )
+
+        # Selection changes
         self._view.ui.listWidget_available_mods.currentItemChanged.connect(
             self._on_mod_selected
         )
         self._view.ui.listWidget_active_mods.currentItemChanged.connect(
             self._on_mod_selected
         )
-        self._view.ui.listWidget_available_mods.customContextMenuRequested.connect(
-            self._handle_right_click
+
+        # Drag and drop reordering
+        self._view.ui.listWidget_active_mods.model().rowsMoved.connect(
+            self._save_mods_order
         )
 
-        # Combo box and search
+        # Context menu
+        self._view.ui.listWidget_available_mods.customContextMenuRequested.connect(
+            self._handle_context_menu
+        )
+
+    def _connect_ui_signals(self) -> None:
+        """Connect UI element signals to their handlers."""
+        # Preset selection
         self._view.ui.comboBox_presets.currentTextChanged.connect(
             self._on_preset_selection_changed
         )
+
+        # Search filtering
         self._view.ui.lineEdit_search_installed.textChanged.connect(
             self._filter_installed_mods
         )
@@ -129,106 +192,194 @@ class ModManagerController(QObject):
             self._filter_active_mods
         )
 
-    # Mod management
-    def _enable_mod_from_item(self, item: QListWidgetItem):
-        """Enable a mod from a list widget item."""
+    # ================== MOD MANAGEMENT ==================
+
+    def _enable_mod_from_item(self, item: QListWidgetItem) -> None:
+        """
+        Enable a mod from a list widget item double-click.
+
+        Args:
+            item: The clicked list widget item containing mod data
+        """
         mod = self._get_mod_from_item(item)
         if mod:
             self._model.enable_mod(mod)
 
-    def _disable_mod_from_item(self, item: QListWidgetItem):
-        """Disable a mod from a list widget item."""
+    def _disable_mod_from_item(self, item: QListWidgetItem) -> None:
+        """
+        Disable a mod from a list widget item double-click.
+
+        Args:
+            item: The clicked list widget item containing mod data
+        """
         mod = self._get_mod_from_item(item)
         if mod:
             self._model.disable_mod(mod)
 
-    def _enable_selected_mod(self):
-        """Enable currently selected mods from available list."""
+    def _enable_selected_mod(self) -> None:
+        """Enable all currently selected mods from the available list."""
         for item in self._view.get_current_available_mod():
             mod = self._get_mod_from_item(item)
             if mod:
                 self._model.enable_mod(mod)
 
-    def _disable_selected_mod(self):
-        """Disable currently selected mods from active list."""
+    def _disable_selected_mod(self) -> None:
+        """Disable all currently selected mods from the active list."""
         for item in self._view.get_current_active_mod():
             mod = self._get_mod_from_item(item)
             if mod:
                 self._model.disable_mod(mod)
 
-    def _move_up(self):
-        """Move selected active mod up in the list."""
+    def _move_up(self) -> None:
+        """Move selected active mod up in the load order."""
         if self._view.move_active_mod_up():
             self._save_mods_order()
 
-    def _move_down(self):
-        """Move selected active mod down in the list."""
+    def _move_down(self) -> None:
+        """Move selected active mod down in the load order."""
         if self._view.move_active_mod_down():
             self._save_mods_order()
 
-    def _save_mods_order(self):
-        """Save the current order of active mods."""
+    def _save_mods_order(self) -> None:
+        """Save the current order of active mods to the model."""
         reordered_mods = self._view.get_active_mods_order()
         self._model.set_mods_order(reordered_mods)
 
-    def _clear_active_mods(self):
-        """Clear all active mods."""
-        self._model.clear_active_mods()
+    def _clear_active_mods(self) -> None:
+        """Clear all active mods after user confirmation."""
+        if not self._model.get_active_mods():
+            self._view.show_message(
+                title="No Active Mods",
+                text="There are no active mods to clear.",
+                icon="information",
+            )
+            return
 
-    def _handle_right_click(self, pos: QPoint):
-        """Handle right-click context menu on available mods list."""
+        if self._view.ask_confirmation(
+            "Clear All Mods", "Are you sure you want to clear all active mods?"
+        ):
+            self._model.clear_active_mods()
+
+    def _handle_context_menu(self, pos: QPoint) -> None:
+        """
+        Handle right-click context menu on available mods list.
+
+        Args:
+            pos: Position where the context menu was requested
+        """
         item = self._view.ui.listWidget_available_mods.itemAt(pos)
         if not item:
             return
 
-        mod = item.data(256)
-        if not mod.manualInstall:
+        mod = self._get_mod_from_item(item)
+        if not mod:
             return
 
         menu = QMenu(self._view.ui.listWidget_available_mods)
-        delete_action = menu.addAction("Delete")
 
-        def on_delete():
-            row = self._view.ui.listWidget_available_mods.row(item)
-            self._view.ui.listWidget_available_mods.takeItem(row)
-            self._model.delete_mod(mod)
+        # Add "Open Folder" action
+        open_action = menu.addAction("Open Folder")
+        open_action.triggered.connect(lambda: self._open_mod_folder(mod.folderPath))
 
-        delete_action.triggered.connect(on_delete)
+        # Add "Delete" action for manually installed mods
+        if mod.manualInstall:
+            delete_action = menu.addAction("Delete")
+            delete_action.triggered.connect(
+                lambda: self._delete_mod_with_confirmation(item, mod)
+            )
+
         menu.exec(self._view.ui.listWidget_available_mods.mapToGlobal(pos))
 
-    # Data refresh methods
-    def _refresh_all(self):
+    def _open_mod_folder(self, folder_path: str) -> None:
+        """
+        Open mod folder in system file explorer.
+
+        Args:
+            folder_path: Path to the mod folder
+        """
+        try:
+            if sys.platform.startswith("win"):
+                os.startfile(folder_path)
+            elif sys.platform.startswith("darwin"):
+                subprocess.Popen(["open", folder_path])
+            else:
+                subprocess.Popen(["xdg-open", folder_path])
+        except Exception as e:
+            self._view.show_error(
+                "Open Folder Error", f"Failed to open mod folder: {str(e)}"
+            )
+
+    def _delete_mod_with_confirmation(self, item: QListWidgetItem, mod: Mod) -> None:
+        """
+        Delete a mod after user confirmation.
+
+        Args:
+            item: The list widget item to remove
+            mod: The mod to delete
+        """
+        if self._view.ask_confirmation(
+            "Delete Mod",
+            f"Are you sure you want to permanently delete '{mod.name}'?\nThis cannot be undone.",
+        ):
+            row = self._view.ui.listWidget_available_mods.row(item)
+            self._view.ui.listWidget_available_mods.takeItem(row)
+
+            if self._model.delete_mod(mod):
+                self._view.show_message(
+                    title="Mod Deleted", text=f"'{mod.name}' has been deleted."
+                )
+            else:
+                self._view.show_error(
+                    "Delete Error",
+                    f"Failed to delete '{mod.name}'. Check file permissions.",
+                )
+
+    # ================== DATA REFRESH ==================
+
+    def _refresh_all(self) -> None:
         """Refresh all data and clear search filters."""
         self._model.refresh_all()
         self._clear_search_filters()
 
-    def _refresh_installed_mods(self):
-        """Refresh only installed mods."""
+    def _refresh_installed_mods(self) -> None:
+        """Refresh only the installed mods list."""
         self._model.refresh_installed_mods()
 
-    # View updates
-    def _update_view(self):
+    # ================== VIEW UPDATES ==================
+
+    def _update_view(self) -> None:
         """Update the view with current model data."""
         self._view.populate_mod_lists(
-            self._model.installed_mods, self._model.active_mods
+            self._model.get_installed_mods(), self._model.get_active_mods()
         )
         self._view.update_presets(
-            self._model.preset_names, self._view.get_current_preset_name()
+            self._model.get_presets_names(), self._view.get_current_preset_name()
         )
 
-    def _on_mod_selected(self, current: QListWidgetItem):
-        """Handle mod selection in lists."""
+    def _on_mod_selected(self, current: QListWidgetItem) -> None:
+        """
+        Handle mod selection changes in lists.
+
+        Args:
+            current: The currently selected list item
+        """
         mod = self._get_mod_from_item(current) if current else None
         self._view.update_mod_details(mod)
 
-    def _toggle_mod_details(self, checked: bool):
-        """Toggle mod details panel visibility."""
+    def _toggle_mod_details(self, checked: bool) -> None:
+        """
+        Toggle mod details panel visibility.
+
+        Args:
+            checked: Whether the mod details should be visible
+        """
         self._view.ui.groupBox_mod_info.setVisible(checked)
 
-    # Preset management
-    def _save_preset(self):
-        """Save current active mods as a preset."""
-        if self._model.active_mods_count == 0:
+    # ================== PRESET MANAGEMENT ==================
+
+    def _save_preset(self) -> None:
+        """Save current active mods as a new preset."""
+        if self._model.get_active_mods_count() == 0:
             self._view.show_message(
                 title="Empty Preset",
                 text="Cannot save an empty preset. Add mods to the list first.",
@@ -237,7 +388,7 @@ class ModManagerController(QObject):
             return
 
         dialog = PresetDialog(
-            parent=self._view, existing_presets=self._model.preset_names
+            parent=self._view, existing_presets=self._model.get_presets_names()
         )
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
@@ -246,17 +397,17 @@ class ModManagerController(QObject):
         if not preset_name:
             return
 
-        if self._model.has_preset(preset_name) and not self._confirm_preset_overwrite(
-            preset_name
-        ):
-            return
+        # Check for existing preset and confirm overwrite
+        if self._model.has_preset(preset_name):
+            if not self._confirm_preset_overwrite(preset_name):
+                return
 
         if self._model.save_preset(preset_name):
             self._view.show_message(
                 title="Preset Saved", text=f"Preset '{preset_name}' has been saved."
             )
 
-    def _load_preset(self):
+    def _load_preset(self) -> None:
         """Load the selected preset."""
         preset_name = self._view.get_current_preset_name()
         if not preset_name:
@@ -268,36 +419,47 @@ class ModManagerController(QObject):
             return
 
         if not self._model.has_preset(preset_name):
-            self._view.show_message(
+            self._view.show_error(
                 title="Preset Not Found", text=f"Preset '{preset_name}' was not found."
             )
             return
 
         if self._confirm_preset_load(preset_name):
-            self._model.load_preset(preset_name)
+            success = self._model.load_preset(preset_name)
+            if success:
+                self._view.show_message(
+                    title="Preset Loaded",
+                    text=f"Preset '{preset_name}' has been loaded.",
+                )
 
-    def _delete_preset(self):
+    def _delete_preset(self) -> None:
         """Delete the selected preset."""
         preset_name = self._view.get_current_preset_name()
         if not preset_name:
             self._view.show_message(
-                title="Preset Not Selected", text="Please select a preset to delete."
+                title="No Preset Selected",
+                text="Please select a preset to delete.",
+                icon="warning",
             )
             return
 
         if not self._model.has_preset(preset_name):
             return
 
-        if self._confirm_preset_deletion(preset_name) and self._model.delete_preset(
-            preset_name
-        ):
-            self._view.show_message(
-                title="Preset Deleted",
-                text=f"Preset '{preset_name}' has been deleted.",
-            )
+        if self._confirm_preset_deletion(preset_name):
+            if self._model.delete_preset(preset_name):
+                self._view.show_message(
+                    title="Preset Deleted",
+                    text=f"Preset '{preset_name}' has been deleted.",
+                )
 
-    def _on_preset_selection_changed(self, preset_name: str):
-        """Handle preset selection change."""
+    def _on_preset_selection_changed(self, preset_name: str) -> None:
+        """
+        Handle preset selection changes in the dropdown.
+
+        Args:
+            preset_name: Name of the selected preset
+        """
         if not preset_name or not self._model.has_preset(preset_name):
             self._view.ui.listWidget_presets.clear()
             return
@@ -307,48 +469,98 @@ class ModManagerController(QObject):
 
         for mod in preset_mods:
             item = QListWidgetItem(self._view.parse_clear_text(mod.name))
-            item.setData(256, mod)
+            item.setData(Qt.UserRole, mod)
             self._view.ui.listWidget_presets.addItem(item)
 
-    # Confirmation dialogs
+    # ================== CONFIRMATION DIALOGS ==================
+
     def _confirm_preset_overwrite(self, preset_name: str) -> bool:
-        """Confirm preset overwrite."""
+        """
+        Confirm preset overwrite with user.
+
+        Args:
+            preset_name: Name of the preset to overwrite
+
+        Returns:
+            True if user confirms overwrite
+        """
         return self._view.ask_confirmation(
             "Existing Preset", f"Preset '{preset_name}' already exists. Overwrite?"
         )
 
     def _confirm_preset_load(self, preset_name: str) -> bool:
-        """Confirm preset loading."""
+        """
+        Confirm preset loading with user.
+
+        Args:
+            preset_name: Name of the preset to load
+
+        Returns:
+            True if user confirms loading
+        """
         return self._view.ask_confirmation(
             "Load Preset",
             f"Loading preset '{preset_name}' will clear the current list of mods. Continue?",
         )
 
     def _confirm_preset_deletion(self, preset_name: str) -> bool:
-        """Confirm preset deletion."""
+        """
+        Confirm preset deletion with user.
+
+        Args:
+            preset_name: Name of the preset to delete
+
+        Returns:
+            True if user confirms deletion
+        """
         return self._view.ask_confirmation(
             "Delete Preset",
-            f"Are you sure you want to delete preset '{preset_name}'? This cannot be undone.",
+            f"Are you sure you want to delete preset '{preset_name}'?\nThis cannot be undone.",
         )
 
-    def _confirm_code_import(self, mod_count: int) -> bool:
-        """Confirm share code import."""
+    def _confirm_share_code_import(self, mod_count: int) -> bool:
+        """
+        Confirm share code import with user.
+
+        Args:
+            mod_count: Number of mods in the share code
+
+        Returns:
+            True if user confirms import
+        """
         return self._view.ask_confirmation(
             "Import Share Code",
             f"This will replace your current active mods with {mod_count} mods from the code. Continue?",
         )
 
-    # Search filtering
-    def _filter_installed_mods(self, search_text: str):
-        """Filter installed mods list based on search text."""
+    # ================== SEARCH FILTERING ==================
+
+    def _filter_installed_mods(self, search_text: str) -> None:
+        """
+        Filter installed mods list based on search text.
+
+        Args:
+            search_text: Text to search for in mod names and descriptions
+        """
         self._filter_list_widget(self._view.ui.listWidget_available_mods, search_text)
 
-    def _filter_active_mods(self, search_text: str):
-        """Filter active mods list based on search text."""
+    def _filter_active_mods(self, search_text: str) -> None:
+        """
+        Filter active mods list based on search text.
+
+        Args:
+            search_text: Text to search for in mod names and descriptions
+        """
         self._filter_list_widget(self._view.ui.listWidget_active_mods, search_text)
 
-    def _filter_list_widget(self, list_widget, search_text: str):
-        """Filter items in a list widget based on search text."""
+    def _filter_list_widget(self, list_widget, search_text: str) -> None:
+        """
+        Filter items in a list widget based on search text.
+
+        Args:
+            list_widget: The list widget to filter
+            search_text: Text to search for
+        """
         search_text = search_text.lower().strip()
 
         for i in range(list_widget.count()):
@@ -358,28 +570,39 @@ class ModManagerController(QObject):
             if not search_text:
                 item.setHidden(False)
             else:
+                # Search in mod name and description
                 mod_name = mod.name.lower() if mod and mod.name else ""
                 mod_desc = mod.desc.lower() if mod and mod.desc else ""
-                is_visible = search_text in mod_name or search_text in mod_desc
+                mod_id = mod.id.lower() if mod and mod.id else ""
+
+                is_visible = (
+                    search_text in mod_name
+                    or search_text in mod_desc
+                    or search_text in mod_id
+                )
                 item.setHidden(not is_visible)
 
-    def _clear_search_filters(self):
-        """Clear all search filters."""
+    def _clear_search_filters(self) -> None:
+        """Clear all search filters and show all items."""
         self._view.ui.lineEdit_search_installed.clear()
         self._view.ui.lineEdit_search_active.clear()
 
-    # Share code functionality
-    def _export_share_code(self):
-        """Export active mods as a share code."""
-        if not self._model.active_mods:
+    # ================== SHARE CODE FUNCTIONALITY ==================
+
+    def _export_share_code(self) -> None:
+        """Export active mods as a shareable base64 code."""
+        active_mods = self._model.get_active_mods()
+        if not active_mods:
             self._view.show_message(
-                title="No Active Mods", text="Add mods to the active list first."
+                title="No Active Mods",
+                text="Add mods to the active list first.",
+                icon="warning",
             )
             return
 
         share_data = {
             "version": 1,
-            "mods": [{"name": mod.name} for mod in self._model.active_mods],
+            "mods": [{"name": mod.name, "id": mod.id} for mod in active_mods],
             "timestamp": int(time.time()),
         }
 
@@ -392,16 +615,16 @@ class ModManagerController(QObject):
                 text="Share code has been generated and copied to the field.",
             )
         except Exception as e:
-            self._view.show_message(
-                title="Export Error", text=f"Failed to generate code: {str(e)}"
+            self._view.show_error(
+                title="Export Error", text=f"Failed to generate share code: {str(e)}"
             )
 
-    def _import_share_code(self):
+    def _import_share_code(self) -> None:
         """Import mods from a share code."""
         code = self._view.ui.lineEdit_share_code.text().strip()
         if not code:
             self._view.show_message(
-                title="Empty Code", text="Enter a share code first."
+                title="Empty Code", text="Enter a share code first.", icon="warning"
             )
             return
 
@@ -412,102 +635,172 @@ class ModManagerController(QObject):
             if not self._validate_share_data(share_data):
                 raise ValueError("Invalid share code format")
 
-            if not self._confirm_code_import(len(share_data["mods"])):
+            mod_count = len(share_data["mods"])
+            if not self._confirm_share_code_import(mod_count):
                 return
 
-            self._apply_share_code(share_data["mods"])
-            self._view.show_message(
-                title="Code Imported",
-                text=f"Successfully imported {len(share_data['mods'])} mods.",
-            )
+            applied_count = self._apply_share_code(share_data["mods"])
+
+            if applied_count == mod_count:
+                self._view.show_message(
+                    title="Code Imported",
+                    text=f"Successfully imported all {mod_count} mods.",
+                )
+            else:
+                missing_count = mod_count - applied_count
+                self._view.show_message(
+                    title="Partial Import",
+                    text=f"Imported {applied_count} of {mod_count} mods.\n{missing_count} mods are not installed.",
+                    icon="warning",
+                )
+
         except Exception as e:
-            self._view.show_message(
+            self._view.show_error(
                 title="Import Error", text=f"Invalid share code: {str(e)}"
             )
 
-    def _apply_share_code(self, mod_list: List[Dict]):
-        """Apply share code by enabling specified mods."""
+    def _apply_share_code(self, mod_list: List[Dict]) -> int:
+        """
+        Apply share code by enabling specified mods.
+
+        Args:
+            mod_list: List of mod data from share code
+
+        Returns:
+            Number of mods successfully applied
+        """
         self._model.clear_active_mods()
-        installed_mods = {mod.name: mod for mod in self._model.installed_mods}
+
+        # Create lookup maps for both name and ID
+        installed_mods = self._model.get_installed_mods()
+        mods_by_name = {mod.name: mod for mod in installed_mods}
+        mods_by_id = {mod.id: mod for mod in installed_mods}
+
         applied_count = 0
 
         for mod_data in mod_list:
-            mod_name = mod_data["name"]
-            if mod_name in installed_mods:
-                self._model.enable_mod(installed_mods[mod_name])
+            mod = None
+
+            # Try to find by ID first, then by name
+            if "id" in mod_data and mod_data["id"] in mods_by_id:
+                mod = mods_by_id[mod_data["id"]]
+            elif "name" in mod_data and mod_data["name"] in mods_by_name:
+                mod = mods_by_name[mod_data["name"]]
+
+            if mod:
+                self._model.enable_mod(mod)
                 applied_count += 1
 
-        if applied_count < len(mod_list):
-            missing = len(mod_list) - applied_count
-            self._view.show_message(
-                title="Some Mods Missing",
-                text=f"{missing} mods from the code are not installed.",
-            )
+        return applied_count
 
-    # Dialog management
-    def _import_mod(self):
-        """Open import mod dialog."""
+    # ================== DIALOG MANAGEMENT ==================
+
+    def _import_mod(self) -> None:
+        """Open the mod import dialog."""
         dialog = ImportDialog(self._view)
-        dialog.mod_import_requested.connect(self._handle_import_mod)
+        dialog.mod_import_requested.connect(self._handle_mod_import)
         dialog.exec()
 
-    def _handle_import_mod(self, archive_path: str):
-        """Handle mod import from archive."""
-        if self._model.import_mod(archive_path):
-            self._update_view()
+    def _handle_mod_import(self, archive_path: str) -> None:
+        """
+        Handle mod import from file path.
 
-    def _open_preferences(self):
-        """Open preferences dialog."""
+        Args:
+            archive_path: Path to the mod file/directory to import
+        """
+        if self._model.import_mod(archive_path):
+            self._view.show_message(
+                title="Import Successful", text="Mod has been imported successfully."
+            )
+            self._update_view()
+        else:
+            self._view.show_error(
+                title="Import Failed",
+                text="Failed to import mod. Check the file format and try again.",
+            )
+
+    def _open_preferences(self) -> None:
+        """Open the preferences dialog."""
         dialog = PreferencesDialog(self._config, self._view)
         if dialog.exec() == QDialog.DialogCode.Accepted:
+            # Reload data if preferences changed
             self._load_data()
             self._model.refresh_all()
 
-    def _open_user_manual(self):
-        """Open user manual dialog."""
+    def _open_user_manual(self) -> None:
+        """Open the user manual dialog."""
         dialog = UserManualDialog(self._view)
         dialog.exec()
 
-    def _open_about(self):
-        """Open about dialog."""
+    def _open_about(self) -> None:
+        """Open the about dialog."""
         dialog = AboutDialog(self._view, QApplication.applicationVersion())
         dialog.exec()
 
-    def _check_app_update(self):
+    def _check_app_update(self) -> None:
         """Check for application updates."""
         CheckUpdateDialog(self._view, QApplication.applicationVersion())
 
-    # Font management
-    def _change_font(self, font_name: str):
-        """Change application font."""
+    # ================== FONT MANAGEMENT ==================
+
+    def _change_font(self, font_name: str) -> None:
+        """
+        Change the application font.
+
+        Args:
+            font_name: Name of the font to apply ("default" or "dyslexia")
+        """
         if font_name == "default":
-            font = QFont("Inter-Regular", 10)
-            self._view.set_font(font)
+            QFontDatabase.addApplicationFont(":/assets/fonts/Inter-Regular.otf")
+            font = QFont("Inter", 10)
+            self._view.set_application_font(font)
             self._config.set_font("default")
         elif font_name == "dyslexia":
             QFontDatabase.addApplicationFont(":/assets/fonts/OpenDyslexic-Regular.otf")
             font = QFont("OpenDyslexic", 10)
-            self._view.set_font(font)
+            self._view.set_application_font(font)
             self._config.set_font("dyslexia")
 
-    # Utility methods
+    # ================== UTILITY METHODS ==================
+
     @staticmethod
     def _get_mod_from_item(item: Optional[QListWidgetItem]) -> Optional[Mod]:
-        """Extract mod data from a list widget item."""
-        return item.data(256) if item else None
+        """
+        Extract mod data from a list widget item.
+
+        Args:
+            item: The list widget item to extract data from
+
+        Returns:
+            The mod object stored in the item, or None if not found
+        """
+        return item.data(Qt.UserRole) if item else None
 
     @staticmethod
     def _validate_share_data(data: Dict) -> bool:
-        """Validate share code data structure."""
+        """
+        Validate the structure of share code data.
+
+        Args:
+            data: Decoded share code data
+
+        Returns:
+            True if data structure is valid
+        """
+        # Check required top-level keys
         required_keys = ["version", "mods"]
         if not all(key in data for key in required_keys):
             return False
 
+        # Check mods list structure
         if not isinstance(data["mods"], list):
             return False
 
+        # Validate each mod entry
         for mod_data in data["mods"]:
-            if not isinstance(mod_data, dict) or "name" not in mod_data:
+            if not isinstance(mod_data, dict):
+                return False
+            if "name" not in mod_data:
                 return False
 
         return True

@@ -8,6 +8,7 @@ class Mod:
     desc: str
     minGameVersion: str
     maxGameVersion: str
+    folderPath: str
     manualInstall: bool
 
     def __str__(self):

@@ -1,10 +1,12 @@
-from PySide6.QtCore import QSettings
+from PySide6.QtCore import QSettings, QObject
 
 
-class ConfigManager:
+class ConfigManager(QObject):
     def __init__(self):
+        super().__init__()
         self.settings = QSettings("alex6", "GoH Mod Manager")
 
+    # Getters
     def get_mods_directory(self):
         return self.settings.value("mods_directory", "")
 
@@ -17,6 +19,7 @@ class ConfigManager:
     def get_font(self):
         return self.settings.value("font", "")
 
+    # Setters
     def set_mods_directory(self, path):
         self.settings.setValue("mods_directory", path)
 
