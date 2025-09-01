@@ -37,7 +37,7 @@ def setup_application(app: QtWidgets.QApplication):
     app.setApplicationName("Call to Arms: Gates of Hell - Mod Manager")
     app.setOrganizationName("alexbdka")
     app.setOrganizationDomain("alexbdka.github.io")
-    app.setApplicationVersion("1.1.1")
+    app.setApplicationVersion("1.2.0")
     app.setApplicationDisplayName("GoH Mod Manager")
 
 
