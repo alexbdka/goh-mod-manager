@@ -16,9 +16,6 @@
                 <height>600</height>
             </size>
         </property>
-        <property name="windowTitle">
-            <string>Call to Arms: Gates of Hell | Mod Manager</string>
-        </property>
         <property name="windowIcon">
             <iconset resource="../../resources/resources.qrc">
                 <normaloff>:/assets/icons/logo.ico</normaloff>:/assets/icons/logo.ico
@@ -94,13 +91,8 @@
                                                     </property>
                                                     <item>
                                                         <widget class="QLineEdit" name="lineEdit_search_installed">
-                                                            <property name="toolTip">
-                                                                <string>Type to search through your installed mods
-                                                                    library
-                                                                </string>
-                                                            </property>
                                                             <property name="placeholderText">
-                                                                <string>Filter available mods by name...</string>
+                                                                <string>Search...</string>
                                                             </property>
                                                             <property name="clearButtonEnabled">
                                                                 <bool>true</bool>
@@ -109,39 +101,12 @@
                                                     </item>
                                                     <item>
                                                         <widget class="QPushButton" name="pushButton_refresh_mods">
-                                                            <property name="minimumSize">
-                                                                <size>
-                                                                    <width>32</width>
-                                                                    <height>32</height>
-                                                                </size>
-                                                            </property>
-                                                            <property name="maximumSize">
-                                                                <size>
-                                                                    <width>32</width>
-                                                                    <height>32</height>
-                                                                </size>
-                                                            </property>
-                                                            <property name="toolTip">
-                                                                <string>Scan for newly installed mods and refresh the
-                                                                    list
-                                                                </string>
-                                                            </property>
-                                                            <property name="text">
-                                                                <string/>
-                                                            </property>
                                                             <property name="icon">
                                                                 <iconset resource="../../resources/resources.qrc">
                                                                     <normaloff>
-                                                                        :/assets/icons/refresh-line.svg
-                                                                    </normaloff>
+                                                                        :/assets/icons/refresh-line.svg</normaloff>
                                                                     :/assets/icons/refresh-line.svg
                                                                 </iconset>
-                                                            </property>
-                                                            <property name="iconSize">
-                                                                <size>
-                                                                    <width>16</width>
-                                                                    <height>16</height>
-                                                                </size>
                                                             </property>
                                                         </widget>
                                                     </item>
@@ -149,28 +114,11 @@
                                             </item>
                                             <item>
                                                 <widget class="QListWidget" name="listWidget_available_mods">
-                                                    <property name="toolTip">
-                                                        <string>Select one or multiple mods to add to your active
-                                                            configuration. Use Ctrl+Click for multiple selection.
-                                                        </string>
-                                                    </property>
-                                                    <property name="showDropIndicator" stdset="0">
-                                                        <bool>false</bool>
-                                                    </property>
-                                                    <property name="dragDropMode">
-                                                        <enum>QAbstractItemView::DragDropMode::NoDragDrop</enum>
-                                                    </property>
                                                     <property name="alternatingRowColors">
                                                         <bool>true</bool>
                                                     </property>
                                                     <property name="selectionMode">
                                                         <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
-                                                    </property>
-                                                    <property name="layoutMode">
-                                                        <enum>QListView::LayoutMode::SinglePass</enum>
-                                                    </property>
-                                                    <property name="uniformItemSizes">
-                                                        <bool>true</bool>
                                                     </property>
                                                     <property name="sortingEnabled">
                                                         <bool>true</bool>
@@ -181,30 +129,10 @@
                                                 <layout class="QHBoxLayout" name="horizontalLayout_mod_actions">
                                                     <item>
                                                         <widget class="QPushButton" name="pushButton_add_mod">
-                                                            <property name="enabled">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                            <property name="toolTip">
-                                                                <string>Add the selected mods to your active mod list
-                                                                </string>
-                                                            </property>
                                                             <property name="text">
-                                                                <string>Add Selected</string>
+                                                                <string>Add</string>
                                                             </property>
                                                         </widget>
-                                                    </item>
-                                                    <item>
-                                                        <spacer name="horizontalSpacer_2">
-                                                            <property name="orientation">
-                                                                <enum>Qt::Orientation::Horizontal</enum>
-                                                            </property>
-                                                            <property name="sizeHint" stdset="0">
-                                                                <size>
-                                                                    <width>40</width>
-                                                                    <height>20</height>
-                                                                </size>
-                                                            </property>
-                                                        </spacer>
                                                     </item>
                                                 </layout>
                                             </item>
@@ -252,12 +180,8 @@
                                                     </property>
                                                     <item>
                                                         <widget class="QLineEdit" name="lineEdit_search_active">
-                                                            <property name="toolTip">
-                                                                <string>Quickly find mods in your current load order
-                                                                </string>
-                                                            </property>
                                                             <property name="placeholderText">
-                                                                <string>Search active mods...</string>
+                                                                <string>Search...</string>
                                                             </property>
                                                             <property name="clearButtonEnabled">
                                                                 <bool>true</bool>
@@ -266,18 +190,8 @@
                                                     </item>
                                                     <item>
                                                         <widget class="QLabel" name="label_mod_count">
-                                                            <property name="minimumSize">
-                                                                <size>
-                                                                    <width>80</width>
-                                                                    <height>0</height>
-                                                                </size>
-                                                            </property>
-                                                            <property name="toolTip">
-                                                                <string>Number of mods currently in your load order
-                                                                </string>
-                                                            </property>
                                                             <property name="text">
-                                                                <string>0 mods active</string>
+                                                                <string>ACTIVE_MODS</string>
                                                             </property>
                                                         </widget>
                                                     </item>
@@ -285,28 +199,11 @@
                                             </item>
                                             <item>
                                                 <widget class="QListWidget" name="listWidget_active_mods">
-                                                    <property name="acceptDrops">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="toolTip">
-                                                        <string>Your active mod configuration. Mods at the top load
-                                                            first. Drag and drop to reorder, or use the buttons below.
-                                                        </string>
-                                                    </property>
-                                                    <property name="dragEnabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="dragDropMode">
-                                                        <enum>QAbstractItemView::DragDropMode::InternalMove</enum>
-                                                    </property>
                                                     <property name="alternatingRowColors">
                                                         <bool>true</bool>
                                                     </property>
                                                     <property name="selectionMode">
                                                         <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
-                                                    </property>
-                                                    <property name="uniformItemSizes">
-                                                        <bool>true</bool>
                                                     </property>
                                                 </widget>
                                             </item>
@@ -317,14 +214,6 @@
                                                     </property>
                                                     <item>
                                                         <widget class="QPushButton" name="pushButton_move_up">
-                                                            <property name="enabled">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                            <property name="toolTip">
-                                                                <string>Move selected mods higher in load order (loads
-                                                                    earlier)
-                                                                </string>
-                                                            </property>
                                                             <property name="text">
                                                                 <string>Move Up</string>
                                                             </property>
@@ -332,14 +221,6 @@
                                                     </item>
                                                     <item>
                                                         <widget class="QPushButton" name="pushButton_move_down">
-                                                            <property name="enabled">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                            <property name="toolTip">
-                                                                <string>Move selected mods lower in load order (loads
-                                                                    later)
-                                                                </string>
-                                                            </property>
                                                             <property name="text">
                                                                 <string>Move Down</string>
                                                             </property>
@@ -352,22 +233,14 @@
                                                             </property>
                                                             <property name="sizeHint" stdset="0">
                                                                 <size>
-                                                                    <width>40</width>
-                                                                    <height>20</height>
+                                                                    <width>0</width>
+                                                                    <height>0</height>
                                                                 </size>
                                                             </property>
                                                         </spacer>
                                                     </item>
                                                     <item>
                                                         <widget class="QPushButton" name="pushButton_remove_mod">
-                                                            <property name="enabled">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                            <property name="toolTip">
-                                                                <string>Deactivate selected mods (removes from load
-                                                                    order)
-                                                                </string>
-                                                            </property>
                                                             <property name="text">
                                                                 <string>Remove</string>
                                                             </property>
@@ -375,14 +248,6 @@
                                                     </item>
                                                     <item>
                                                         <widget class="QPushButton" name="pushButton_clear_all">
-                                                            <property name="enabled">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                            <property name="toolTip">
-                                                                <string>Deactivate all mods and clear the entire load
-                                                                    order
-                                                                </string>
-                                                            </property>
                                                             <property name="text">
                                                                 <string>Clear All</string>
                                                             </property>
@@ -397,18 +262,13 @@
                                                             <italic>true</italic>
                                                         </font>
                                                     </property>
-                                                    <property name="styleSheet">
-                                                        <string>color: #666;</string>
-                                                    </property>
                                                     <property name="text">
                                                         <string>Tip: Drag and drop mods to reorder them instantly
+
                                                         </string>
                                                     </property>
                                                     <property name="alignment">
                                                         <set>Qt::AlignmentFlag::AlignCenter</set>
-                                                    </property>
-                                                    <property name="wordWrap">
-                                                        <bool>true</bool>
                                                     </property>
                                                 </widget>
                                             </item>
@@ -481,33 +341,26 @@
                                             </item>
                                             <item>
                                                 <widget class="QTextEdit" name="textEdit_mod_description">
-                                                    <property name="minimumSize">
-                                                        <size>
-                                                            <width>0</width>
-                                                            <height>60</height>
-                                                        </size>
-                                                    </property>
-                                                    <property name="maximumSize">
-                                                        <size>
-                                                            <width>16777215</width>
-                                                            <height>100</height>
-                                                        </size>
-                                                    </property>
-                                                    <property name="toolTip">
-                                                        <string>Detailed information about the selected mod</string>
-                                                    </property>
                                                     <property name="readOnly">
                                                         <bool>true</bool>
-                                                    </property>
-                                                    <property name="placeholderText">
-                                                        <string>Mod description, version info, and compatibility notes
-                                                            will appear here...
-                                                        </string>
                                                     </property>
                                                 </widget>
                                             </item>
                                         </layout>
                                     </widget>
+                                </item>
+                                <item>
+                                    <spacer name="verticalSpacer">
+                                        <property name="orientation">
+                                            <enum>Qt::Orientation::Vertical</enum>
+                                        </property>
+                                        <property name="sizeHint" stdset="0">
+                                            <size>
+                                                <width>0</width>
+                                                <height>0</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
                                 </item>
                                 <item>
                                     <widget class="QGroupBox" name="groupBox_presets">
@@ -526,14 +379,6 @@
                                             </property>
                                             <item>
                                                 <widget class="QComboBox" name="comboBox_presets">
-                                                    <property name="toolTip">
-                                                        <string>Select an existing preset or type a new name to create
-                                                            one
-                                                        </string>
-                                                    </property>
-                                                    <property name="editable">
-                                                        <bool>true</bool>
-                                                    </property>
                                                     <item>
                                                         <property name="text">
                                                             <string>-- Select or Create Preset --</string>
@@ -548,12 +393,6 @@
                                                     </property>
                                                     <item>
                                                         <widget class="QPushButton" name="pushButton_load_preset">
-                                                            <property name="enabled">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                            <property name="toolTip">
-                                                                <string>Load the selected preset configuration</string>
-                                                            </property>
                                                             <property name="text">
                                                                 <string>Load</string>
                                                             </property>
@@ -561,14 +400,6 @@
                                                     </item>
                                                     <item>
                                                         <widget class="QPushButton" name="pushButton_save_preset">
-                                                            <property name="enabled">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                            <property name="toolTip">
-                                                                <string>Save your current mod configuration as a
-                                                                    preset
-                                                                </string>
-                                                            </property>
                                                             <property name="text">
                                                                 <string>Save</string>
                                                             </property>
@@ -576,12 +407,6 @@
                                                     </item>
                                                     <item>
                                                         <widget class="QPushButton" name="pushButton_delete_preset">
-                                                            <property name="enabled">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                            <property name="toolTip">
-                                                                <string>Delete the selected preset permanently</string>
-                                                            </property>
                                                             <property name="text">
                                                                 <string>Delete</string>
                                                             </property>
@@ -591,22 +416,26 @@
                                             </item>
                                             <item>
                                                 <widget class="QListWidget" name="listWidget_presets">
-                                                    <property name="toolTip">
-                                                        <string>Your saved mod configurations</string>
-                                                    </property>
                                                     <property name="alternatingRowColors">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="selectionMode">
-                                                        <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
-                                                    </property>
-                                                    <property name="uniformItemSizes">
                                                         <bool>true</bool>
                                                     </property>
                                                 </widget>
                                             </item>
                                         </layout>
                                     </widget>
+                                </item>
+                                <item>
+                                    <spacer name="verticalSpacer_2">
+                                        <property name="orientation">
+                                            <enum>Qt::Orientation::Vertical</enum>
+                                        </property>
+                                        <property name="sizeHint" stdset="0">
+                                            <size>
+                                                <width>20</width>
+                                                <height>40</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
                                 </item>
                                 <item>
                                     <widget class="QGroupBox" name="groupBox_sharing">
@@ -625,10 +454,6 @@
                                             </property>
                                             <item>
                                                 <widget class="QLineEdit" name="lineEdit_share_code">
-                                                    <property name="toolTip">
-                                                        <string>Enter a configuration code shared by another player
-                                                        </string>
-                                                    </property>
                                                     <property name="placeholderText">
                                                         <string>Paste a shared configuration code here...</string>
                                                     </property>
@@ -644,14 +469,6 @@
                                                     </property>
                                                     <item>
                                                         <widget class="QPushButton" name="pushButton_import_config">
-                                                            <property name="enabled">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                            <property name="toolTip">
-                                                                <string>Import and apply the configuration from the
-                                                                    share code
-                                                                </string>
-                                                            </property>
                                                             <property name="text">
                                                                 <string>Import</string>
                                                             </property>
@@ -664,7 +481,11 @@
                                                             </property>
                                                             <property name="toolTip">
                                                                 <string>Generate a shareable code for your current mod
+
+
                                                                     setup
+
+
                                                                 </string>
                                                             </property>
                                                             <property name="text">
@@ -760,10 +581,7 @@
         <widget class="QStatusBar" name="statusbar"/>
         <action name="actionImport_Mod">
             <property name="text">
-                <string>&amp;Import Mod...</string>
-            </property>
-            <property name="toolTip">
-                <string>Install a new mod from file or folder</string>
+                <string>Import Mod...</string>
             </property>
             <property name="shortcut">
                 <string>Ctrl+I</string>
@@ -771,10 +589,7 @@
         </action>
         <action name="actionRefresh">
             <property name="text">
-                <string>&amp;Refresh</string>
-            </property>
-            <property name="toolTip">
-                <string>Refresh mod lists and scan for changes</string>
+                <string>Refresh</string>
             </property>
             <property name="shortcut">
                 <string>F5</string>
@@ -782,10 +597,7 @@
         </action>
         <action name="actionExit">
             <property name="text">
-                <string>&amp;Exit</string>
-            </property>
-            <property name="toolTip">
-                <string>Close the mod manager</string>
+                <string>Exit</string>
             </property>
             <property name="shortcut">
                 <string>Ctrl+Q</string>
@@ -793,10 +605,7 @@
         </action>
         <action name="actionPreferences">
             <property name="text">
-                <string>&amp;Preferences...</string>
-            </property>
-            <property name="toolTip">
-                <string>Configure mod manager settings</string>
+                <string>Preferences...</string>
             </property>
             <property name="shortcut">
                 <string>Ctrl+,</string>
@@ -804,10 +613,7 @@
         </action>
         <action name="actionClear_Active_Mods">
             <property name="text">
-                <string>&amp;Clear Active Mods</string>
-            </property>
-            <property name="toolTip">
-                <string>Deactivate all mods and clear load order</string>
+                <string>Clear Active Mods</string>
             </property>
             <property name="shortcut">
                 <string>Ctrl+Shift+C</string>
@@ -821,10 +627,7 @@
                 <bool>true</bool>
             </property>
             <property name="text">
-                <string>Show &amp;Mod Details</string>
-            </property>
-            <property name="toolTip">
-                <string>Show or hide the mod information panel</string>
+                <string>Show Mod Details</string>
             </property>
         </action>
         <action name="actionUser_Manual">
@@ -860,17 +663,11 @@
             </property>
         </action>
         <action name="actionDefaultFont">
-            <property name="checkable">
-                <bool>false</bool>
-            </property>
             <property name="text">
                 <string>Default</string>
             </property>
         </action>
         <action name="actionDyslexiaFont">
-            <property name="checkable">
-                <bool>false</bool>
-            </property>
             <property name="text">
                 <string>Dyslexia</string>
             </property>
@@ -887,7 +684,6 @@
         <tabstop>pushButton_move_down</tabstop>
         <tabstop>pushButton_remove_mod</tabstop>
         <tabstop>pushButton_clear_all</tabstop>
-        <tabstop>textEdit_mod_description</tabstop>
         <tabstop>comboBox_presets</tabstop>
         <tabstop>pushButton_load_preset</tabstop>
         <tabstop>pushButton_save_preset</tabstop>

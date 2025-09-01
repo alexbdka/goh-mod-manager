@@ -226,7 +226,6 @@ class ModInfoParser:
                 manualInstall=self._detect_manual_installation(),
             )
 
-            logger.debug(f"Successfully parsed mod: {mod.name} (ID: {mod.id})")
             return mod
 
         except Exception as e:

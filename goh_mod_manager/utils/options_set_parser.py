@@ -203,8 +203,7 @@ class OptionsSetParser:
         # Remove all lines matching mod patterns
         original_count = len(self.lines)
         self.lines = [
-            line for line in self.lines
-            if not self.MOD_ENTRY_PATTERN.match(line)
+            line for line in self.lines if not self.MOD_ENTRY_PATTERN.match(line)
         ]
 
         removed_count = original_count - len(self.lines)
@@ -268,7 +267,8 @@ class OptionsSetParser:
 
         # Remove lines matching either format for this mod ID
         self.lines = [
-            line for line in self.lines
+            line
+            for line in self.lines
             if not (line == f'\t\t"mod_{mod_id}:0"\n' or line == f'\t\t"{mod_id}:0"\n')
         ]
 
@@ -382,31 +382,39 @@ class OptionsSetParser:
             dict: Statistics including line count, mod count, etc.
         """
         stats = {
-            'file_exists': self.file_path.exists(),
-            'total_lines': len(self.lines),
-            'has_mods_section': self._find_mods_section_bounds() is not None,
-            'mod_count': self.get_mod_count(),
-            'file_size_bytes': self.file_path.stat().st_size if self.file_path.exists() else 0
+            "file_exists": self.file_path.exists(),
+            "total_lines": len(self.lines),
+            "has_mods_section": self._find_mods_section_bounds() is not None,
+            "mod_count": self.get_mod_count(),
+            "file_size_bytes": (
+                self.file_path.stat().st_size if self.file_path.exists() else 0
+            ),
         }
 
-        if stats['has_mods_section']:
+        if stats["has_mods_section"]:
             mods_detailed = self.get_mods_detailed()
-            workshop_mods = [mod_id for mod_id, is_manual in mods_detailed if not is_manual]
+            workshop_mods = [
+                mod_id for mod_id, is_manual in mods_detailed if not is_manual
+            ]
             manual_mods = [mod_id for mod_id, is_manual in mods_detailed if is_manual]
 
-            stats.update({
-                'workshop_mod_count': len(workshop_mods),
-                'manual_mod_count': len(manual_mods)
-            })
+            stats.update(
+                {
+                    "workshop_mod_count": len(workshop_mods),
+                    "manual_mod_count": len(manual_mods),
+                }
+            )
 
         return stats
 
     def __str__(self) -> str:
         """String representation showing basic file info."""
         stats = self.get_file_stats()
-        return (f"OptionsSetParser({self.file_path.name}, "
-                f"mods: {stats['mod_count']}, "
-                f"lines: {stats['total_lines']})")
+        return (
+            f"OptionsSetParser({self.file_path.name}, "
+            f"mods: {stats['mod_count']}, "
+            f"lines: {stats['total_lines']})"
+        )
 
     def __repr__(self) -> str:
         """Detailed string representation for debugging."""

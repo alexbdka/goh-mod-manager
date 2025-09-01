@@ -218,15 +218,21 @@ class ModManagerController(QObject):
 
     def _enable_selected_mod(self) -> None:
         """Enable all currently selected mods from the available list."""
-        for item in self._view.get_current_available_mod():
-            mod = self._get_mod_from_item(item)
+        mods = [
+            self._get_mod_from_item(item)
+            for item in self._view.get_current_available_mod()
+        ]
+        for mod in mods:
             if mod:
                 self._model.enable_mod(mod)
 
     def _disable_selected_mod(self) -> None:
         """Disable all currently selected mods from the active list."""
-        for item in self._view.get_current_active_mod():
-            mod = self._get_mod_from_item(item)
+        mods = [
+            self._get_mod_from_item(item)
+            for item in self._view.get_current_active_mod()
+        ]
+        for mod in mods:
             if mod:
                 self._model.disable_mod(mod)
 
@@ -278,8 +284,14 @@ class ModManagerController(QObject):
         menu = QMenu(self._view.ui.listWidget_available_mods)
 
         # Add "Open Folder" action
-        open_action = menu.addAction("Open Folder")
-        open_action.triggered.connect(lambda: self._open_mod_folder(mod.folderPath))
+        open_folder_action = menu.addAction("Open Folder")
+        open_folder_action.triggered.connect(
+            lambda: self._open_mod_folder(mod.folderPath)
+        )
+
+        # Add "Open Workshop" action
+        open_workshop_action = menu.addAction("Open Workshop")
+        open_workshop_action.triggered.connect(lambda: self._open_steam_page(mod.id))
 
         # Add "Delete" action for manually installed mods
         if mod.manualInstall:
@@ -307,6 +319,27 @@ class ModManagerController(QObject):
         except Exception as e:
             self._view.show_error(
                 "Open Folder Error", f"Failed to open mod folder: {str(e)}"
+            )
+
+    def _open_steam_page(self, mod_id: str) -> None:
+        """
+        Open the workshop page for a mod on Steam.
+
+        Args:
+            mod_id: The Steam mod ID
+        """
+        try:
+            if sys.platform.startswith("win"):
+                os.startfile(f"steam://url/CommunityFilePage/{mod_id}")
+            elif sys.platform.startswith("darwin"):
+                subprocess.Popen(["open", f"steam://url/CommunityFilePage/{mod_id}"])
+            else:
+                subprocess.Popen(
+                    ["xdg-open", f"steam://url/CommunityFilePage/{mod_id}"]
+                )
+        except Exception as e:
+            self._view.show_error(
+                "Open Steam Page Error", f"Failed to open Steam page: {str(e)}"
             )
 
     def _delete_mod_with_confirmation(self, item: QListWidgetItem, mod: Mod) -> None:
@@ -750,7 +783,7 @@ class ModManagerController(QObject):
         Args:
             font_name: Name of the font to apply ("default" or "dyslexia")
         """
-        if font_name == "default":
+        if font_name == "default" or font_name == "":
             QFontDatabase.addApplicationFont(":/assets/fonts/Inter-Regular.otf")
             font = QFont("Inter", 10)
             self._view.set_application_font(font)

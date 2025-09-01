@@ -27,7 +27,6 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QLineEdit,
-    QListView,
     QListWidget,
     QMenu,
     QMenuBar,
@@ -80,10 +79,8 @@ class Ui_MainWindow(object):
         self.actionTheme.setObjectName("actionTheme")
         self.actionDefaultFont = QAction(MainWindow)
         self.actionDefaultFont.setObjectName("actionDefaultFont")
-        self.actionDefaultFont.setCheckable(False)
         self.actionDyslexiaFont = QAction(MainWindow)
         self.actionDyslexiaFont.setObjectName("actionDyslexiaFont")
-        self.actionDyslexiaFont.setCheckable(False)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_main = QHBoxLayout(self.centralwidget)
@@ -120,8 +117,6 @@ class Ui_MainWindow(object):
 
         self.pushButton_refresh_mods = QPushButton(self.groupBox_installed_mods)
         self.pushButton_refresh_mods.setObjectName("pushButton_refresh_mods")
-        self.pushButton_refresh_mods.setMinimumSize(QSize(32, 32))
-        self.pushButton_refresh_mods.setMaximumSize(QSize(32, 32))
         icon1 = QIcon()
         icon1.addFile(
             ":/assets/icons/refresh-line.svg",
@@ -130,7 +125,6 @@ class Ui_MainWindow(object):
             QIcon.State.Off,
         )
         self.pushButton_refresh_mods.setIcon(icon1)
-        self.pushButton_refresh_mods.setIconSize(QSize(16, 16))
 
         self.horizontalLayout_search_installed.addWidget(self.pushButton_refresh_mods)
 
@@ -138,16 +132,10 @@ class Ui_MainWindow(object):
 
         self.listWidget_available_mods = QListWidget(self.groupBox_installed_mods)
         self.listWidget_available_mods.setObjectName("listWidget_available_mods")
-        self.listWidget_available_mods.setProperty("showDropIndicator", False)
-        self.listWidget_available_mods.setDragDropMode(
-            QAbstractItemView.DragDropMode.NoDragDrop
-        )
         self.listWidget_available_mods.setAlternatingRowColors(True)
         self.listWidget_available_mods.setSelectionMode(
             QAbstractItemView.SelectionMode.ExtendedSelection
         )
-        self.listWidget_available_mods.setLayoutMode(QListView.LayoutMode.SinglePass)
-        self.listWidget_available_mods.setUniformItemSizes(True)
         self.listWidget_available_mods.setSortingEnabled(True)
 
         self.verticalLayout_2.addWidget(self.listWidget_available_mods)
@@ -156,15 +144,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_mod_actions.setObjectName("horizontalLayout_mod_actions")
         self.pushButton_add_mod = QPushButton(self.groupBox_installed_mods)
         self.pushButton_add_mod.setObjectName("pushButton_add_mod")
-        self.pushButton_add_mod.setEnabled(True)
 
         self.horizontalLayout_mod_actions.addWidget(self.pushButton_add_mod)
-
-        self.horizontalSpacer_2 = QSpacerItem(
-            40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-        )
-
-        self.horizontalLayout_mod_actions.addItem(self.horizontalSpacer_2)
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_mod_actions)
 
@@ -196,7 +177,6 @@ class Ui_MainWindow(object):
 
         self.label_mod_count = QLabel(self.groupBox_active_mods)
         self.label_mod_count.setObjectName("label_mod_count")
-        self.label_mod_count.setMinimumSize(QSize(80, 0))
 
         self.horizontalLayout_search_active.addWidget(self.label_mod_count)
 
@@ -204,16 +184,10 @@ class Ui_MainWindow(object):
 
         self.listWidget_active_mods = QListWidget(self.groupBox_active_mods)
         self.listWidget_active_mods.setObjectName("listWidget_active_mods")
-        self.listWidget_active_mods.setAcceptDrops(True)
-        self.listWidget_active_mods.setDragEnabled(True)
-        self.listWidget_active_mods.setDragDropMode(
-            QAbstractItemView.DragDropMode.InternalMove
-        )
         self.listWidget_active_mods.setAlternatingRowColors(True)
         self.listWidget_active_mods.setSelectionMode(
             QAbstractItemView.SelectionMode.ExtendedSelection
         )
-        self.listWidget_active_mods.setUniformItemSizes(True)
 
         self.verticalLayout_3.addWidget(self.listWidget_active_mods)
 
@@ -224,31 +198,27 @@ class Ui_MainWindow(object):
         )
         self.pushButton_move_up = QPushButton(self.groupBox_active_mods)
         self.pushButton_move_up.setObjectName("pushButton_move_up")
-        self.pushButton_move_up.setEnabled(True)
 
         self.horizontalLayout_load_order_controls.addWidget(self.pushButton_move_up)
 
         self.pushButton_move_down = QPushButton(self.groupBox_active_mods)
         self.pushButton_move_down.setObjectName("pushButton_move_down")
-        self.pushButton_move_down.setEnabled(True)
 
         self.horizontalLayout_load_order_controls.addWidget(self.pushButton_move_down)
 
         self.horizontalSpacer = QSpacerItem(
-            40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
+            0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
         )
 
         self.horizontalLayout_load_order_controls.addItem(self.horizontalSpacer)
 
         self.pushButton_remove_mod = QPushButton(self.groupBox_active_mods)
         self.pushButton_remove_mod.setObjectName("pushButton_remove_mod")
-        self.pushButton_remove_mod.setEnabled(True)
 
         self.horizontalLayout_load_order_controls.addWidget(self.pushButton_remove_mod)
 
         self.pushButton_clear_all = QPushButton(self.groupBox_active_mods)
         self.pushButton_clear_all.setObjectName("pushButton_clear_all")
-        self.pushButton_clear_all.setEnabled(True)
 
         self.horizontalLayout_load_order_controls.addWidget(self.pushButton_clear_all)
 
@@ -260,7 +230,6 @@ class Ui_MainWindow(object):
         font.setItalic(True)
         self.label_drag_info.setFont(font)
         self.label_drag_info.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.label_drag_info.setWordWrap(True)
 
         self.verticalLayout_3.addWidget(self.label_drag_info)
 
@@ -295,13 +264,17 @@ class Ui_MainWindow(object):
 
         self.textEdit_mod_description = QTextEdit(self.groupBox_mod_info)
         self.textEdit_mod_description.setObjectName("textEdit_mod_description")
-        self.textEdit_mod_description.setMinimumSize(QSize(0, 60))
-        self.textEdit_mod_description.setMaximumSize(QSize(16777215, 100))
         self.textEdit_mod_description.setReadOnly(True)
 
         self.verticalLayout_mod_info.addWidget(self.textEdit_mod_description)
 
         self.verticalLayout_sidebar.addWidget(self.groupBox_mod_info)
+
+        self.verticalSpacer = QSpacerItem(
+            0, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
+        )
+
+        self.verticalLayout_sidebar.addItem(self.verticalSpacer)
 
         self.groupBox_presets = QGroupBox(self.widget_right_panel)
         self.groupBox_presets.setObjectName("groupBox_presets")
@@ -312,7 +285,6 @@ class Ui_MainWindow(object):
         self.comboBox_presets = QComboBox(self.groupBox_presets)
         self.comboBox_presets.addItem("")
         self.comboBox_presets.setObjectName("comboBox_presets")
-        self.comboBox_presets.setEditable(True)
 
         self.verticalLayout_presets.addWidget(self.comboBox_presets)
 
@@ -323,19 +295,16 @@ class Ui_MainWindow(object):
         )
         self.pushButton_load_preset = QPushButton(self.groupBox_presets)
         self.pushButton_load_preset.setObjectName("pushButton_load_preset")
-        self.pushButton_load_preset.setEnabled(True)
 
         self.horizontalLayout_preset_controls.addWidget(self.pushButton_load_preset)
 
         self.pushButton_save_preset = QPushButton(self.groupBox_presets)
         self.pushButton_save_preset.setObjectName("pushButton_save_preset")
-        self.pushButton_save_preset.setEnabled(True)
 
         self.horizontalLayout_preset_controls.addWidget(self.pushButton_save_preset)
 
         self.pushButton_delete_preset = QPushButton(self.groupBox_presets)
         self.pushButton_delete_preset.setObjectName("pushButton_delete_preset")
-        self.pushButton_delete_preset.setEnabled(True)
 
         self.horizontalLayout_preset_controls.addWidget(self.pushButton_delete_preset)
 
@@ -344,14 +313,16 @@ class Ui_MainWindow(object):
         self.listWidget_presets = QListWidget(self.groupBox_presets)
         self.listWidget_presets.setObjectName("listWidget_presets")
         self.listWidget_presets.setAlternatingRowColors(True)
-        self.listWidget_presets.setSelectionMode(
-            QAbstractItemView.SelectionMode.SingleSelection
-        )
-        self.listWidget_presets.setUniformItemSizes(True)
 
         self.verticalLayout_presets.addWidget(self.listWidget_presets)
 
         self.verticalLayout_sidebar.addWidget(self.groupBox_presets)
+
+        self.verticalSpacer_2 = QSpacerItem(
+            20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
+        )
+
+        self.verticalLayout_sidebar.addItem(self.verticalSpacer_2)
 
         self.groupBox_sharing = QGroupBox(self.widget_right_panel)
         self.groupBox_sharing.setObjectName("groupBox_sharing")
@@ -372,7 +343,6 @@ class Ui_MainWindow(object):
         )
         self.pushButton_import_config = QPushButton(self.groupBox_sharing)
         self.pushButton_import_config.setObjectName("pushButton_import_config")
-        self.pushButton_import_config.setEnabled(True)
 
         self.horizontalLayout_sharing_controls.addWidget(self.pushButton_import_config)
 
@@ -429,8 +399,7 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.pushButton_move_up, self.pushButton_move_down)
         QWidget.setTabOrder(self.pushButton_move_down, self.pushButton_remove_mod)
         QWidget.setTabOrder(self.pushButton_remove_mod, self.pushButton_clear_all)
-        QWidget.setTabOrder(self.pushButton_clear_all, self.textEdit_mod_description)
-        QWidget.setTabOrder(self.textEdit_mod_description, self.comboBox_presets)
+        QWidget.setTabOrder(self.pushButton_clear_all, self.comboBox_presets)
         QWidget.setTabOrder(self.comboBox_presets, self.pushButton_load_preset)
         QWidget.setTabOrder(self.pushButton_load_preset, self.pushButton_save_preset)
         QWidget.setTabOrder(self.pushButton_save_preset, self.pushButton_delete_preset)
@@ -470,92 +439,47 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(
-            QCoreApplication.translate(
-                "MainWindow", "Call to Arms: Gates of Hell | Mod Manager", None
-            )
-        )
         self.actionImport_Mod.setText(
-            QCoreApplication.translate("MainWindow", "&Import Mod...", None)
+            QCoreApplication.translate("MainWindow", "Import Mod...", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.actionImport_Mod.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow", "Install a new mod from file or folder", None
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         # if QT_CONFIG(shortcut)
         self.actionImport_Mod.setShortcut(
             QCoreApplication.translate("MainWindow", "Ctrl+I", None)
         )
         # endif // QT_CONFIG(shortcut)
         self.actionRefresh.setText(
-            QCoreApplication.translate("MainWindow", "&Refresh", None)
+            QCoreApplication.translate("MainWindow", "Refresh", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.actionRefresh.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow", "Refresh mod lists and scan for changes", None
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         # if QT_CONFIG(shortcut)
         self.actionRefresh.setShortcut(
             QCoreApplication.translate("MainWindow", "F5", None)
         )
         # endif // QT_CONFIG(shortcut)
-        self.actionExit.setText(QCoreApplication.translate("MainWindow", "&Exit", None))
-        # if QT_CONFIG(tooltip)
-        self.actionExit.setToolTip(
-            QCoreApplication.translate("MainWindow", "Close the mod manager", None)
-        )
-        # endif // QT_CONFIG(tooltip)
+        self.actionExit.setText(QCoreApplication.translate("MainWindow", "Exit", None))
         # if QT_CONFIG(shortcut)
         self.actionExit.setShortcut(
             QCoreApplication.translate("MainWindow", "Ctrl+Q", None)
         )
         # endif // QT_CONFIG(shortcut)
         self.actionPreferences.setText(
-            QCoreApplication.translate("MainWindow", "&Preferences...", None)
+            QCoreApplication.translate("MainWindow", "Preferences...", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.actionPreferences.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow", "Configure mod manager settings", None
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         # if QT_CONFIG(shortcut)
         self.actionPreferences.setShortcut(
             QCoreApplication.translate("MainWindow", "Ctrl+,", None)
         )
         # endif // QT_CONFIG(shortcut)
         self.actionClear_Active_Mods.setText(
-            QCoreApplication.translate("MainWindow", "&Clear Active Mods", None)
+            QCoreApplication.translate("MainWindow", "Clear Active Mods", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.actionClear_Active_Mods.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow", "Deactivate all mods and clear load order", None
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         # if QT_CONFIG(shortcut)
         self.actionClear_Active_Mods.setShortcut(
             QCoreApplication.translate("MainWindow", "Ctrl+Shift+C", None)
         )
         # endif // QT_CONFIG(shortcut)
         self.actionShow_Mod_Details.setText(
-            QCoreApplication.translate("MainWindow", "Show &Mod Details", None)
+            QCoreApplication.translate("MainWindow", "Show Mod Details", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.actionShow_Mod_Details.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow", "Show or hide the mod information panel", None
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.actionUser_Manual.setText(
             QCoreApplication.translate("MainWindow", "&User Manual", None)
         )
@@ -601,161 +525,38 @@ class Ui_MainWindow(object):
         self.groupBox_installed_mods.setTitle(
             QCoreApplication.translate("MainWindow", "Available Mods", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.lineEdit_search_installed.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Type to search through your installed mods\n"
-                "                                                                    library\n"
-                "                                                                ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.lineEdit_search_installed.setPlaceholderText(
-            QCoreApplication.translate(
-                "MainWindow", "Filter available mods by name...", None
-            )
+            QCoreApplication.translate("MainWindow", "Search...", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.pushButton_refresh_mods.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Scan for newly installed mods and refresh the\n"
-                "                                                                    list\n"
-                "                                                                ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
-        self.pushButton_refresh_mods.setText("")
-        # if QT_CONFIG(tooltip)
-        self.listWidget_available_mods.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Select one or multiple mods to add to your active\n"
-                "                                                            configuration. Use Ctrl+Click for multiple selection.\n"
-                "                                                        ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
-        # if QT_CONFIG(tooltip)
-        self.pushButton_add_mod.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Add the selected mods to your active mod list\n"
-                "                                                                ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.pushButton_add_mod.setText(
-            QCoreApplication.translate("MainWindow", "Add Selected", None)
+            QCoreApplication.translate("MainWindow", "Add", None)
         )
         self.groupBox_active_mods.setTitle(
             QCoreApplication.translate("MainWindow", "Active Mods (Load Order)", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.lineEdit_search_active.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Quickly find mods in your current load order\n"
-                "                                                                ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.lineEdit_search_active.setPlaceholderText(
-            QCoreApplication.translate("MainWindow", "Search active mods...", None)
+            QCoreApplication.translate("MainWindow", "Search...", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.label_mod_count.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Number of mods currently in your load order\n"
-                "                                                                ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.label_mod_count.setText(
-            QCoreApplication.translate("MainWindow", "0 mods active", None)
+            QCoreApplication.translate("MainWindow", "ACTIVE_MODS", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.listWidget_active_mods.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Your active mod configuration. Mods at the top load\n"
-                "                                                            first. Drag and drop to reorder, or use the buttons below.\n"
-                "                                                        ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
-        # if QT_CONFIG(tooltip)
-        self.pushButton_move_up.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Move selected mods higher in load order (loads\n"
-                "                                                                    earlier)\n"
-                "                                                                ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.pushButton_move_up.setText(
             QCoreApplication.translate("MainWindow", "Move Up", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.pushButton_move_down.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Move selected mods lower in load order (loads\n"
-                "                                                                    later)\n"
-                "                                                                ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.pushButton_move_down.setText(
             QCoreApplication.translate("MainWindow", "Move Down", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.pushButton_remove_mod.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Deactivate selected mods (removes from load\n"
-                "                                                                    order)\n"
-                "                                                                ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.pushButton_remove_mod.setText(
             QCoreApplication.translate("MainWindow", "Remove", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.pushButton_clear_all.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Deactivate all mods and clear the entire load\n"
-                "                                                                    order\n"
-                "                                                                ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.pushButton_clear_all.setText(
             QCoreApplication.translate("MainWindow", "Clear All", None)
-        )
-        self.label_drag_info.setStyleSheet(
-            QCoreApplication.translate("MainWindow", "color: #666;", None)
         )
         self.label_drag_info.setText(
             QCoreApplication.translate(
                 "MainWindow",
                 "Tip: Drag and drop mods to reorder them instantly\n"
+                "\n"
                 "                                                        ",
                 None,
             )
@@ -768,22 +569,6 @@ class Ui_MainWindow(object):
                 "MainWindow", "Select a mod to view details", None
             )
         )
-        # if QT_CONFIG(tooltip)
-        self.textEdit_mod_description.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow", "Detailed information about the selected mod", None
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
-        self.textEdit_mod_description.setPlaceholderText(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Mod description, version info, and compatibility notes\n"
-                "                                                            will appear here...\n"
-                "                                                        ",
-                None,
-            )
-        )
         self.groupBox_presets.setTitle(
             QCoreApplication.translate("MainWindow", "Presets", None)
         )
@@ -794,87 +579,23 @@ class Ui_MainWindow(object):
             ),
         )
 
-        # if QT_CONFIG(tooltip)
-        self.comboBox_presets.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Select an existing preset or type a new name to create\n"
-                "                                                            one\n"
-                "                                                        ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
-        # if QT_CONFIG(tooltip)
-        self.pushButton_load_preset.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow", "Load the selected preset configuration", None
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.pushButton_load_preset.setText(
             QCoreApplication.translate("MainWindow", "Load", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.pushButton_save_preset.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Save your current mod configuration as a\n"
-                "                                                                    preset\n"
-                "                                                                ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.pushButton_save_preset.setText(
             QCoreApplication.translate("MainWindow", "Save", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.pushButton_delete_preset.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow", "Delete the selected preset permanently", None
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.pushButton_delete_preset.setText(
             QCoreApplication.translate("MainWindow", "Delete", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.listWidget_presets.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow", "Your saved mod configurations", None
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.groupBox_sharing.setTitle(
             QCoreApplication.translate("MainWindow", "Configuration Sharing", None)
         )
-        # if QT_CONFIG(tooltip)
-        self.lineEdit_share_code.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Enter a configuration code shared by another player\n"
-                "                                                        ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.lineEdit_share_code.setPlaceholderText(
             QCoreApplication.translate(
                 "MainWindow", "Paste a shared configuration code here...", None
             )
         )
-        # if QT_CONFIG(tooltip)
-        self.pushButton_import_config.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Import and apply the configuration from the\n"
-                "                                                                    share code\n"
-                "                                                                ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
         self.pushButton_import_config.setText(
             QCoreApplication.translate("MainWindow", "Import", None)
         )
@@ -883,7 +604,11 @@ class Ui_MainWindow(object):
             QCoreApplication.translate(
                 "MainWindow",
                 "Generate a shareable code for your current mod\n"
+                "\n"
+                "\n"
                 "                                                                    setup\n"
+                "\n"
+                "\n"
                 "                                                                ",
                 None,
             )
@@ -898,5 +623,6 @@ class Ui_MainWindow(object):
         self.menuStyle.setTitle(QCoreApplication.translate("MainWindow", "Style", None))
         self.menuFont.setTitle(QCoreApplication.translate("MainWindow", "Font", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", "&Help", None))
+        pass
 
     # retranslateUi

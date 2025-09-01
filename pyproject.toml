@@ -6,7 +6,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "black>=25.1.0",
-    "flake8>=7.3.0",
     "loguru>=0.7.3",
     "nuitka>=2.7.11",
     "packaging>=25.0",
