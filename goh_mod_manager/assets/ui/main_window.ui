@@ -104,7 +104,8 @@
                                                             <property name="icon">
                                                                 <iconset resource="../../resources/resources.qrc">
                                                                     <normaloff>
-                                                                        :/assets/icons/refresh-line.svg</normaloff>
+                                                                        :/assets/icons/refresh-line.svg
+                                                                    </normaloff>
                                                                     :/assets/icons/refresh-line.svg
                                                                 </iconset>
                                                             </property>
