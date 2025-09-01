@@ -132,6 +132,7 @@ class Ui_MainWindow(object):
 
         self.listWidget_available_mods = QListWidget(self.groupBox_installed_mods)
         self.listWidget_available_mods.setObjectName("listWidget_available_mods")
+        self.listWidget_available_mods.setProperty("showDropIndicator", False)
         self.listWidget_available_mods.setAlternatingRowColors(True)
         self.listWidget_available_mods.setSelectionMode(
             QAbstractItemView.SelectionMode.ExtendedSelection
@@ -184,6 +185,11 @@ class Ui_MainWindow(object):
 
         self.listWidget_active_mods = QListWidget(self.groupBox_active_mods)
         self.listWidget_active_mods.setObjectName("listWidget_active_mods")
+        self.listWidget_active_mods.setProperty("showDropIndicator", True)
+        self.listWidget_active_mods.setDragEnabled(True)
+        self.listWidget_active_mods.setDragDropMode(
+            QAbstractItemView.DragDropMode.InternalMove
+        )
         self.listWidget_active_mods.setAlternatingRowColors(True)
         self.listWidget_active_mods.setSelectionMode(
             QAbstractItemView.SelectionMode.ExtendedSelection
@@ -312,6 +318,7 @@ class Ui_MainWindow(object):
 
         self.listWidget_presets = QListWidget(self.groupBox_presets)
         self.listWidget_presets.setObjectName("listWidget_presets")
+        self.listWidget_presets.setProperty("showDropIndicator", False)
         self.listWidget_presets.setAlternatingRowColors(True)
 
         self.verticalLayout_presets.addWidget(self.listWidget_presets)

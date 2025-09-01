@@ -104,8 +104,7 @@
                                                             <property name="icon">
                                                                 <iconset resource="../../resources/resources.qrc">
                                                                     <normaloff>
-                                                                        :/assets/icons/refresh-line.svg
-                                                                    </normaloff>
+                                                                        :/assets/icons/refresh-line.svg</normaloff>
                                                                     :/assets/icons/refresh-line.svg
                                                                 </iconset>
                                                             </property>
@@ -115,6 +114,9 @@
                                             </item>
                                             <item>
                                                 <widget class="QListWidget" name="listWidget_available_mods">
+                                                    <property name="showDropIndicator" stdset="0">
+                                                        <bool>false</bool>
+                                                    </property>
                                                     <property name="alternatingRowColors">
                                                         <bool>true</bool>
                                                     </property>
@@ -200,6 +202,15 @@
                                             </item>
                                             <item>
                                                 <widget class="QListWidget" name="listWidget_active_mods">
+                                                    <property name="showDropIndicator" stdset="0">
+                                                        <bool>true</bool>
+                                                    </property>
+                                                    <property name="dragEnabled">
+                                                        <bool>true</bool>
+                                                    </property>
+                                                    <property name="dragDropMode">
+                                                        <enum>QAbstractItemView::DragDropMode::InternalMove</enum>
+                                                    </property>
                                                     <property name="alternatingRowColors">
                                                         <bool>true</bool>
                                                     </property>
@@ -417,6 +428,9 @@
                                             </item>
                                             <item>
                                                 <widget class="QListWidget" name="listWidget_presets">
+                                                    <property name="showDropIndicator" stdset="0">
+                                                        <bool>false</bool>
+                                                    </property>
                                                     <property name="alternatingRowColors">
                                                         <bool>true</bool>
                                                     </property>
