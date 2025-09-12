@@ -59,7 +59,7 @@
                                     <height>16777215</height>
                                 </size>
                             </property>
-                            <layout class="QVBoxLayout" name="verticalLayout_installed">
+                            <layout class="QVBoxLayout" name="verticalLayout_available_mods">
                                 <property name="spacing">
                                     <number>6</number>
                                 </property>
@@ -76,7 +76,7 @@
                                     <number>0</number>
                                 </property>
                                 <item>
-                                    <widget class="QGroupBox" name="groupBox_installed_mods">
+                                    <widget class="QGroupBox" name="groupBox_available_mods">
                                         <property name="title">
                                             <string>Available Mods</string>
                                         </property>
@@ -85,12 +85,13 @@
                                                 <number>6</number>
                                             </property>
                                             <item>
-                                                <layout class="QHBoxLayout" name="horizontalLayout_search_installed">
+                                                <layout class="QHBoxLayout"
+                                                        name="horizontalLayout_search_available_mods">
                                                     <property name="spacing">
                                                         <number>6</number>
                                                     </property>
                                                     <item>
-                                                        <widget class="QLineEdit" name="lineEdit_search_installed">
+                                                        <widget class="QLineEdit" name="lineEdit_search_available_mods">
                                                             <property name="placeholderText">
                                                                 <string>Search...</string>
                                                             </property>
@@ -100,11 +101,13 @@
                                                         </widget>
                                                     </item>
                                                     <item>
-                                                        <widget class="QPushButton" name="pushButton_refresh_mods">
+                                                        <widget class="QPushButton"
+                                                                name="pushButton_refresh_available_mods">
                                                             <property name="icon">
                                                                 <iconset resource="../../resources/resources.qrc">
                                                                     <normaloff>
-                                                                        :/assets/icons/refresh-line.svg</normaloff>
+                                                                        :/assets/icons/refresh-line.svg
+                                                                    </normaloff>
                                                                     :/assets/icons/refresh-line.svg
                                                                 </iconset>
                                                             </property>
@@ -114,6 +117,9 @@
                                             </item>
                                             <item>
                                                 <widget class="QListWidget" name="listWidget_available_mods">
+                                                    <property name="acceptDrops">
+                                                        <bool>true</bool>
+                                                    </property>
                                                     <property name="showDropIndicator" stdset="0">
                                                         <bool>false</bool>
                                                     </property>
@@ -129,9 +135,10 @@
                                                 </widget>
                                             </item>
                                             <item>
-                                                <layout class="QHBoxLayout" name="horizontalLayout_mod_actions">
+                                                <layout class="QHBoxLayout"
+                                                        name="horizontalLayout_available_mods_actions">
                                                     <item>
-                                                        <widget class="QPushButton" name="pushButton_add_mod">
+                                                        <widget class="QPushButton" name="pushButton_add">
                                                             <property name="text">
                                                                 <string>Add</string>
                                                             </property>
@@ -151,7 +158,7 @@
                                     <height>0</height>
                                 </size>
                             </property>
-                            <layout class="QVBoxLayout" name="verticalLayout_active">
+                            <layout class="QVBoxLayout" name="verticalLayout_active_mods">
                                 <property name="spacing">
                                     <number>6</number>
                                 </property>
@@ -177,12 +184,12 @@
                                                 <number>6</number>
                                             </property>
                                             <item>
-                                                <layout class="QHBoxLayout" name="horizontalLayout_search_active">
+                                                <layout class="QHBoxLayout" name="horizontalLayout_search_active_mods">
                                                     <property name="spacing">
                                                         <number>6</number>
                                                     </property>
                                                     <item>
-                                                        <widget class="QLineEdit" name="lineEdit_search_active">
+                                                        <widget class="QLineEdit" name="lineEdit_search_active_mods">
                                                             <property name="placeholderText">
                                                                 <string>Search...</string>
                                                             </property>
@@ -192,11 +199,7 @@
                                                         </widget>
                                                     </item>
                                                     <item>
-                                                        <widget class="QLabel" name="label_mod_count">
-                                                            <property name="text">
-                                                                <string>ACTIVE_MODS</string>
-                                                            </property>
-                                                        </widget>
+                                                        <widget class="QLCDNumber" name="lcdNumber_mods_counter"/>
                                                     </item>
                                                 </layout>
                                             </item>
@@ -252,7 +255,7 @@
                                                         </spacer>
                                                     </item>
                                                     <item>
-                                                        <widget class="QPushButton" name="pushButton_remove_mod">
+                                                        <widget class="QPushButton" name="pushButton_remove">
                                                             <property name="text">
                                                                 <string>Remove</string>
                                                             </property>
@@ -319,7 +322,7 @@
                                     <number>0</number>
                                 </property>
                                 <item>
-                                    <widget class="QGroupBox" name="groupBox_mod_info">
+                                    <widget class="QGroupBox" name="groupBox_mod_informations">
                                         <property name="minimumSize">
                                             <size>
                                                 <width>0</width>
@@ -327,7 +330,7 @@
                                             </size>
                                         </property>
                                         <property name="title">
-                                            <string>Mod Information</string>
+                                            <string>Mod Informations</string>
                                         </property>
                                         <layout class="QVBoxLayout" name="verticalLayout_mod_info">
                                             <property name="spacing">
@@ -360,19 +363,6 @@
                                             </item>
                                         </layout>
                                     </widget>
-                                </item>
-                                <item>
-                                    <spacer name="verticalSpacer">
-                                        <property name="orientation">
-                                            <enum>Qt::Orientation::Vertical</enum>
-                                        </property>
-                                        <property name="sizeHint" stdset="0">
-                                            <size>
-                                                <width>0</width>
-                                                <height>0</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
                                 </item>
                                 <item>
                                     <widget class="QGroupBox" name="groupBox_presets">
@@ -440,19 +430,6 @@
                                     </widget>
                                 </item>
                                 <item>
-                                    <spacer name="verticalSpacer_2">
-                                        <property name="orientation">
-                                            <enum>Qt::Orientation::Vertical</enum>
-                                        </property>
-                                        <property name="sizeHint" stdset="0">
-                                            <size>
-                                                <width>20</width>
-                                                <height>40</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                </item>
-                                <item>
                                     <widget class="QGroupBox" name="groupBox_sharing">
                                         <property name="minimumSize">
                                             <size>
@@ -483,14 +460,14 @@
                                                         <number>6</number>
                                                     </property>
                                                     <item>
-                                                        <widget class="QPushButton" name="pushButton_import_config">
+                                                        <widget class="QPushButton" name="pushButton_import">
                                                             <property name="text">
                                                                 <string>Import</string>
                                                             </property>
                                                         </widget>
                                                     </item>
                                                     <item>
-                                                        <widget class="QPushButton" name="pushButton_export_config">
+                                                        <widget class="QPushButton" name="pushButton_export">
                                                             <property name="enabled">
                                                                 <bool>true</bool>
                                                             </property>
@@ -513,19 +490,6 @@
                                         </layout>
                                     </widget>
                                 </item>
-                                <item>
-                                    <spacer name="verticalSpacer_sidebar">
-                                        <property name="orientation">
-                                            <enum>Qt::Orientation::Vertical</enum>
-                                        </property>
-                                        <property name="sizeHint" stdset="0">
-                                            <size>
-                                                <width>20</width>
-                                                <height>40</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                </item>
                             </layout>
                         </widget>
                     </widget>
@@ -545,8 +509,11 @@
                 <property name="title">
                     <string>&amp;File</string>
                 </property>
-                <addaction name="actionImport_Mod"/>
-                <addaction name="actionRefresh"/>
+                <addaction name="actionOpen_game_folder"/>
+                <addaction name="actionOpen_mods_folder"/>
+                <addaction name="actionOpen_options_file"/>
+                <addaction name="separator"/>
+                <addaction name="actionOpen_logs"/>
                 <addaction name="separator"/>
                 <addaction name="actionExit"/>
             </widget>
@@ -554,9 +521,8 @@
                 <property name="title">
                     <string>&amp;Edit</string>
                 </property>
-                <addaction name="actionPreferences"/>
+                <addaction name="actionSettings"/>
                 <addaction name="separator"/>
-                <addaction name="actionClear_Active_Mods"/>
             </widget>
             <widget class="QMenu" name="menuView">
                 <property name="title">
@@ -570,12 +536,17 @@
                         <property name="title">
                             <string>Font</string>
                         </property>
-                        <addaction name="actionDefaultFont"/>
-                        <addaction name="actionDyslexiaFont"/>
+                        <addaction name="actionDefault"/>
+                        <addaction name="actionDyslexic"/>
                     </widget>
                     <addaction name="menuFont"/>
                 </widget>
-                <addaction name="actionShow_Mod_Details"/>
+                <addaction name="actionRefresh_2"/>
+                <addaction name="actionShow_mod_informations"/>
+                <addaction name="separator"/>
+                <addaction name="actionZoom_in"/>
+                <addaction name="actionZoom_out"/>
+                <addaction name="actionReset_zoom"/>
                 <addaction name="separator"/>
                 <addaction name="menuStyle"/>
             </widget>
@@ -583,20 +554,33 @@
                 <property name="title">
                     <string>&amp;Help</string>
                 </property>
-                <addaction name="actionUser_Manual"/>
-                <addaction name="separator"/>
-                <addaction name="actionCheck_Updates"/>
+                <addaction name="actionUser_manual"/>
                 <addaction name="actionAbout"/>
+            </widget>
+            <widget class="QMenu" name="menuImport">
+                <property name="title">
+                    <string>Import</string>
+                </property>
+                <addaction name="action_load_order_from_code"/>
+                <addaction name="action_local_mod"/>
+            </widget>
+            <widget class="QMenu" name="menuExport">
+                <property name="title">
+                    <string>Export</string>
+                </property>
+                <addaction name="action_load_order_as_code"/>
             </widget>
             <addaction name="menuFile"/>
             <addaction name="menuEdit"/>
             <addaction name="menuView"/>
+            <addaction name="menuImport"/>
+            <addaction name="menuExport"/>
             <addaction name="menuHelp"/>
         </widget>
         <widget class="QStatusBar" name="statusbar"/>
-        <action name="actionImport_Mod">
+        <action name="actionImport_mod">
             <property name="text">
-                <string>Import Mod...</string>
+                <string>Import mod...</string>
             </property>
             <property name="shortcut">
                 <string>Ctrl+I</string>
@@ -618,12 +602,9 @@
                 <string>Ctrl+Q</string>
             </property>
         </action>
-        <action name="actionPreferences">
+        <action name="actionSettings">
             <property name="text">
-                <string>Preferences...</string>
-            </property>
-            <property name="shortcut">
-                <string>Ctrl+,</string>
+                <string>Settings</string>
             </property>
         </action>
         <action name="actionClear_Active_Mods">
@@ -634,7 +615,7 @@
                 <string>Ctrl+Shift+C</string>
             </property>
         </action>
-        <action name="actionShow_Mod_Details">
+        <action name="actionShow_mod_informations">
             <property name="checkable">
                 <bool>true</bool>
             </property>
@@ -642,12 +623,12 @@
                 <bool>true</bool>
             </property>
             <property name="text">
-                <string>Show Mod Details</string>
+                <string>Show mod informations</string>
             </property>
         </action>
-        <action name="actionUser_Manual">
+        <action name="actionUser_manual">
             <property name="text">
-                <string>&amp;User Manual</string>
+                <string>User manual</string>
             </property>
             <property name="toolTip">
                 <string>Open the complete user guide</string>
@@ -658,7 +639,7 @@
         </action>
         <action name="actionCheck_Updates">
             <property name="text">
-                <string>&amp;Check for Updates</string>
+                <string>Check for updates</string>
             </property>
             <property name="toolTip">
                 <string>Check for mod manager updates</string>
@@ -666,7 +647,7 @@
         </action>
         <action name="actionAbout">
             <property name="text">
-                <string>&amp;About</string>
+                <string>About</string>
             </property>
             <property name="toolTip">
                 <string>About this mod manager</string>
@@ -677,27 +658,82 @@
                 <string>Theme</string>
             </property>
         </action>
-        <action name="actionDefaultFont">
+        <action name="actionDefault">
             <property name="text">
                 <string>Default</string>
             </property>
         </action>
-        <action name="actionDyslexiaFont">
+        <action name="actionDyslexic">
             <property name="text">
-                <string>Dyslexia</string>
+                <string>Dyslexic</string>
+            </property>
+        </action>
+        <action name="actionOpen_game_folder">
+            <property name="text">
+                <string>Open game folder</string>
+            </property>
+        </action>
+        <action name="actionOpen_mods_folder">
+            <property name="text">
+                <string>Open mods folder</string>
+            </property>
+        </action>
+        <action name="actionOpen_options_file">
+            <property name="text">
+                <string>Open options file</string>
+            </property>
+        </action>
+        <action name="actionOpen_logs">
+            <property name="text">
+                <string>Open logs</string>
+            </property>
+        </action>
+        <action name="action_load_order_from_code">
+            <property name="text">
+                <string>... load order from code</string>
+            </property>
+        </action>
+        <action name="action_load_order_as_code">
+            <property name="text">
+                <string>... load order as code</string>
+            </property>
+        </action>
+        <action name="action_local_mod">
+            <property name="text">
+                <string>... local mod</string>
+            </property>
+        </action>
+        <action name="actionRefresh_2">
+            <property name="text">
+                <string>Refresh</string>
+            </property>
+        </action>
+        <action name="actionZoom_in">
+            <property name="text">
+                <string>Zoom in</string>
+            </property>
+        </action>
+        <action name="actionZoom_out">
+            <property name="text">
+                <string>Zoom out</string>
+            </property>
+        </action>
+        <action name="actionReset_zoom">
+            <property name="text">
+                <string>Reset zoom</string>
             </property>
         </action>
     </widget>
     <tabstops>
-        <tabstop>lineEdit_search_installed</tabstop>
-        <tabstop>pushButton_refresh_mods</tabstop>
+        <tabstop>lineEdit_search_available_mods</tabstop>
+        <tabstop>pushButton_refresh_available_mods</tabstop>
         <tabstop>listWidget_available_mods</tabstop>
-        <tabstop>pushButton_add_mod</tabstop>
-        <tabstop>lineEdit_search_active</tabstop>
+        <tabstop>pushButton_add</tabstop>
+        <tabstop>lineEdit_search_active_mods</tabstop>
         <tabstop>listWidget_active_mods</tabstop>
         <tabstop>pushButton_move_up</tabstop>
         <tabstop>pushButton_move_down</tabstop>
-        <tabstop>pushButton_remove_mod</tabstop>
+        <tabstop>pushButton_remove</tabstop>
         <tabstop>pushButton_clear_all</tabstop>
         <tabstop>comboBox_presets</tabstop>
         <tabstop>pushButton_load_preset</tabstop>
@@ -705,8 +741,8 @@
         <tabstop>pushButton_delete_preset</tabstop>
         <tabstop>listWidget_presets</tabstop>
         <tabstop>lineEdit_share_code</tabstop>
-        <tabstop>pushButton_import_config</tabstop>
-        <tabstop>pushButton_export_config</tabstop>
+        <tabstop>pushButton_import</tabstop>
+        <tabstop>pushButton_export</tabstop>
     </tabstops>
     <resources>
         <include location="../../resources/resources.qrc"/>

@@ -166,7 +166,10 @@ class OptionsSetParser:
 
         # Remove all lines matching mod patterns
         self.lines = [
-            line for line in self.lines if not self.MOD_ENTRY_PATTERN.match(line) and line.strip() != '"mod_template:0"'
+            line
+            for line in self.lines
+            if not self.MOD_ENTRY_PATTERN.match(line)
+            and line.strip() != '"mod_template:0"'
         ]
 
         return self.save()

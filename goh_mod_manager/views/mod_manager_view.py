@@ -259,12 +259,7 @@ class ModManagerView(QMainWindow):
         Args:
             count: Number of active mods
         """
-        if count <= 0:
-            self.ui.label_mod_count.setText("No active mods")
-        elif count == 1:
-            self.ui.label_mod_count.setText("1 active mod")
-        else:
-            self.ui.label_mod_count.setText(f"{count} active mods")
+        self.ui.lcdNumber_mods_counter.display(count)
 
     def update_mod_details(self, mod: Optional[Mod]) -> None:
         """

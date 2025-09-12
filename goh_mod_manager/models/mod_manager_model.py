@@ -57,7 +57,7 @@ class ModManagerModel(QObject):
         return len(self._active_mods)
 
     def get_presets_names(self) -> List[str]:
-        """Get list of all preset names."""
+        """Get a list of all preset names."""
         return list(self._presets.keys())
 
     # ================== CONFIGURATION ==================
@@ -72,12 +72,21 @@ class ModManagerModel(QObject):
         self._config.set_mods_directory(mods_directory)
         self._load_installed_mods()
 
+    def set_game_directory(self, game_directory: str) -> None:
+        """
+        Set the game directory path.
+
+        Args:
+            game_directory: Path to the game's installation directory
+        """
+        self._config.set_game_directory(game_directory)
+
     def set_options_file(self, options_file: str) -> None:
         """
         Set the options file path and refresh active mods.
 
         Args:
-            options_file: Path to the game's options configuration file
+            options_file: Path to the game's options.set file
         """
         self._config.set_options_file(options_file)
         self._load_active_mods()
@@ -96,9 +105,9 @@ class ModManagerModel(QObject):
         """
         return self._presets.get(preset_name, [])
 
-    def has_preset(self, name: str) -> bool:
+    def has_preset(self, preset_name: str) -> bool:
         """Check if a preset exists."""
-        return name in self._presets
+        return preset_name in self._presets
 
     def set_presets(self, presets: Dict[str, List[str]]) -> None:
         """
@@ -150,10 +159,8 @@ class ModManagerModel(QObject):
         preset_mods = self._presets[preset_name]
         self.clear_active_mods()
 
-        if preset_mods:
-            self.set_mods_order(preset_mods)
-            logger.info(f"Preset '{preset_name}' loaded with {len(preset_mods)} mods")
-
+        self.set_mods_order(preset_mods)
+        logger.info(f"Preset '{preset_name}' loaded with {len(preset_mods)} mods")
         return True
 
     def delete_preset(self, preset_name: str) -> bool:
@@ -167,7 +174,7 @@ class ModManagerModel(QObject):
             True if preset was deleted, False if preset doesn't exist
         """
         if preset_name not in self._presets:
-            logger.warning(f"Preset '{preset_name}' not found for deletion")
+            logger.error(f"Preset '{preset_name}' not found")
             return False
 
         del self._presets[preset_name]
@@ -238,7 +245,7 @@ class ModManagerModel(QObject):
             reordered_mods: List of mods in desired order
 
         Returns:
-            True if order was successfully updated
+            True if the order was successfully updated
         """
         self._active_mods = reordered_mods.copy()
         return self._save_active_mods()
@@ -268,12 +275,12 @@ class ModManagerModel(QObject):
         self.refresh_active_mods()
 
     def refresh_installed_mods(self) -> None:
-        """Refresh the list of installed mods from filesystem."""
+        """Refresh the list of installed mods from the filesystem."""
         self._load_installed_mods()
         self.installed_mods_signal.emit()
 
     def refresh_active_mods(self) -> None:
-        """Refresh the list of active mods from options file."""
+        """Refresh the list of active mods from the options file."""
         self._load_active_mods()
         self._emit_updates()
 
@@ -284,7 +291,7 @@ class ModManagerModel(QObject):
         Import a mod from a directory or archive file.
 
         Args:
-            path: Path to mod directory or archive file
+            path: Path to the archive file
 
         Returns:
             True if mod was successfully imported
@@ -319,11 +326,11 @@ class ModManagerModel(QObject):
 
         directories_to_scan = []
 
-        # Add configured mods directory if it exists
+        # Add the main mods directory if it exists
         if mods_directory and os.path.exists(mods_directory):
             directories_to_scan.append(mods_directory)
 
-        # Add game mods directory if valid
+        # Add the game mods directory if it exists and is valid
         if self._is_valid_game_mods_directory(game_mods_directory):
             directories_to_scan.append(game_mods_directory)
 
@@ -336,7 +343,7 @@ class ModManagerModel(QObject):
 
     def _load_mod_from_directory(self, mod_path: str) -> None:
         """
-        Load a single mod from its directory.
+        Load a mod from its directory.
 
         Args:
             mod_path: Path to the mod directory containing mod.info
@@ -375,10 +382,10 @@ class ModManagerModel(QObject):
 
     def _resolve_active_mods(self, active_mod_ids: List[str]) -> None:
         """
-        Resolve mod IDs to mod objects and populate active mods list.
+        Resolve mod IDs to mod objects and populate the active mods list.
 
         Args:
-            active_mod_ids: List of mod IDs from options file
+            active_mod_ids: List of mod IDs from the options file
         """
         for mod_id in active_mod_ids:
             mod = self._find_installed_mod_by_id(mod_id)
@@ -487,7 +494,7 @@ class ModManagerModel(QObject):
         """
         Import a mod from a directory structure.
 
-        Recursively searches for mod.info file in the directory tree.
+        Recursively searches for mod.info files in the directory tree.
 
         Args:
             dir_path: Path to the directory to import from
@@ -564,7 +571,7 @@ class ModManagerModel(QObject):
             extract_to: Directory to extract files to
 
         Raises:
-            ValueError: If archive format is not supported
+            ValueError: If the archive format is not supported
             RuntimeError: If extraction fails
         """
         ext = Path(archive_path).suffix.lower()
@@ -614,6 +621,6 @@ class ModManagerModel(QObject):
             path: Path to validate
 
         Returns:
-            True if path is valid and exists
+            True if the path is valid and exists
         """
         return bool(path) and os.path.exists(path)

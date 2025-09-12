@@ -4,16 +4,19 @@ import os
 import subprocess
 import sys
 import time
+from pathlib import Path
 from typing import Dict, List, Optional
 
 from PySide6.QtCore import QObject, QPoint
 from PySide6.QtGui import QFont, QFontDatabase, Qt
 from PySide6.QtWidgets import QApplication, QDialog, QListWidgetItem, QMenu
+from loguru import logger
 
 from goh_mod_manager.models.mod import Mod
 from goh_mod_manager.models.mod_manager_model import ModManagerModel
 from goh_mod_manager.views.dialogs.about_dialog import AboutDialog
-from goh_mod_manager.views.dialogs.check_update_dialog import CheckUpdateDialog
+from goh_mod_manager.views.dialogs.export_code_dialog import ExportCodeDialog
+from goh_mod_manager.views.dialogs.import_code_dialog import ImportCodeDialog
 from goh_mod_manager.views.dialogs.import_dialog import ImportDialog
 from goh_mod_manager.views.dialogs.preferences_dialog import PreferencesDialog
 from goh_mod_manager.views.dialogs.preset_dialog import PresetDialog
@@ -104,38 +107,55 @@ class ModManagerController(QObject):
     def _connect_menu_signals(self) -> None:
         """Connect menu action signals to their handlers."""
         # File menu
+        self._view.ui.actionOpen_game_folder.triggered.connect(self._open_game_folder)
+        self._view.ui.actionOpen_mods_folder.triggered.connect(self._open_mods_folder)
+        self._view.ui.actionOpen_options_file.triggered.connect(self._open_options_file)
+        self._view.ui.actionOpen_logs.triggered.connect(self._open_logs)
         self._view.ui.actionExit.triggered.connect(self._view.close)
-        self._view.ui.actionImport_Mod.triggered.connect(self._import_mod)
-        self._view.ui.actionPreferences.triggered.connect(self._open_preferences)
+
+        # Edit menu
+        self._view.ui.actionSettings.triggered.connect(self._open_preferences)
 
         # View menu
         self._view.ui.actionRefresh.triggered.connect(self._refresh_all)
-        self._view.ui.actionShow_Mod_Details.triggered.connect(self._toggle_mod_details)
-
-        # Tools menu
-        self._view.ui.actionClear_Active_Mods.triggered.connect(self._clear_active_mods)
-
-        # Help menu
-        self._view.ui.actionUser_Manual.triggered.connect(self._open_user_manual)
-        self._view.ui.actionCheck_Updates.triggered.connect(self._check_app_update)
-        self._view.ui.actionAbout.triggered.connect(self._open_about)
+        self._view.ui.actionShow_mod_informations.triggered.connect(
+            self._toggle_mod_details
+        )
+        # self._view.ui.actionZoom_in.triggered.connect()
+        # self._view.ui.actionZoom_out.triggered.connect()
+        # self._view.ui.actionReset_zoom.triggered.connect()
 
         # Font menu
-        self._view.ui.actionDefaultFont.triggered.connect(
+        self._view.ui.actionDefault.triggered.connect(
             lambda: self._change_font("default")
         )
-        self._view.ui.actionDyslexiaFont.triggered.connect(
+        self._view.ui.actionDyslexic.triggered.connect(
             lambda: self._change_font("dyslexia")
         )
+
+        # Import menu
+        self._view.ui.action_load_order_from_code.triggered.connect(
+            self._open_import_code
+        )
+        self._view.ui.action_local_mod.triggered.connect(self._import_mod)
+
+        # Export menu
+        self._view.ui.action_load_order_as_code.triggered.connect(
+            self._open_export_code
+        )
+
+        # Help menu
+        self._view.ui.actionUser_manual.triggered.connect(self._open_user_manual)
+        self._view.ui.actionAbout.triggered.connect(self._open_about)
 
     def _connect_button_signals(self) -> None:
         """Connect button click signals to their handlers."""
         # Mod management buttons
-        self._view.ui.pushButton_refresh_mods.clicked.connect(
+        self._view.ui.pushButton_refresh_available_mods.clicked.connect(
             self._refresh_installed_mods
         )
-        self._view.ui.pushButton_add_mod.clicked.connect(self._enable_selected_mod)
-        self._view.ui.pushButton_remove_mod.clicked.connect(self._disable_selected_mod)
+        self._view.ui.pushButton_add.clicked.connect(self._enable_selected_mod)
+        self._view.ui.pushButton_remove.clicked.connect(self._disable_selected_mod)
         self._view.ui.pushButton_move_up.clicked.connect(self._move_up)
         self._view.ui.pushButton_move_down.clicked.connect(self._move_down)
         self._view.ui.pushButton_clear_all.clicked.connect(self._clear_active_mods)
@@ -146,8 +166,8 @@ class ModManagerController(QObject):
         self._view.ui.pushButton_delete_preset.clicked.connect(self._delete_preset)
 
         # Share code buttons
-        self._view.ui.pushButton_export_config.clicked.connect(self._export_share_code)
-        self._view.ui.pushButton_import_config.clicked.connect(self._import_share_code)
+        self._view.ui.pushButton_export.clicked.connect(self._export_share_code)
+        self._view.ui.pushButton_import.clicked.connect(self._import_share_code)
 
     def _connect_list_signals(self) -> None:
         """Connect list widget signals to their handlers."""
@@ -185,12 +205,72 @@ class ModManagerController(QObject):
         )
 
         # Search filtering
-        self._view.ui.lineEdit_search_installed.textChanged.connect(
+        self._view.ui.lineEdit_search_available_mods.textChanged.connect(
             self._filter_installed_mods
         )
-        self._view.ui.lineEdit_search_active.textChanged.connect(
+        self._view.ui.lineEdit_search_active_mods.textChanged.connect(
             self._filter_active_mods
         )
+
+    # ================== MENU ACTIONS ==================
+
+    def _open_game_folder(self):
+        folder_path = self._config.get_game_directory()
+        try:
+            if sys.platform.startswith("win"):
+                os.startfile(folder_path)
+            elif sys.platform.startswith("darwin"):
+                subprocess.Popen(["open", folder_path])
+            else:
+                subprocess.Popen(["xdg-open", folder_path])
+        except Exception as e:
+            self._view.show_error(
+                "Open Folder Error", f"Failed to open game folder: {str(e)}"
+            )
+
+    def _open_mods_folder(self):
+        folder_path = self._config.get_mods_directory()
+        try:
+            if sys.platform.startswith("win"):
+                os.startfile(folder_path)
+            elif sys.platform.startswith("darwin"):
+                subprocess.Popen(["open", folder_path])
+            else:
+                subprocess.Popen(["xdg-open", folder_path])
+        except Exception as e:
+            self._view.show_error(
+                "Open Folder Error", f"Failed to open mods folder: {str(e)}"
+            )
+
+    def _open_options_file(self):
+        folder_path = self._config.get_options_file()
+        try:
+            if sys.platform.startswith("win"):
+                os.startfile(folder_path)
+            elif sys.platform.startswith("darwin"):
+                subprocess.Popen(["open", folder_path])
+            else:
+                subprocess.Popen(["xdg-open", folder_path])
+        except Exception as e:
+            self._view.show_error(
+                "Open Folder Error", f"Failed to open game folder: {str(e)}"
+            )
+
+    def _open_logs(self):
+        project_root = Path(__file__).resolve().parent.parent
+        log_file = project_root / "logs" / "goh_mod_manager.log"
+        logger.info(f"Opening log file: {log_file}")
+        try:
+            if sys.platform.startswith("win"):
+                os.startfile(log_file)
+            elif sys.platform.startswith("darwin"):
+                subprocess.Popen(["open", log_file])
+            else:
+                subprocess.Popen(["xdg-open", log_file])
+        except Exception as e:
+            self._view.show_error(
+                "Open Log Error", f"Failed to open log file: {str(e)}"
+            )
 
     # ================== MOD MANAGEMENT ==================
 
@@ -406,7 +486,7 @@ class ModManagerController(QObject):
         Args:
             checked: Whether the mod details should be visible
         """
-        self._view.ui.groupBox_mod_info.setVisible(checked)
+        self._view.ui.groupBox_mod_informations.setVisible(checked)
 
     # ================== PRESET MANAGEMENT ==================
 
@@ -770,9 +850,13 @@ class ModManagerController(QObject):
         dialog = AboutDialog(self._view, QApplication.applicationVersion())
         dialog.exec()
 
-    def _check_app_update(self) -> None:
-        """Check for application updates."""
-        CheckUpdateDialog(self._view, QApplication.applicationVersion())
+    def _open_import_code(self):
+        dialog = ImportCodeDialog(self._view)
+        dialog.exec()
+
+    def _open_export_code(self):
+        dialog = ExportCodeDialog(self._view)
+        dialog.exec()
 
     # ================== FONT MANAGEMENT ==================
 

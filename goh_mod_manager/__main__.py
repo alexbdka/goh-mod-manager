@@ -13,7 +13,7 @@ from goh_mod_manager.views.mod_manager_view import ModManagerView
 
 
 class ModManagerApp:
-    """Main application class following MVC pattern."""
+    """Main application class"""
 
     def __init__(self):
         """Initialize MVC components."""
@@ -37,7 +37,7 @@ def setup_application(app: QtWidgets.QApplication):
     app.setApplicationName("Call to Arms: Gates of Hell - Mod Manager")
     app.setOrganizationName("alexbdka")
     app.setOrganizationDomain("alexbdka.github.io")
-    app.setApplicationVersion("1.2.0")
+    app.setApplicationVersion("1.3.0")
     app.setApplicationDisplayName("GoH Mod Manager")
 
 

@@ -6,20 +6,20 @@
             <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>400</width>
-                <height>200</height>
+                <width>450</width>
+                <height>240</height>
             </rect>
         </property>
         <property name="minimumSize">
             <size>
-                <width>400</width>
-                <height>200</height>
+                <width>450</width>
+                <height>240</height>
             </size>
         </property>
         <property name="maximumSize">
             <size>
-                <width>400</width>
-                <height>200</height>
+                <width>450</width>
+                <height>240</height>
             </size>
         </property>
         <property name="windowTitle">
@@ -76,19 +76,15 @@
                     <property name="text">
                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Credits:&lt;/span&gt;&lt;br/&gt;•
                             Interface: &lt;a href=&quot;https://doc.qt.io/qtforpython/&quot;&gt;&lt;span style=&quot;
-                            text-decoration: underline; color:#0000ff;&quot;&gt;Qt for Python (PySide6)&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;•
+                            text-decoration: underline; color:#55aaff;&quot;&gt;Qt for Python (PySide6)&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;•
                             Icons: &lt;a href=&quot;https://remixicon.com/&quot;&gt;&lt;span style=&quot;
-                            text-decoration: underline; color:#0000ff;&quot;&gt;Remix Icon&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;•
+                            text-decoration: underline; color:#55aaff;&quot;&gt;Remix Icon, awasde&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;•
                             Developer: &lt;a href=&quot;https://github.com/alexbdka&quot;&gt;&lt;span style=&quot;
-                            text-decoration: underline; color:#0000ff;&quot;&gt;alex6&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
+                            text-decoration: underline; color:#55aaff;&quot;&gt;alex6&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
                         </string>
                     </property>
                     <property name="textFormat">
                         <enum>Qt::TextFormat::RichText</enum>
-                    </property>
-                    <property name="alignment">
-                        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop
-                        </set>
                     </property>
                     <property name="wordWrap">
                         <bool>true</bool>

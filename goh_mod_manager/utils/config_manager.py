@@ -10,6 +10,9 @@ class ConfigManager(QObject):
     def get_mods_directory(self):
         return self.settings.value("mods_directory", "")
 
+    def get_game_directory(self):
+        return self.settings.value("game_directory", "")
+
     def get_options_file(self):
         return self.settings.value("options_file", "")
 
@@ -22,6 +25,9 @@ class ConfigManager(QObject):
     # Setters
     def set_mods_directory(self, path):
         self.settings.setValue("mods_directory", path)
+
+    def set_game_directory(self, path):
+        self.settings.setValue("game_directory", path)
 
     def set_options_file(self, path):
         self.settings.setValue("options_file", path)
