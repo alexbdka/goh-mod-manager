@@ -5,7 +5,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from PySide6.QtCore import QObject, QPoint
 from PySide6.QtGui import QFont, QFontDatabase, Qt
@@ -17,6 +17,7 @@ from goh_mod_manager.models.mod_manager_model import ModManagerModel
 from goh_mod_manager.views.dialogs.about_dialog import AboutDialog
 from goh_mod_manager.views.dialogs.export_code_dialog import ExportCodeDialog
 from goh_mod_manager.views.dialogs.import_code_dialog import ImportCodeDialog
+from goh_mod_manager.views.dialogs.import_details import DetailedMessageDialog
 from goh_mod_manager.views.dialogs.import_dialog import ImportDialog
 from goh_mod_manager.views.dialogs.preferences_dialog import PreferencesDialog
 from goh_mod_manager.views.dialogs.preset_dialog import PresetDialog
@@ -164,10 +165,6 @@ class ModManagerController(QObject):
         self._view.ui.pushButton_save_preset.clicked.connect(self._save_preset)
         self._view.ui.pushButton_load_preset.clicked.connect(self._load_preset)
         self._view.ui.pushButton_delete_preset.clicked.connect(self._delete_preset)
-
-        # Share code buttons
-        self._view.ui.pushButton_export.clicked.connect(self._export_share_code)
-        self._view.ui.pushButton_import.clicked.connect(self._import_share_code)
 
     def _connect_list_signals(self) -> None:
         """Connect list widget signals to their handlers."""
@@ -850,12 +847,135 @@ class ModManagerController(QObject):
         dialog = AboutDialog(self._view, QApplication.applicationVersion())
         dialog.exec()
 
-    def _open_import_code(self):
-        dialog = ImportCodeDialog(self._view)
+    def _open_export_code(self):
+        active_mods = self._model.get_active_mods()
+        if not active_mods:
+            self._view.show_message(
+                title="No Active Mods",
+                text="Add mods to the active list first.",
+                icon="warning",
+            )
+            return
+
+        mod_data = [{"id": str(mod.id), "name": mod.name} for mod in active_mods]
+        code = self._generate_code(mod_data)
+
+        dialog = ExportCodeDialog(self._view)
+        dialog.set_code(code, len(mod_data))
         dialog.exec()
 
-    def _open_export_code(self):
-        dialog = ExportCodeDialog(self._view)
+    def _open_import_code(self):
+        dialog = ImportCodeDialog(self._view)
+        dialog.import_requested.connect(self._handle_import)
+        dialog.exec()
+
+    def _handle_import(self, code: str):
+        try:
+            mod_data = self._decode_code(code)
+            found_mods, missing_mods = self._apply_mod_data(mod_data)
+
+            self._show_import_result(found_mods, missing_mods, len(mod_data))
+
+        except Exception as e:
+            self._view.show_error(
+                title="Import Error", text=f"Invalid share code: {str(e)}"
+            )
+
+    def _generate_code(self, mod_data: List[Dict]) -> str:
+        # to JSON
+        json_string = json.dumps(mod_data, separators=(",", ":"))
+
+        # Encode to base64
+        b64_bytes = base64.b64encode(json_string.encode("utf-8"))
+        return b64_bytes.decode("utf-8")
+
+    def _decode_code(self, code: str) -> List[Dict]:
+        try:
+            clean_code = code.strip().replace(" ", "").replace("\n", "")
+
+            # Decode base64 code
+            json_bytes = base64.b64decode(clean_code)
+            json_string = json_bytes.decode("utf-8")
+
+            # Parse JSON
+            mod_data = json.loads(json_string)
+
+            # Is valid
+            if not isinstance(mod_data, list):
+                raise ValueError("Invalid data structure")
+
+            for item in mod_data:
+                if not isinstance(item, dict) or "id" not in item:
+                    raise ValueError("Invalid mod data structure")
+
+            return mod_data
+
+        except Exception as e:
+            raise ValueError(f"Cannot decode share code: {str(e)}")
+
+    def _apply_mod_data(self, mod_data: List[Dict]) -> Tuple[List[Dict], List[Dict]]:
+        self._model.clear_active_mods()
+
+        installed_mods = {str(mod.id): mod for mod in self._model.get_installed_mods()}
+
+        found_mods = []
+        missing_mods = []
+
+        for mod_info in mod_data:
+            mod_id = str(mod_info["id"])
+
+            if mod_id in installed_mods:
+                mod = installed_mods[mod_id]
+                self._model.enable_mod(mod)
+                found_mods.append(
+                    {
+                        "id": mod_id,
+                        "name": mod.name,
+                    }
+                )
+            else:
+                missing_mods.append(
+                    {
+                        "id": mod_id,
+                        "name": mod_info.get("name", "Unknown Mod"),
+                    }
+                )
+
+        return found_mods, missing_mods
+
+    def _show_import_result(
+        self, found_mods: List[Dict], missing_mods: List[Dict], total_count: int
+    ):
+        found_count = len(found_mods)
+        missing_count = len(missing_mods)
+
+        if missing_count == 0:
+            self._view.show_message(
+                title="Import Successful",
+                text=f"Successfully loaded {total_count} mods.",
+                icon="info",
+            )
+        else:
+            self._show_missing_mods_dialog(found_count, missing_mods, total_count)
+
+    def _show_missing_mods_dialog(
+        self, found_count: int, missing_mods: List[Dict], total_count: int
+    ):
+        missing_count = len(missing_mods)
+
+        missing_list = []
+        for mod in missing_mods:
+            missing_list.append(f"• {mod['name']} (ID: {mod['id']})")
+
+        missing_text = "\n".join(missing_list)
+
+        message = f"Loaded {found_count} of {total_count} mods.\n\n"
+        message += f"Missing mods ({missing_count}):\n{missing_text}"
+
+        dialog = DetailedMessageDialog(self._view)
+        dialog.set_title("Partial Import")
+        dialog.set_message(f"Loaded {found_count} of {total_count} mods.")
+        dialog.set_details(f"Missing mods ({missing_count}):", missing_text)
         dialog.exec()
 
     # ================== FONT MANAGEMENT ==================

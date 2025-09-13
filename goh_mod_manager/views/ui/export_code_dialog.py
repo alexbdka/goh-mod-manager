@@ -8,20 +8,20 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QMetaObject, Qt)
-from PySide6.QtGui import (QFont)
-from PySide6.QtWidgets import (QHBoxLayout, QLabel,
-                               QLineEdit, QPushButton, QVBoxLayout)
+from PySide6.QtCore import QCoreApplication, QMetaObject, Qt
+from PySide6.QtGui import QFont
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QVBoxLayout
+
 
 class Ui_ExportCodeDialog(object):
     def setupUi(self, ExportCodeDialog):
         if not ExportCodeDialog.objectName():
-            ExportCodeDialog.setObjectName(u"ExportCodeDialog")
+            ExportCodeDialog.setObjectName("ExportCodeDialog")
         ExportCodeDialog.resize(350, 120)
         self.verticalLayout = QVBoxLayout(ExportCodeDialog)
-        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setObjectName("verticalLayout")
         self.label = QLabel(ExportCodeDialog)
-        self.label.setObjectName(u"label")
+        self.label.setObjectName("label")
         font = QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -31,31 +31,38 @@ class Ui_ExportCodeDialog(object):
         self.verticalLayout.addWidget(self.label)
 
         self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.lineEdit_code = QLineEdit(ExportCodeDialog)
-        self.lineEdit_code.setObjectName(u"lineEdit_code")
+        self.lineEdit_code.setObjectName("lineEdit_code")
 
         self.horizontalLayout.addWidget(self.lineEdit_code)
 
         self.pushButton_copy = QPushButton(ExportCodeDialog)
-        self.pushButton_copy.setObjectName(u"pushButton_copy")
+        self.pushButton_copy.setObjectName("pushButton_copy")
 
         self.horizontalLayout.addWidget(self.pushButton_copy)
 
-
         self.verticalLayout.addLayout(self.horizontalLayout)
-
 
         self.retranslateUi(ExportCodeDialog)
 
         QMetaObject.connectSlotsByName(ExportCodeDialog)
+
     # setupUi
 
     def retranslateUi(self, ExportCodeDialog):
-        ExportCodeDialog.setWindowTitle(QCoreApplication.translate("ExportCodeDialog", u"Code", None))
-        self.label.setText(QCoreApplication.translate("ExportCodeDialog", u"Export", None))
+        ExportCodeDialog.setWindowTitle(
+            QCoreApplication.translate("ExportCodeDialog", "Code", None)
+        )
+        self.label.setText(
+            QCoreApplication.translate("ExportCodeDialog", "Export", None)
+        )
         self.lineEdit_code.setText("")
-        self.lineEdit_code.setPlaceholderText(QCoreApplication.translate("ExportCodeDialog", u"Wait for code...", None))
-        self.pushButton_copy.setText(QCoreApplication.translate("ExportCodeDialog", u"Copy", None))
-    # retranslateUi
+        self.lineEdit_code.setPlaceholderText(
+            QCoreApplication.translate("ExportCodeDialog", "Wait for code...", None)
+        )
+        self.pushButton_copy.setText(
+            QCoreApplication.translate("ExportCodeDialog", "Copy", None)
+        )
 
+    # retranslateUi

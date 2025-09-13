@@ -359,38 +359,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_sidebar.addWidget(self.groupBox_presets)
 
-        self.groupBox_sharing = QGroupBox(self.widget_right_panel)
-        self.groupBox_sharing.setObjectName("groupBox_sharing")
-        self.groupBox_sharing.setMinimumSize(QSize(0, 120))
-        self.verticalLayout_sharing = QVBoxLayout(self.groupBox_sharing)
-        self.verticalLayout_sharing.setSpacing(6)
-        self.verticalLayout_sharing.setObjectName("verticalLayout_sharing")
-        self.lineEdit_share_code = QLineEdit(self.groupBox_sharing)
-        self.lineEdit_share_code.setObjectName("lineEdit_share_code")
-        self.lineEdit_share_code.setClearButtonEnabled(True)
-
-        self.verticalLayout_sharing.addWidget(self.lineEdit_share_code)
-
-        self.horizontalLayout_sharing_controls = QHBoxLayout()
-        self.horizontalLayout_sharing_controls.setSpacing(6)
-        self.horizontalLayout_sharing_controls.setObjectName(
-            "horizontalLayout_sharing_controls"
-        )
-        self.pushButton_import = QPushButton(self.groupBox_sharing)
-        self.pushButton_import.setObjectName("pushButton_import")
-
-        self.horizontalLayout_sharing_controls.addWidget(self.pushButton_import)
-
-        self.pushButton_export = QPushButton(self.groupBox_sharing)
-        self.pushButton_export.setObjectName("pushButton_export")
-        self.pushButton_export.setEnabled(True)
-
-        self.horizontalLayout_sharing_controls.addWidget(self.pushButton_export)
-
-        self.verticalLayout_sharing.addLayout(self.horizontalLayout_sharing_controls)
-
-        self.verticalLayout_sidebar.addWidget(self.groupBox_sharing)
-
         self.splitter_main.addWidget(self.widget_right_panel)
 
         self.horizontalLayout_main.addWidget(self.splitter_main)
@@ -439,9 +407,6 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.pushButton_load_preset, self.pushButton_save_preset)
         QWidget.setTabOrder(self.pushButton_save_preset, self.pushButton_delete_preset)
         QWidget.setTabOrder(self.pushButton_delete_preset, self.listWidget_presets)
-        QWidget.setTabOrder(self.listWidget_presets, self.lineEdit_share_code)
-        QWidget.setTabOrder(self.lineEdit_share_code, self.pushButton_import)
-        QWidget.setTabOrder(self.pushButton_import, self.pushButton_export)
 
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
@@ -655,35 +620,6 @@ class Ui_MainWindow(object):
         )
         self.pushButton_delete_preset.setText(
             QCoreApplication.translate("MainWindow", "Delete", None)
-        )
-        self.groupBox_sharing.setTitle(
-            QCoreApplication.translate("MainWindow", "Configuration Sharing", None)
-        )
-        self.lineEdit_share_code.setPlaceholderText(
-            QCoreApplication.translate(
-                "MainWindow", "Paste a shared configuration code here...", None
-            )
-        )
-        self.pushButton_import.setText(
-            QCoreApplication.translate("MainWindow", "Import", None)
-        )
-        # if QT_CONFIG(tooltip)
-        self.pushButton_export.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Generate a shareable code for your current mod\n"
-                "\n"
-                "\n"
-                "                                                                    setup\n"
-                "\n"
-                "\n"
-                "                                                                ",
-                None,
-            )
-        )
-        # endif // QT_CONFIG(tooltip)
-        self.pushButton_export.setText(
-            QCoreApplication.translate("MainWindow", "Export", None)
         )
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", "&File", None))
         self.menuEdit.setTitle(QCoreApplication.translate("MainWindow", "&Edit", None))

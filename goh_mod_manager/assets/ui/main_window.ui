@@ -429,67 +429,6 @@
                                         </layout>
                                     </widget>
                                 </item>
-                                <item>
-                                    <widget class="QGroupBox" name="groupBox_sharing">
-                                        <property name="minimumSize">
-                                            <size>
-                                                <width>0</width>
-                                                <height>120</height>
-                                            </size>
-                                        </property>
-                                        <property name="title">
-                                            <string>Configuration Sharing</string>
-                                        </property>
-                                        <layout class="QVBoxLayout" name="verticalLayout_sharing">
-                                            <property name="spacing">
-                                                <number>6</number>
-                                            </property>
-                                            <item>
-                                                <widget class="QLineEdit" name="lineEdit_share_code">
-                                                    <property name="placeholderText">
-                                                        <string>Paste a shared configuration code here...</string>
-                                                    </property>
-                                                    <property name="clearButtonEnabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <layout class="QHBoxLayout" name="horizontalLayout_sharing_controls">
-                                                    <property name="spacing">
-                                                        <number>6</number>
-                                                    </property>
-                                                    <item>
-                                                        <widget class="QPushButton" name="pushButton_import">
-                                                            <property name="text">
-                                                                <string>Import</string>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                    <item>
-                                                        <widget class="QPushButton" name="pushButton_export">
-                                                            <property name="enabled">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                            <property name="toolTip">
-                                                                <string>Generate a shareable code for your current mod
-
-
-                                                                    setup
-
-
-                                                                </string>
-                                                            </property>
-                                                            <property name="text">
-                                                                <string>Export</string>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                </layout>
-                                            </item>
-                                        </layout>
-                                    </widget>
-                                </item>
                             </layout>
                         </widget>
                     </widget>
@@ -740,9 +679,6 @@
         <tabstop>pushButton_save_preset</tabstop>
         <tabstop>pushButton_delete_preset</tabstop>
         <tabstop>listWidget_presets</tabstop>
-        <tabstop>lineEdit_share_code</tabstop>
-        <tabstop>pushButton_import</tabstop>
-        <tabstop>pushButton_export</tabstop>
     </tabstops>
     <resources>
         <include location="../../resources/resources.qrc"/>

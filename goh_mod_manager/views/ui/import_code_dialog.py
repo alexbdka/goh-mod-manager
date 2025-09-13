@@ -8,20 +8,20 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QMetaObject, Qt)
-from PySide6.QtGui import (QFont)
-from PySide6.QtWidgets import (QHBoxLayout, QLabel,
-                               QLineEdit, QPushButton, QVBoxLayout)
+from PySide6.QtCore import QCoreApplication, QMetaObject, Qt
+from PySide6.QtGui import QFont
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QVBoxLayout
+
 
 class Ui_ImportCodeDialog(object):
     def setupUi(self, ImportCodeDialog):
         if not ImportCodeDialog.objectName():
-            ImportCodeDialog.setObjectName(u"ImportCodeDialog")
+            ImportCodeDialog.setObjectName("ImportCodeDialog")
         ImportCodeDialog.resize(350, 120)
         self.verticalLayout = QVBoxLayout(ImportCodeDialog)
-        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setObjectName("verticalLayout")
         self.label = QLabel(ImportCodeDialog)
-        self.label.setObjectName(u"label")
+        self.label.setObjectName("label")
         font = QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -31,30 +31,37 @@ class Ui_ImportCodeDialog(object):
         self.verticalLayout.addWidget(self.label)
 
         self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.lineEdit_code = QLineEdit(ImportCodeDialog)
-        self.lineEdit_code.setObjectName(u"lineEdit_code")
+        self.lineEdit_code.setObjectName("lineEdit_code")
 
         self.horizontalLayout.addWidget(self.lineEdit_code)
 
         self.pushButton_import = QPushButton(ImportCodeDialog)
-        self.pushButton_import.setObjectName(u"pushButton_import")
+        self.pushButton_import.setObjectName("pushButton_import")
 
         self.horizontalLayout.addWidget(self.pushButton_import)
 
-
         self.verticalLayout.addLayout(self.horizontalLayout)
-
 
         self.retranslateUi(ImportCodeDialog)
 
         QMetaObject.connectSlotsByName(ImportCodeDialog)
+
     # setupUi
 
     def retranslateUi(self, ImportCodeDialog):
-        ImportCodeDialog.setWindowTitle(QCoreApplication.translate("ImportCodeDialog", u"Code", None))
-        self.label.setText(QCoreApplication.translate("ImportCodeDialog", u"Import", None))
-        self.lineEdit_code.setPlaceholderText(QCoreApplication.translate("ImportCodeDialog", u"Enter code...", None))
-        self.pushButton_import.setText(QCoreApplication.translate("ImportCodeDialog", u"Import", None))
-    # retranslateUi
+        ImportCodeDialog.setWindowTitle(
+            QCoreApplication.translate("ImportCodeDialog", "Code", None)
+        )
+        self.label.setText(
+            QCoreApplication.translate("ImportCodeDialog", "Import", None)
+        )
+        self.lineEdit_code.setPlaceholderText(
+            QCoreApplication.translate("ImportCodeDialog", "Enter code...", None)
+        )
+        self.pushButton_import.setText(
+            QCoreApplication.translate("ImportCodeDialog", "Import", None)
+        )
 
+    # retranslateUi
