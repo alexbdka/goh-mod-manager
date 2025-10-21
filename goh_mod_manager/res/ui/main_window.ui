@@ -17,8 +17,8 @@
             </size>
         </property>
         <property name="windowIcon">
-            <iconset resource="../../resources/resources.qrc">
-                <normaloff>:/assets/icons/logo.ico</normaloff>:/assets/icons/logo.ico
+            <iconset resource="../resources.qrc">
+                <normaloff>:/icons/icon/logo.ico</normaloff>:/icons/icon/logo.ico
             </iconset>
         </property>
         <widget class="QWidget" name="centralwidget">
@@ -104,11 +104,9 @@
                                                         <widget class="QPushButton"
                                                                 name="pushButton_refresh_available_mods">
                                                             <property name="icon">
-                                                                <iconset resource="../../resources/resources.qrc">
-                                                                    <normaloff>
-                                                                        :/assets/icons/refresh-line.svg
-                                                                    </normaloff>
-                                                                    :/assets/icons/refresh-line.svg
+                                                                <iconset resource="../resources.qrc">
+                                                                    <normaloff>:/icons/icon/refresh-line.svg</normaloff>
+                                                                    :/icons/icon/refresh-line.svg
                                                                 </iconset>
                                                             </property>
                                                         </widget>
@@ -681,7 +679,7 @@
         <tabstop>listWidget_presets</tabstop>
     </tabstops>
     <resources>
-        <include location="../../resources/resources.qrc"/>
+        <include location="../resources.qrc"/>
     </resources>
     <connections/>
 </ui>

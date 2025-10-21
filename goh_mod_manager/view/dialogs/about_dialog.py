@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QDialog
 
-from goh_mod_manager.views.ui.about_dialog import Ui_AboutDialog
+from goh_mod_manager.view.ui.about_dialog import Ui_AboutDialog
 
 
 class AboutDialog(QDialog):

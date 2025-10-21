@@ -143,7 +143,7 @@ class Ui_PreferencesDialog(object):
             )
         )
         self.settingsFileLabel.setText(
-            QCoreApplication.translate("PreferencesDialog", "Settings file", None)
+            QCoreApplication.translate("PreferencesDialog", "Options file", None)
         )
         self.modsFolderLabel.setText(
             QCoreApplication.translate("PreferencesDialog", "Mods folder :", None)

@@ -28,3 +28,5 @@ logger.add(
     retention="7 days",
     compression="zip",
 )
+
+logger.info("Logger initialized")

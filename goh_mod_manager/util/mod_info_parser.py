@@ -2,8 +2,8 @@ import re
 from pathlib import Path
 from typing import Dict, Optional
 
-from goh_mod_manager.models.mod import Mod
-from goh_mod_manager.utils.mod_manager_logger import logger
+from goh_mod_manager.model.mod import Mod
+from goh_mod_manager.util.mod_manager_logger import logger
 
 
 class ModInfoParser:
@@ -26,7 +26,7 @@ class ModInfoParser:
 
     # Regex patterns for different field types
     FIELD_PATTERN = re.compile(
-        r'\{\s*(name|desc|minGameVersion|maxGameVersion)\s+"?([^"}]+)"?\s*}',
+        r'\{\s*(name|desc|minGameVersion|maxGameVersion|require)\s+"?([^"}]+)"?\s*}',
         re.IGNORECASE,
     )
 
@@ -36,6 +36,7 @@ class ModInfoParser:
         "desc": "No description available",
         "minGameVersion": "any",
         "maxGameVersion": "any",
+        "require": "",
     }
 
     # Mapping from lowercase field names to camelCase
@@ -44,6 +45,7 @@ class ModInfoParser:
         "desc": "desc",
         "mingameversion": "minGameVersion",
         "maxgameversion": "maxGameVersion",
+        "require": "require",
     }
 
     def __init__(self, file_path: str):
@@ -113,7 +115,7 @@ class ModInfoParser:
 
         # Log missing fields
         missing_fields = set(self.DEFAULT_VALUES.keys()) - found_fields
-        if missing_fields:
+        if missing_fields and missing_fields != {"require"}:
             logger.info(f"Using default values for missing fields: {missing_fields}")
 
         return result
@@ -163,6 +165,7 @@ class ModInfoParser:
                 maxGameVersion=parsed_data["maxGameVersion"],
                 folderPath=str(self.file_path.parent),
                 manualInstall=self._detect_manual_installation(),
+                require=parsed_data["require"],
             )
 
             return mod

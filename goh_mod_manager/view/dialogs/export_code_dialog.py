@@ -1,7 +1,7 @@
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QDialog, QApplication
 
-from goh_mod_manager.views.ui.export_code_dialog import Ui_ExportCodeDialog
+from goh_mod_manager.view.ui.export_code_dialog import Ui_ExportCodeDialog
 
 
 class ExportCodeDialog(QDialog):
@@ -26,7 +26,7 @@ class ExportCodeDialog(QDialog):
         self.ui.pushButton_copy.setEnabled(False)
 
         QTimer.singleShot(
-            1000,
+            3000,
             lambda: [
                 self.ui.pushButton_copy.setText(original_text),
                 self.ui.pushButton_copy.setEnabled(True),

@@ -10,8 +10,8 @@ from PySide6.QtWidgets import (
     QMessageBox,
 )
 
-from goh_mod_manager.models.mod import Mod
-from goh_mod_manager.views.ui.main_window import Ui_MainWindow
+from goh_mod_manager.model.mod import Mod
+from goh_mod_manager.view.ui.main_window import Ui_MainWindow
 
 
 class ModManagerView(QMainWindow):
@@ -496,6 +496,9 @@ class ModManagerView(QMainWindow):
             font = item.font()
             font.setBold(True)
             item.setFont(font)
+
+        for mods in mod.require:
+            pass
 
         list_widget.addItem(item)
 

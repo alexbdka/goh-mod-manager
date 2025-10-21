@@ -2,8 +2,8 @@ import re
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from goh_mod_manager.models.mod import Mod
-from goh_mod_manager.utils.mod_manager_logger import logger
+from goh_mod_manager.model.mod import Mod
+from goh_mod_manager.util.mod_manager_logger import logger
 
 
 class OptionsSetParser:

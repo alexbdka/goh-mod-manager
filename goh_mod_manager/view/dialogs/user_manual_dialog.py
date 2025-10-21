@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (
     QDialog,
 )
 
-from goh_mod_manager.views.ui.user_manual_dialog import Ui_UserManualDialog
+from goh_mod_manager.view.ui.user_manual_dialog import Ui_UserManualDialog
 
 
 class UserManualDialog(QDialog):

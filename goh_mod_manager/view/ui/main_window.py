@@ -42,7 +42,7 @@ from PySide6.QtWidgets import (
 )
 
 # noinspection PyUnresolvedReferences
-import goh_mod_manager.resources.resources_rc
+import goh_mod_manager.res.resources
 
 
 class Ui_MainWindow(object):
@@ -53,7 +53,7 @@ class Ui_MainWindow(object):
         MainWindow.setMinimumSize(QSize(1200, 600))
         icon = QIcon()
         icon.addFile(
-            ":/assets/icons/logo.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off
+            ":/icons/icon/logo.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off
         )
         MainWindow.setWindowIcon(icon)
         self.actionImport_mod = QAction(MainWindow)
@@ -152,10 +152,7 @@ class Ui_MainWindow(object):
         )
         icon1 = QIcon()
         icon1.addFile(
-            ":/assets/icons/refresh-line.svg",
-            QSize(),
-            QIcon.Mode.Normal,
-            QIcon.State.Off,
+            ":/icons/icon/refresh-line.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off
         )
         self.pushButton_refresh_available_mods.setIcon(icon1)
 

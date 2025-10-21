@@ -7,8 +7,8 @@ from PySide6.QtWidgets import (
     QMessageBox,
 )
 
-from goh_mod_manager.utils.mod_manager_logger import logger
-from goh_mod_manager.views.ui.import_dialog import Ui_ImportDialog
+from goh_mod_manager.util.mod_manager_logger import logger
+from goh_mod_manager.view.ui.import_dialog import Ui_ImportDialog
 
 
 class ImportDialog(QDialog):

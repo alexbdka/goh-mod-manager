@@ -4,8 +4,8 @@ from PySide6.QtWidgets import (
     QMessageBox,
 )
 
-from goh_mod_manager.utils.config_manager import ConfigManager
-from goh_mod_manager.views.ui.preferences_dialog import Ui_PreferencesDialog
+from goh_mod_manager.util.config_manager import ConfigManager
+from goh_mod_manager.view.ui.preferences_dialog import Ui_PreferencesDialog
 
 
 class PreferencesDialog(QDialog):

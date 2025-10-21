@@ -8,21 +8,21 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 from PySide6.QtCore import QObject, QPoint
-from PySide6.QtGui import QFont, QFontDatabase, Qt
-from PySide6.QtWidgets import QApplication, QDialog, QListWidgetItem, QMenu
+from PySide6.QtGui import QFont, QFontDatabase, Qt, QBrush, QColor, QPalette
+from PySide6.QtWidgets import QApplication, QDialog, QListWidgetItem, QMenu, QMessageBox
 from loguru import logger
 
-from goh_mod_manager.models.mod import Mod
-from goh_mod_manager.models.mod_manager_model import ModManagerModel
-from goh_mod_manager.views.dialogs.about_dialog import AboutDialog
-from goh_mod_manager.views.dialogs.export_code_dialog import ExportCodeDialog
-from goh_mod_manager.views.dialogs.import_code_dialog import ImportCodeDialog
-from goh_mod_manager.views.dialogs.import_details import DetailedMessageDialog
-from goh_mod_manager.views.dialogs.import_dialog import ImportDialog
-from goh_mod_manager.views.dialogs.preferences_dialog import PreferencesDialog
-from goh_mod_manager.views.dialogs.preset_dialog import PresetDialog
-from goh_mod_manager.views.dialogs.user_manual_dialog import UserManualDialog
-from goh_mod_manager.views.mod_manager_view import ModManagerView
+from goh_mod_manager.model.mod import Mod
+from goh_mod_manager.model.mod_manager_model import ModManagerModel
+from goh_mod_manager.view.dialogs.about_dialog import AboutDialog
+from goh_mod_manager.view.dialogs.export_code_dialog import ExportCodeDialog
+from goh_mod_manager.view.dialogs.import_code_dialog import ImportCodeDialog
+from goh_mod_manager.view.dialogs.import_details import DetailedMessageDialog
+from goh_mod_manager.view.dialogs.import_dialog import ImportDialog
+from goh_mod_manager.view.dialogs.preferences_dialog import PreferencesDialog
+from goh_mod_manager.view.dialogs.preset_dialog import PresetDialog
+from goh_mod_manager.view.dialogs.user_manual_dialog import UserManualDialog
+from goh_mod_manager.view.mod_manager_view import ModManagerView
 
 
 class ModManagerController(QObject):
@@ -274,13 +274,10 @@ class ModManagerController(QObject):
     def _enable_mod_from_item(self, item: QListWidgetItem) -> None:
         """
         Enable a mod from a list widget item double-click.
-
-        Args:
-            item: The clicked list widget item containing mod data
         """
         mod = self._get_mod_from_item(item)
         if mod:
-            self._model.enable_mod(mod)
+            self._enable_mods([mod])
 
     def _disable_mod_from_item(self, item: QListWidgetItem) -> None:
         """
@@ -294,14 +291,75 @@ class ModManagerController(QObject):
             self._model.disable_mod(mod)
 
     def _enable_selected_mod(self) -> None:
-        """Enable all currently selected mods from the available list."""
+        """
+        Enable all currently selected mods from the available list.
+        """
         mods = [
             self._get_mod_from_item(item)
             for item in self._view.get_current_available_mod()
         ]
+        mods = [m for m in mods if m]
+        if not mods:
+            return
+
+        self._enable_mods(mods)
+
+    def _enable_mods(self, mods: list) -> None:
+        """
+        Enable one or more mods, checking for missing dependencies.
+        Asks the user for confirmation through the view if dependencies are missing.
+        """
+        active_mods = self._model.get_active_mods()
+        installed_mods = self._model.get_installed_mods()
+
         for mod in mods:
-            if mod:
-                self._model.enable_mod(mod)
+            missing = self._get_missing_dependencies(mod, active_mods, installed_mods)
+
+            if missing:
+                dep_names = ", ".join(m.name for m in missing)
+
+                # Format text properly (remove custom tags for dialogs)
+                title = self._view.parse_formatted_text(f"Missing dependencies")
+                text = self._view.parse_formatted_text(
+                    f"The mod '{mod.name}' requires the following dependencies:\n\n"
+                    f"{dep_names}\n\n"
+                    "Would you like to enable them as well?"
+                )
+
+                if self._view.ask_confirmation(
+                    title, text, default=QMessageBox.StandardButton.Yes
+                ):
+                    for dep in missing:
+                        self._model.enable_mod(dep)
+
+            # Finally, enable the main mod
+            self._model.enable_mod(mod)
+
+    def _get_missing_dependencies(self, mod, active_mods, installed_mods):
+        """
+        Return a list of dependency mods that are not yet enabled.
+
+        Args:
+            mod: The Mod object whose dependencies to check.
+            active_mods: List of currently active mods.
+            installed_mods: List of all installed mods.
+
+        Returns:
+            List of Mod objects that are required but not currently enabled.
+        """
+        if not mod.require:
+            return []
+
+        required_ids = str(mod.require).split()
+        active_ids = {m.id for m in active_mods}
+        installed_by_id = {m.id: m for m in installed_mods}
+
+        missing = []
+        for req_id in required_ids:
+            if req_id not in active_ids and req_id in installed_by_id:
+                missing.append(installed_by_id[req_id])
+
+        return missing
 
     def _disable_selected_mod(self) -> None:
         """Disable all currently selected mods from the active list."""
@@ -469,12 +527,37 @@ class ModManagerController(QObject):
     def _on_mod_selected(self, current: QListWidgetItem) -> None:
         """
         Handle mod selection changes in lists.
-
-        Args:
-            current: The currently selected list item
         """
         mod = self._get_mod_from_item(current) if current else None
         self._view.update_mod_details(mod)
+
+        # Palette courante pour déterminer la couleur par défaut
+        palette = self._view.ui.listWidget_available_mods.palette()
+        default_text_color = palette.color(QPalette.Text)
+
+        if not mod:
+            self._reset_mod_colors(default_text_color)
+            return
+
+        required_ids = str(mod.require).split() if getattr(mod, "require", None) else []
+
+        for i in range(self._view.ui.listWidget_available_mods.count()):
+            item = self._view.ui.listWidget_available_mods.item(i)
+            item_mod = item.data(Qt.UserRole)
+
+            if item_mod.id in required_ids:
+                item.setForeground(QBrush(QColor("#E67E22")))  # orange si dépendance
+            else:
+                item.setForeground(QBrush(default_text_color))  # couleur du thème
+
+    def _reset_mod_colors(self, color=None):
+        """Réinitialise les couleurs de tous les mods dans la liste."""
+        palette = self._view.ui.listWidget_available_mods.palette()
+        default_text_color = color or palette.color(QPalette.Text)
+
+        for i in range(self._view.ui.listWidget_available_mods.count()):
+            item = self._view.ui.listWidget_available_mods.item(i)
+            item.setForeground(QBrush(default_text_color))
 
     def _toggle_mod_details(self, checked: bool) -> None:
         """
@@ -988,12 +1071,12 @@ class ModManagerController(QObject):
             font_name: Name of the font to apply ("default" or "dyslexia")
         """
         if font_name == "default" or font_name == "":
-            QFontDatabase.addApplicationFont(":/assets/fonts/Inter-Regular.otf")
+            QFontDatabase.addApplicationFont(":/assets/font/Inter-Regular.otf")
             font = QFont("Inter", 10)
             self._view.set_application_font(font)
             self._config.set_font("default")
         elif font_name == "dyslexia":
-            QFontDatabase.addApplicationFont(":/assets/fonts/OpenDyslexic-Regular.otf")
+            QFontDatabase.addApplicationFont(":/assets/font/OpenDyslexic-Regular.otf")
             font = QFont("OpenDyslexic", 10)
             self._view.set_application_font(font)
             self._config.set_font("dyslexia")

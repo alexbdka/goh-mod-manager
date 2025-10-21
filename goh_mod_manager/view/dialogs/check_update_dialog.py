@@ -2,7 +2,7 @@ import requests
 from PySide6.QtWidgets import QMessageBox, QDialog
 from packaging import version
 
-from goh_mod_manager.utils.mod_manager_logger import logger
+from goh_mod_manager.util.mod_manager_logger import logger
 
 
 class CheckUpdateDialog(QDialog):

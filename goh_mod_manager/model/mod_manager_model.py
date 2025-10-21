@@ -10,11 +10,11 @@ import rarfile
 from PySide6.QtCore import QObject, Signal
 from py7zr import py7zr
 
-from goh_mod_manager.models.mod import Mod
-from goh_mod_manager.utils.config_manager import ConfigManager
-from goh_mod_manager.utils.mod_info_parser import ModInfoParser
-from goh_mod_manager.utils.mod_manager_logger import logger
-from goh_mod_manager.utils.options_set_parser import OptionsSetParser
+from goh_mod_manager.model.mod import Mod
+from goh_mod_manager.util.config_manager import ConfigManager
+from goh_mod_manager.util.mod_info_parser import ModInfoParser
+from goh_mod_manager.util.mod_manager_logger import logger
+from goh_mod_manager.util.options_set_parser import OptionsSetParser
 
 
 class ModManagerModel(QObject):

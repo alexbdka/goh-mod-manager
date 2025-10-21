@@ -1,7 +1,7 @@
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QDialog, QApplication
 
-from goh_mod_manager.views.ui.import_code_dialog import Ui_ImportCodeDialog
+from goh_mod_manager.view.ui.import_code_dialog import Ui_ImportCodeDialog
 
 
 class ImportCodeDialog(QDialog):

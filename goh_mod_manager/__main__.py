@@ -6,10 +6,11 @@ Main application entry point.
 import sys
 
 from PySide6 import QtWidgets
+from qt_material import apply_stylesheet
 
-from goh_mod_manager.controllers.mod_manager_controller import ModManagerController
-from goh_mod_manager.models.mod_manager_model import ModManagerModel
-from goh_mod_manager.views.mod_manager_view import ModManagerView
+from goh_mod_manager.controller.mod_manager_controller import ModManagerController
+from goh_mod_manager.model.mod_manager_model import ModManagerModel
+from goh_mod_manager.view.mod_manager_view import ModManagerView
 
 
 class ModManagerApp:
@@ -34,12 +35,19 @@ class ModManagerApp:
 
 def setup_application(app: QtWidgets.QApplication):
     """Configure Qt application properties."""
-    app.setApplicationName("Call to Arms: Gates of Hell - Mod Manager")
+    app.setApplicationName("GoH Mod Manager")
     app.setOrganizationName("alexbdka")
     app.setOrganizationDomain("alexbdka.github.io")
     app.setApplicationVersion("1.3.0")
     app.setApplicationDisplayName("GoH Mod Manager")
+    #style_sheet(app)
 
+
+def style_sheet(app: QtWidgets.QApplication):
+    """Apply Qt stylesheet."""
+    extra = {
+    }
+    apply_stylesheet(app, theme="light_red.xml", invert_secondary=True, extra=extra)
 
 def main():
     """Main entry point."""
