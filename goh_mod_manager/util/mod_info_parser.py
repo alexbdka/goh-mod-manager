@@ -165,8 +165,9 @@ class ModInfoParser:
                 maxGameVersion=parsed_data["maxGameVersion"],
                 folderPath=str(self.file_path.parent),
                 manualInstall=self._detect_manual_installation(),
-                require=parsed_data["require"],
+                require = " ".join([r.replace("mod_", "") for r in parsed_data["require"].split()])
             )
+            logger.debug(f"Parsed mod: {mod.require}")
 
             return mod
 
