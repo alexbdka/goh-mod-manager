@@ -254,7 +254,7 @@ class ModManagerController(QObject):
             )
 
     def _open_logs(self):
-        project_root = Path(__file__).resolve().parent.parent
+        project_root = Path(__file__).resolve().parent.parent.parent
         log_file = project_root / "logs" / "goh_mod_manager.log"
         logger.info(f"Opening log file: {log_file}")
         try:

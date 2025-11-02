@@ -46,15 +46,15 @@ class ConfigManager(QObject):
 
     # Automatic search
     def first_run(self):
-        if self.get_game_directory() == '':
+        if self.get_game_directory() == "":
             self.settings.setValue("game_directory", str(self.find_game_directory()))
             logger.info(f"Found game directory: {self.get_game_directory()}")
 
-        if self.get_mods_directory() == '':
+        if self.get_mods_directory() == "":
             self.settings.setValue("mods_directory", str(self.find_mods_directory()))
             logger.info(f"Found mods directory: {self.get_mods_directory()}")
 
-        if self.get_options_file() == '':
+        if self.get_options_file() == "":
             self.settings.setValue("options_file", str(self.find_options_file()))
             logger.info(f"Found options file: {self.get_options_file()}")
 
