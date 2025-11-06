@@ -2,7 +2,9 @@
 # which is greatly inspired by https://github.com/LostDragonist/steam-library-setup-tool with some adjustments
 
 import sys
-import winreg
+
+if sys.platform == "win32":
+    import winreg
 from pathlib import Path
 from typing import TypedDict, cast
 
@@ -140,16 +142,31 @@ def parse_library_info(library_vdf_path: Path) -> list[LibraryFolder]:
 def find_steam_path() -> Path | None:
     """
     Retrieve the Steam path, if available.
-
-    Returns:
-        The Steam path, or None if Steam is not installed.
+    Works on Windows and Linux.
     """
-    try:
-        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Software\\Valve\\Steam") as key:
-            value = winreg.QueryValueEx(key, "SteamExe")
-            return Path(value[0].replace("/", "\\")).parent
-    except FileNotFoundError:
-        return None
+    # Windows
+    if sys.platform == "win32":
+        try:
+            with winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER, "Software\\Valve\\Steam"
+            ) as key:
+                value = winreg.QueryValueEx(key, "SteamExe")
+                return Path(value[0].replace("/", "\\")).parent
+        except FileNotFoundError:
+            return None
+
+    # Linux / macOS
+    possible_paths = [
+        Path.home() / ".local/share/Steam",
+        Path.home() / ".steam/steam",
+        Path.home() / ".var/app/com.valvesoftware.Steam/.local/share/Steam",  # Flatpak
+    ]
+
+    for path in possible_paths:
+        if path.exists():
+            return path
+
+    return None
 
 
 def find_games() -> dict[str, Path]:

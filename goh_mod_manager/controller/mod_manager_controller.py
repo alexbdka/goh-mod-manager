@@ -335,29 +335,63 @@ class ModManagerController(QObject):
             # Finally, enable the main mod
             self._model.enable_mod(mod)
 
-    def _get_missing_dependencies(self, mod, active_mods, installed_mods):
+    def _get_missing_dependencies(self, mod, active_mods, installed_mods, visited=None):
         """
-        Return a list of dependency mods that are not yet enabled.
+        Recursively return a list of missing dependency mods that are not yet enabled,
+        in the correct load order (deepest dependencies first).
 
         Args:
-            mod: The Mod object whose dependencies to check.
+            mod: The Mod object whose dependencies to resolve.
             active_mods: List of currently active mods.
             installed_mods: List of all installed mods.
+            visited: Set of mod IDs that were already processed (prevents infinite loops).
 
         Returns:
-            List of Mod objects that are required but not currently enabled.
+            A list of Mod objects that are required but not currently enabled,
+            ordered so that dependencies appear before the mods that depend on them.
         """
+
+        # Initialize the visited set if this is the top-level call
+        if visited is None:
+            visited = set()
+
+        # Skip if we've already processed this mod (prevents circular dependencies)
+        if mod.id in visited:
+            return []
+
+        visited.add(mod.id)
+
+        # If this mod has no dependencies, return empty
         if not mod.require:
             return []
 
+        # Prepare lookup sets/dicts for quick access
         required_ids = str(mod.require).split()
         active_ids = {m.id for m in active_mods}
         installed_by_id = {m.id: m for m in installed_mods}
 
         missing = []
+
         for req_id in required_ids:
-            if req_id not in active_ids and req_id in installed_by_id:
-                missing.append(installed_by_id[req_id])
+            # Skip dependencies that are not installed at all
+            if req_id not in installed_by_id:
+                continue
+
+            req_mod = installed_by_id[req_id]
+
+            # Recursively check dependencies of this dependency first
+            sub_missing = self._get_missing_dependencies(
+                req_mod, active_mods, installed_mods, visited
+            )
+
+            # Add the sub-dependencies first (deep dependencies first)
+            for sub_mod in sub_missing:
+                if sub_mod not in missing:
+                    missing.append(sub_mod)
+
+            # Then add the current required mod itself if it's not active
+            if req_id not in active_ids and req_mod not in missing:
+                missing.append(req_mod)
 
         return missing
 

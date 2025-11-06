@@ -44,13 +44,13 @@ To compile the application into a standalone executable:
 **Windows**
 
 ```bash
-nuitka --standalone --onefile --enable-plugin=pyside6 --output-dir=dist --output-filename=goh_mod_manager --nofollow-import-to=tkinter --include-data-dir=goh_mod_manager/assets=assets --windows-icon-from-ico=goh_mod_manager/assets/icon/logo.ico --windows-console-mode=disable goh_mod_manager/__main__.py
+nuitka --standalone --onefile --enable-plugin=pyside6 --output-dir=dist --output-filename=goh_mod_manager --nofollow-import-to=tkinter --windows-icon-from-ico=goh_mod_manager/res/icon/logo.ico --windows-console-mode=disable goh_mod_manager/__main__.py
 ```
 
 **Linux**
 
 ```bash
-nuitka --standalone --onefile --enable-plugin=pyside6 --output-dir=dist --output-filename=goh_mod_manager --nofollow-import-to=tkinter --include-data-dir=goh_mod_manager/assets=assets goh_mod_manager/__main__.py
+nuitka --standalone --onefile --enable-plugin=pyside6 --output-dir=dist --output-filename=goh_mod_manager --nofollow-import-to=tkinter goh_mod_manager/__main__.py
 ```
 
 The compiled executable will be available in the `dist` directory.
