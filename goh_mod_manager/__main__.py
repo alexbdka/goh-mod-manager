@@ -37,7 +37,7 @@ def setup_application(app: QtWidgets.QApplication):
     app.setApplicationName("GoH Mod Manager")
     app.setOrganizationName("alexbdka")
     app.setOrganizationDomain("alexbdka.github.io")
-    app.setApplicationVersion("1.3.0")
+    app.setApplicationVersion("1.3.1")
     app.setApplicationDisplayName("GoH Mod Manager")
 
 def main():

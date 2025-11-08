@@ -13,5 +13,8 @@ wheels/
 logs/
 *.log
 
+# Help Files
+help*.txt
+
 # IDE
 .idea

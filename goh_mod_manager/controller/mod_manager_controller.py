@@ -1,4 +1,6 @@
 import base64
+import datetime
+import platform
 import json
 import os
 import subprocess
@@ -147,6 +149,7 @@ class ModManagerController(QObject):
 
         # Help menu
         self._view.ui.actionUser_manual.triggered.connect(self._open_user_manual)
+        self._view.ui.actionGenerate_Help_File.triggered.connect(self._generate_help_file)
         self._view.ui.actionAbout.triggered.connect(self._open_about)
 
     def _connect_button_signals(self) -> None:
@@ -958,6 +961,56 @@ class ModManagerController(QObject):
         """Open the user manual dialog."""
         dialog = UserManualDialog(self._view)
         dialog.exec()
+
+    def _generate_help_file(self) -> None:
+        """Generate a help file containing load order and configuration details."""
+        try:
+            now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            filename = f"help-{now}.txt"
+            output_dir = os.path.abspath(".")
+            filepath = os.path.join(output_dir, filename)
+
+            logger.info(f"Generating help file: {filepath}")
+
+            options_file = self._config.get_options_file()
+            load_order = self._model.get_active_mods()
+
+            if os.path.exists(options_file):
+                with open(options_file, "r", encoding="utf-8") as f:
+                    config_content = f.read()
+            else:
+                config_content = f"[!] Options file not found: {options_file}"
+                logger.warning(config_content)
+
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write("=== HELP FILE ===\n")
+                f.write(f"Generated on: {datetime.datetime.now()}\n\n")
+
+                f.write("=== LOAD ORDER ===\n")
+                for i, mod in enumerate(load_order, start=1):
+                    f.write(f"{i}. {mod}\n")
+
+                f.write("\n=== CONFIGURATION FILE ===\n")
+                f.write(f"Source: {options_file}\n\n")
+                f.write(config_content)
+
+            system = platform.system()
+            try:
+                if system == "Windows":
+                    os.startfile(output_dir)
+                elif system == "Darwin":  # macOS
+                    subprocess.run(["open", output_dir], check=False)
+                else:  # Linux
+                    subprocess.run(["xdg-open", output_dir], check=False)
+
+                logger.info(f"Opened folder: {output_dir}")
+            except Exception as e:
+                logger.warning(f"Could not open folder: {e}")
+
+            logger.info(f"Help file successfully generated: {filepath}")
+
+        except Exception as e:
+            logger.error(f"Failed to generate help file: {e}", exc_info=True)
 
     def _open_about(self) -> None:
         """Open the about dialog."""

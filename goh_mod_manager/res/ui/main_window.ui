@@ -1,685 +1,685 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>MainWindow</class>
-    <widget class="QMainWindow" name="MainWindow">
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>1200</width>
-                <height>600</height>
-            </rect>
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1200</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1200</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources.qrc">
+    <normaloff>:/icons/icon/logo.ico</normaloff>:/icons/icon/logo.ico</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_main">
+    <property name="spacing">
+     <number>8</number>
+    </property>
+    <property name="leftMargin">
+     <number>8</number>
+    </property>
+    <property name="topMargin">
+     <number>8</number>
+    </property>
+    <property name="rightMargin">
+     <number>8</number>
+    </property>
+    <property name="bottomMargin">
+     <number>8</number>
+    </property>
+    <item>
+     <widget class="QSplitter" name="splitter_main">
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="QWidget" name="widget_left_panel">
+       <property name="minimumSize">
+        <size>
+         <width>250</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>400</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_available_mods">
+        <property name="spacing">
+         <number>6</number>
         </property>
-        <property name="minimumSize">
-            <size>
-                <width>1200</width>
-                <height>600</height>
-            </size>
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-        <property name="windowIcon">
-            <iconset resource="../resources.qrc">
-                <normaloff>:/icons/icon/logo.ico</normaloff>:/icons/icon/logo.ico
-            </iconset>
+        <property name="topMargin">
+         <number>0</number>
         </property>
-        <widget class="QWidget" name="centralwidget">
-            <layout class="QHBoxLayout" name="horizontalLayout_main">
-                <property name="spacing">
-                    <number>8</number>
-                </property>
-                <property name="leftMargin">
-                    <number>8</number>
-                </property>
-                <property name="topMargin">
-                    <number>8</number>
-                </property>
-                <property name="rightMargin">
-                    <number>8</number>
-                </property>
-                <property name="bottomMargin">
-                    <number>8</number>
-                </property>
-                <item>
-                    <widget class="QSplitter" name="splitter_main">
-                        <property name="orientation">
-                            <enum>Qt::Orientation::Horizontal</enum>
-                        </property>
-                        <property name="childrenCollapsible">
-                            <bool>false</bool>
-                        </property>
-                        <widget class="QWidget" name="widget_left_panel">
-                            <property name="minimumSize">
-                                <size>
-                                    <width>250</width>
-                                    <height>0</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>400</width>
-                                    <height>16777215</height>
-                                </size>
-                            </property>
-                            <layout class="QVBoxLayout" name="verticalLayout_available_mods">
-                                <property name="spacing">
-                                    <number>6</number>
-                                </property>
-                                <property name="leftMargin">
-                                    <number>0</number>
-                                </property>
-                                <property name="topMargin">
-                                    <number>0</number>
-                                </property>
-                                <property name="rightMargin">
-                                    <number>0</number>
-                                </property>
-                                <property name="bottomMargin">
-                                    <number>0</number>
-                                </property>
-                                <item>
-                                    <widget class="QGroupBox" name="groupBox_available_mods">
-                                        <property name="title">
-                                            <string>Available Mods</string>
-                                        </property>
-                                        <layout class="QVBoxLayout" name="verticalLayout_2">
-                                            <property name="spacing">
-                                                <number>6</number>
-                                            </property>
-                                            <item>
-                                                <layout class="QHBoxLayout"
-                                                        name="horizontalLayout_search_available_mods">
-                                                    <property name="spacing">
-                                                        <number>6</number>
-                                                    </property>
-                                                    <item>
-                                                        <widget class="QLineEdit" name="lineEdit_search_available_mods">
-                                                            <property name="placeholderText">
-                                                                <string>Search...</string>
-                                                            </property>
-                                                            <property name="clearButtonEnabled">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                    <item>
-                                                        <widget class="QPushButton"
-                                                                name="pushButton_refresh_available_mods">
-                                                            <property name="icon">
-                                                                <iconset resource="../resources.qrc">
-                                                                    <normaloff>:/icons/icon/refresh-line.svg</normaloff>
-                                                                    :/icons/icon/refresh-line.svg
-                                                                </iconset>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                </layout>
-                                            </item>
-                                            <item>
-                                                <widget class="QListWidget" name="listWidget_available_mods">
-                                                    <property name="acceptDrops">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="showDropIndicator" stdset="0">
-                                                        <bool>false</bool>
-                                                    </property>
-                                                    <property name="alternatingRowColors">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="selectionMode">
-                                                        <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
-                                                    </property>
-                                                    <property name="sortingEnabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <layout class="QHBoxLayout"
-                                                        name="horizontalLayout_available_mods_actions">
-                                                    <item>
-                                                        <widget class="QPushButton" name="pushButton_add">
-                                                            <property name="text">
-                                                                <string>Add</string>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                </layout>
-                                            </item>
-                                        </layout>
-                                    </widget>
-                                </item>
-                            </layout>
-                        </widget>
-                        <widget class="QWidget" name="widget_center_panel">
-                            <property name="minimumSize">
-                                <size>
-                                    <width>300</width>
-                                    <height>0</height>
-                                </size>
-                            </property>
-                            <layout class="QVBoxLayout" name="verticalLayout_active_mods">
-                                <property name="spacing">
-                                    <number>6</number>
-                                </property>
-                                <property name="leftMargin">
-                                    <number>0</number>
-                                </property>
-                                <property name="topMargin">
-                                    <number>0</number>
-                                </property>
-                                <property name="rightMargin">
-                                    <number>0</number>
-                                </property>
-                                <property name="bottomMargin">
-                                    <number>0</number>
-                                </property>
-                                <item>
-                                    <widget class="QGroupBox" name="groupBox_active_mods">
-                                        <property name="title">
-                                            <string>Active Mods (Load Order)</string>
-                                        </property>
-                                        <layout class="QVBoxLayout" name="verticalLayout_3">
-                                            <property name="spacing">
-                                                <number>6</number>
-                                            </property>
-                                            <item>
-                                                <layout class="QHBoxLayout" name="horizontalLayout_search_active_mods">
-                                                    <property name="spacing">
-                                                        <number>6</number>
-                                                    </property>
-                                                    <item>
-                                                        <widget class="QLineEdit" name="lineEdit_search_active_mods">
-                                                            <property name="placeholderText">
-                                                                <string>Search...</string>
-                                                            </property>
-                                                            <property name="clearButtonEnabled">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                    <item>
-                                                        <widget class="QLCDNumber" name="lcdNumber_mods_counter"/>
-                                                    </item>
-                                                </layout>
-                                            </item>
-                                            <item>
-                                                <widget class="QListWidget" name="listWidget_active_mods">
-                                                    <property name="showDropIndicator" stdset="0">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="dragEnabled">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="dragDropMode">
-                                                        <enum>QAbstractItemView::DragDropMode::InternalMove</enum>
-                                                    </property>
-                                                    <property name="alternatingRowColors">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="selectionMode">
-                                                        <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <layout class="QHBoxLayout" name="horizontalLayout_load_order_controls">
-                                                    <property name="spacing">
-                                                        <number>6</number>
-                                                    </property>
-                                                    <item>
-                                                        <widget class="QPushButton" name="pushButton_move_up">
-                                                            <property name="text">
-                                                                <string>Move Up</string>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                    <item>
-                                                        <widget class="QPushButton" name="pushButton_move_down">
-                                                            <property name="text">
-                                                                <string>Move Down</string>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                    <item>
-                                                        <spacer name="horizontalSpacer">
-                                                            <property name="orientation">
-                                                                <enum>Qt::Orientation::Horizontal</enum>
-                                                            </property>
-                                                            <property name="sizeHint" stdset="0">
-                                                                <size>
-                                                                    <width>0</width>
-                                                                    <height>0</height>
-                                                                </size>
-                                                            </property>
-                                                        </spacer>
-                                                    </item>
-                                                    <item>
-                                                        <widget class="QPushButton" name="pushButton_remove">
-                                                            <property name="text">
-                                                                <string>Remove</string>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                    <item>
-                                                        <widget class="QPushButton" name="pushButton_clear_all">
-                                                            <property name="text">
-                                                                <string>Clear All</string>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                </layout>
-                                            </item>
-                                            <item>
-                                                <widget class="QLabel" name="label_drag_info">
-                                                    <property name="font">
-                                                        <font>
-                                                            <italic>true</italic>
-                                                        </font>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string>Tip: Drag and drop mods to reorder them instantly
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QGroupBox" name="groupBox_available_mods">
+          <property name="title">
+           <string>Available Mods</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="spacing">
+            <number>6</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_search_available_mods">
+             <property name="spacing">
+              <number>6</number>
+             </property>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_search_available_mods">
+               <property name="placeholderText">
+                <string>Search...</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_refresh_available_mods">
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/icons/icon/refresh-line.svg</normaloff>:/icons/icon/refresh-line.svg</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QListWidget" name="listWidget_available_mods">
+             <property name="acceptDrops">
+              <bool>true</bool>
+             </property>
+             <property name="showDropIndicator" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
+             </property>
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_available_mods_actions">
+             <item>
+              <widget class="QPushButton" name="pushButton_add">
+               <property name="text">
+                <string>Add</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="widget_center_panel">
+       <property name="minimumSize">
+        <size>
+         <width>300</width>
+         <height>0</height>
+        </size>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_active_mods">
+        <property name="spacing">
+         <number>6</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QGroupBox" name="groupBox_active_mods">
+          <property name="title">
+           <string>Active Mods (Load Order)</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <property name="spacing">
+            <number>6</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_search_active_mods">
+             <property name="spacing">
+              <number>6</number>
+             </property>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_search_active_mods">
+               <property name="placeholderText">
+                <string>Search...</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLCDNumber" name="lcdNumber_mods_counter"/>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QListWidget" name="listWidget_active_mods">
+             <property name="showDropIndicator" stdset="0">
+              <bool>true</bool>
+             </property>
+             <property name="dragEnabled">
+              <bool>true</bool>
+             </property>
+             <property name="dragDropMode">
+              <enum>QAbstractItemView::DragDropMode::InternalMove</enum>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_load_order_controls">
+             <property name="spacing">
+              <number>6</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="pushButton_move_up">
+               <property name="text">
+                <string>Move Up</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_move_down">
+               <property name="text">
+                <string>Move Down</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_remove">
+               <property name="text">
+                <string>Remove</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_clear_all">
+               <property name="text">
+                <string>Clear All</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_drag_info">
+             <property name="font">
+              <font>
+               <italic>true</italic>
+              </font>
+             </property>
+             <property name="text">
+              <string>Tip: Drag and drop mods to reorder them instantly
 
                                                         </string>
-                                                    </property>
-                                                    <property name="alignment">
-                                                        <set>Qt::AlignmentFlag::AlignCenter</set>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                        </layout>
-                                    </widget>
-                                </item>
-                            </layout>
-                        </widget>
-                        <widget class="QWidget" name="widget_right_panel">
-                            <property name="minimumSize">
-                                <size>
-                                    <width>250</width>
-                                    <height>0</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>350</width>
-                                    <height>16777215</height>
-                                </size>
-                            </property>
-                            <layout class="QVBoxLayout" name="verticalLayout_sidebar">
-                                <property name="spacing">
-                                    <number>6</number>
-                                </property>
-                                <property name="leftMargin">
-                                    <number>0</number>
-                                </property>
-                                <property name="topMargin">
-                                    <number>0</number>
-                                </property>
-                                <property name="rightMargin">
-                                    <number>0</number>
-                                </property>
-                                <property name="bottomMargin">
-                                    <number>0</number>
-                                </property>
-                                <item>
-                                    <widget class="QGroupBox" name="groupBox_mod_informations">
-                                        <property name="minimumSize">
-                                            <size>
-                                                <width>0</width>
-                                                <height>150</height>
-                                            </size>
-                                        </property>
-                                        <property name="title">
-                                            <string>Mod Informations</string>
-                                        </property>
-                                        <layout class="QVBoxLayout" name="verticalLayout_mod_info">
-                                            <property name="spacing">
-                                                <number>6</number>
-                                            </property>
-                                            <item>
-                                                <widget class="QLabel" name="label_mod_name">
-                                                    <property name="font">
-                                                        <font>
-                                                            <bold>true</bold>
-                                                        </font>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string>Select a mod to view details</string>
-                                                    </property>
-                                                    <property name="wordWrap">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                    <property name="textInteractionFlags">
-                                                        <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <widget class="QTextEdit" name="textEdit_mod_description">
-                                                    <property name="readOnly">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                        </layout>
-                                    </widget>
-                                </item>
-                                <item>
-                                    <widget class="QGroupBox" name="groupBox_presets">
-                                        <property name="minimumSize">
-                                            <size>
-                                                <width>0</width>
-                                                <height>200</height>
-                                            </size>
-                                        </property>
-                                        <property name="title">
-                                            <string>Presets</string>
-                                        </property>
-                                        <layout class="QVBoxLayout" name="verticalLayout_presets">
-                                            <property name="spacing">
-                                                <number>6</number>
-                                            </property>
-                                            <item>
-                                                <widget class="QComboBox" name="comboBox_presets">
-                                                    <item>
-                                                        <property name="text">
-                                                            <string>-- Select or Create Preset --</string>
-                                                        </property>
-                                                    </item>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <layout class="QHBoxLayout" name="horizontalLayout_preset_controls">
-                                                    <property name="spacing">
-                                                        <number>6</number>
-                                                    </property>
-                                                    <item>
-                                                        <widget class="QPushButton" name="pushButton_load_preset">
-                                                            <property name="text">
-                                                                <string>Load</string>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                    <item>
-                                                        <widget class="QPushButton" name="pushButton_save_preset">
-                                                            <property name="text">
-                                                                <string>Save</string>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                    <item>
-                                                        <widget class="QPushButton" name="pushButton_delete_preset">
-                                                            <property name="text">
-                                                                <string>Delete</string>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                </layout>
-                                            </item>
-                                            <item>
-                                                <widget class="QListWidget" name="listWidget_presets">
-                                                    <property name="showDropIndicator" stdset="0">
-                                                        <bool>false</bool>
-                                                    </property>
-                                                    <property name="alternatingRowColors">
-                                                        <bool>true</bool>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                        </layout>
-                                    </widget>
-                                </item>
-                            </layout>
-                        </widget>
-                    </widget>
-                </item>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="widget_right_panel">
+       <property name="minimumSize">
+        <size>
+         <width>250</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>350</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_sidebar">
+        <property name="spacing">
+         <number>6</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QGroupBox" name="groupBox_mod_informations">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>150</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Mod Informations</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_mod_info">
+           <property name="spacing">
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_mod_name">
+             <property name="font">
+              <font>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Select a mod to view details</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTextEdit" name="textEdit_mod_description">
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_presets">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>200</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Presets</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_presets">
+           <property name="spacing">
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QComboBox" name="comboBox_presets">
+             <item>
+              <property name="text">
+               <string>-- Select or Create Preset --</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_preset_controls">
+             <property name="spacing">
+              <number>6</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="pushButton_load_preset">
+               <property name="text">
+                <string>Load</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_save_preset">
+               <property name="text">
+                <string>Save</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_delete_preset">
+               <property name="text">
+                <string>Delete</string>
+               </property>
+              </widget>
+             </item>
             </layout>
-        </widget>
-        <widget class="QMenuBar" name="menubar">
-            <property name="geometry">
-                <rect>
-                    <x>0</x>
-                    <y>0</y>
-                    <width>1200</width>
-                    <height>33</height>
-                </rect>
-            </property>
-            <widget class="QMenu" name="menuFile">
-                <property name="title">
-                    <string>&amp;File</string>
-                </property>
-                <addaction name="actionOpen_game_folder"/>
-                <addaction name="actionOpen_mods_folder"/>
-                <addaction name="actionOpen_options_file"/>
-                <addaction name="separator"/>
-                <addaction name="actionOpen_logs"/>
-                <addaction name="separator"/>
-                <addaction name="actionExit"/>
+           </item>
+           <item>
+            <widget class="QListWidget" name="listWidget_presets">
+             <property name="showDropIndicator" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
             </widget>
-            <widget class="QMenu" name="menuEdit">
-                <property name="title">
-                    <string>&amp;Edit</string>
-                </property>
-                <addaction name="actionSettings"/>
-                <addaction name="separator"/>
-            </widget>
-            <widget class="QMenu" name="menuView">
-                <property name="title">
-                    <string>&amp;View</string>
-                </property>
-                <widget class="QMenu" name="menuStyle">
-                    <property name="title">
-                        <string>Style</string>
-                    </property>
-                    <widget class="QMenu" name="menuFont">
-                        <property name="title">
-                            <string>Font</string>
-                        </property>
-                        <addaction name="actionDefault"/>
-                        <addaction name="actionDyslexic"/>
-                    </widget>
-                    <addaction name="menuFont"/>
-                </widget>
-                <addaction name="actionRefresh_2"/>
-                <addaction name="actionShow_mod_informations"/>
-                <addaction name="separator"/>
-                <addaction name="actionZoom_in"/>
-                <addaction name="actionZoom_out"/>
-                <addaction name="actionReset_zoom"/>
-                <addaction name="separator"/>
-                <addaction name="menuStyle"/>
-            </widget>
-            <widget class="QMenu" name="menuHelp">
-                <property name="title">
-                    <string>&amp;Help</string>
-                </property>
-                <addaction name="actionUser_manual"/>
-                <addaction name="actionAbout"/>
-            </widget>
-            <widget class="QMenu" name="menuImport">
-                <property name="title">
-                    <string>Import</string>
-                </property>
-                <addaction name="action_load_order_from_code"/>
-                <addaction name="action_local_mod"/>
-            </widget>
-            <widget class="QMenu" name="menuExport">
-                <property name="title">
-                    <string>Export</string>
-                </property>
-                <addaction name="action_load_order_as_code"/>
-            </widget>
-            <addaction name="menuFile"/>
-            <addaction name="menuEdit"/>
-            <addaction name="menuView"/>
-            <addaction name="menuImport"/>
-            <addaction name="menuExport"/>
-            <addaction name="menuHelp"/>
-        </widget>
-        <widget class="QStatusBar" name="statusbar"/>
-        <action name="actionImport_mod">
-            <property name="text">
-                <string>Import mod...</string>
-            </property>
-            <property name="shortcut">
-                <string>Ctrl+I</string>
-            </property>
-        </action>
-        <action name="actionRefresh">
-            <property name="text">
-                <string>Refresh</string>
-            </property>
-            <property name="shortcut">
-                <string>F5</string>
-            </property>
-        </action>
-        <action name="actionExit">
-            <property name="text">
-                <string>Exit</string>
-            </property>
-            <property name="shortcut">
-                <string>Ctrl+Q</string>
-            </property>
-        </action>
-        <action name="actionSettings">
-            <property name="text">
-                <string>Settings</string>
-            </property>
-        </action>
-        <action name="actionClear_Active_Mods">
-            <property name="text">
-                <string>Clear Active Mods</string>
-            </property>
-            <property name="shortcut">
-                <string>Ctrl+Shift+C</string>
-            </property>
-        </action>
-        <action name="actionShow_mod_informations">
-            <property name="checkable">
-                <bool>true</bool>
-            </property>
-            <property name="checked">
-                <bool>true</bool>
-            </property>
-            <property name="text">
-                <string>Show mod informations</string>
-            </property>
-        </action>
-        <action name="actionUser_manual">
-            <property name="text">
-                <string>User manual</string>
-            </property>
-            <property name="toolTip">
-                <string>Open the complete user guide</string>
-            </property>
-            <property name="shortcut">
-                <string>F1</string>
-            </property>
-        </action>
-        <action name="actionCheck_Updates">
-            <property name="text">
-                <string>Check for updates</string>
-            </property>
-            <property name="toolTip">
-                <string>Check for mod manager updates</string>
-            </property>
-        </action>
-        <action name="actionAbout">
-            <property name="text">
-                <string>About</string>
-            </property>
-            <property name="toolTip">
-                <string>About this mod manager</string>
-            </property>
-        </action>
-        <action name="actionTheme">
-            <property name="text">
-                <string>Theme</string>
-            </property>
-        </action>
-        <action name="actionDefault">
-            <property name="text">
-                <string>Default</string>
-            </property>
-        </action>
-        <action name="actionDyslexic">
-            <property name="text">
-                <string>Dyslexic</string>
-            </property>
-        </action>
-        <action name="actionOpen_game_folder">
-            <property name="text">
-                <string>Open game folder</string>
-            </property>
-        </action>
-        <action name="actionOpen_mods_folder">
-            <property name="text">
-                <string>Open mods folder</string>
-            </property>
-        </action>
-        <action name="actionOpen_options_file">
-            <property name="text">
-                <string>Open options file</string>
-            </property>
-        </action>
-        <action name="actionOpen_logs">
-            <property name="text">
-                <string>Open logs</string>
-            </property>
-        </action>
-        <action name="action_load_order_from_code">
-            <property name="text">
-                <string>... load order from code</string>
-            </property>
-        </action>
-        <action name="action_load_order_as_code">
-            <property name="text">
-                <string>... load order as code</string>
-            </property>
-        </action>
-        <action name="action_local_mod">
-            <property name="text">
-                <string>... local mod</string>
-            </property>
-        </action>
-        <action name="actionRefresh_2">
-            <property name="text">
-                <string>Refresh</string>
-            </property>
-        </action>
-        <action name="actionZoom_in">
-            <property name="text">
-                <string>Zoom in</string>
-            </property>
-        </action>
-        <action name="actionZoom_out">
-            <property name="text">
-                <string>Zoom out</string>
-            </property>
-        </action>
-        <action name="actionReset_zoom">
-            <property name="text">
-                <string>Reset zoom</string>
-            </property>
-        </action>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1200</width>
+     <height>33</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionOpen_game_folder"/>
+    <addaction name="actionOpen_mods_folder"/>
+    <addaction name="actionOpen_options_file"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpen_logs"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionSettings"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="menuStyle">
+     <property name="title">
+      <string>Style</string>
+     </property>
+     <widget class="QMenu" name="menuFont">
+      <property name="title">
+       <string>Font</string>
+      </property>
+      <addaction name="actionDefault"/>
+      <addaction name="actionDyslexic"/>
+     </widget>
+     <addaction name="menuFont"/>
     </widget>
-    <tabstops>
-        <tabstop>lineEdit_search_available_mods</tabstop>
-        <tabstop>pushButton_refresh_available_mods</tabstop>
-        <tabstop>listWidget_available_mods</tabstop>
-        <tabstop>pushButton_add</tabstop>
-        <tabstop>lineEdit_search_active_mods</tabstop>
-        <tabstop>listWidget_active_mods</tabstop>
-        <tabstop>pushButton_move_up</tabstop>
-        <tabstop>pushButton_move_down</tabstop>
-        <tabstop>pushButton_remove</tabstop>
-        <tabstop>pushButton_clear_all</tabstop>
-        <tabstop>comboBox_presets</tabstop>
-        <tabstop>pushButton_load_preset</tabstop>
-        <tabstop>pushButton_save_preset</tabstop>
-        <tabstop>pushButton_delete_preset</tabstop>
-        <tabstop>listWidget_presets</tabstop>
-    </tabstops>
-    <resources>
-        <include location="../resources.qrc"/>
-    </resources>
-    <connections/>
+    <addaction name="actionRefresh_2"/>
+    <addaction name="actionShow_mod_informations"/>
+    <addaction name="separator"/>
+    <addaction name="actionZoom_in"/>
+    <addaction name="actionZoom_out"/>
+    <addaction name="actionReset_zoom"/>
+    <addaction name="separator"/>
+    <addaction name="menuStyle"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionUser_manual"/>
+    <addaction name="actionGenerate_Help_File"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuImport">
+    <property name="title">
+     <string>Import</string>
+    </property>
+    <addaction name="action_load_order_from_code"/>
+    <addaction name="action_local_mod"/>
+   </widget>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>Export</string>
+    </property>
+    <addaction name="action_load_order_as_code"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
+   <addaction name="menuImport"/>
+   <addaction name="menuExport"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionImport_mod">
+   <property name="text">
+    <string>Import mod...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionRefresh">
+   <property name="text">
+    <string>Refresh</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionClear_Active_Mods">
+   <property name="text">
+    <string>Clear Active Mods</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="actionShow_mod_informations">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show mod informations</string>
+   </property>
+  </action>
+  <action name="actionUser_manual">
+   <property name="text">
+    <string>User manual</string>
+   </property>
+   <property name="toolTip">
+    <string>Open the complete user guide</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionCheck_Updates">
+   <property name="text">
+    <string>Check for updates</string>
+   </property>
+   <property name="toolTip">
+    <string>Check for mod manager updates</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+   <property name="toolTip">
+    <string>About this mod manager</string>
+   </property>
+  </action>
+  <action name="actionTheme">
+   <property name="text">
+    <string>Theme</string>
+   </property>
+  </action>
+  <action name="actionDefault">
+   <property name="text">
+    <string>Default</string>
+   </property>
+  </action>
+  <action name="actionDyslexic">
+   <property name="text">
+    <string>Dyslexic</string>
+   </property>
+  </action>
+  <action name="actionOpen_game_folder">
+   <property name="text">
+    <string>Open game folder</string>
+   </property>
+  </action>
+  <action name="actionOpen_mods_folder">
+   <property name="text">
+    <string>Open mods folder</string>
+   </property>
+  </action>
+  <action name="actionOpen_options_file">
+   <property name="text">
+    <string>Open options file</string>
+   </property>
+  </action>
+  <action name="actionOpen_logs">
+   <property name="text">
+    <string>Open logs</string>
+   </property>
+  </action>
+  <action name="action_load_order_from_code">
+   <property name="text">
+    <string>... load order from code</string>
+   </property>
+  </action>
+  <action name="action_load_order_as_code">
+   <property name="text">
+    <string>... load order as code</string>
+   </property>
+  </action>
+  <action name="action_local_mod">
+   <property name="text">
+    <string>... local mod</string>
+   </property>
+  </action>
+  <action name="actionRefresh_2">
+   <property name="text">
+    <string>Refresh</string>
+   </property>
+  </action>
+  <action name="actionZoom_in">
+   <property name="text">
+    <string>Zoom in</string>
+   </property>
+  </action>
+  <action name="actionZoom_out">
+   <property name="text">
+    <string>Zoom out</string>
+   </property>
+  </action>
+  <action name="actionReset_zoom">
+   <property name="text">
+    <string>Reset zoom</string>
+   </property>
+  </action>
+  <action name="actionGenerate_Help_File">
+   <property name="text">
+    <string>Generate Help File</string>
+   </property>
+  </action>
+ </widget>
+ <tabstops>
+  <tabstop>lineEdit_search_available_mods</tabstop>
+  <tabstop>pushButton_refresh_available_mods</tabstop>
+  <tabstop>listWidget_available_mods</tabstop>
+  <tabstop>pushButton_add</tabstop>
+  <tabstop>lineEdit_search_active_mods</tabstop>
+  <tabstop>listWidget_active_mods</tabstop>
+  <tabstop>pushButton_move_up</tabstop>
+  <tabstop>pushButton_move_down</tabstop>
+  <tabstop>pushButton_remove</tabstop>
+  <tabstop>pushButton_clear_all</tabstop>
+  <tabstop>comboBox_presets</tabstop>
+  <tabstop>pushButton_load_preset</tabstop>
+  <tabstop>pushButton_save_preset</tabstop>
+  <tabstop>pushButton_delete_preset</tabstop>
+  <tabstop>listWidget_presets</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections/>
 </ui>
