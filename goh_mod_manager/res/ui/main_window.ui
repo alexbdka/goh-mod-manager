@@ -76,9 +76,9 @@
                                     <number>0</number>
                                 </property>
                                 <item>
-                                    <widget class="QGroupBox" name="groupBox_available_mods">
+                                    <widget class="QGroupBox" name="groupBox_installed_mods">
                                         <property name="title">
-                                            <string>Available Mods</string>
+                                            <string>Installed Mods</string>
                                         </property>
                                         <layout class="QVBoxLayout" name="verticalLayout_2">
                                             <property name="spacing">
@@ -91,9 +91,9 @@
                                                         <number>6</number>
                                                     </property>
                                                     <item>
-                                                        <widget class="QLineEdit" name="lineEdit_search_available_mods">
+                                                        <widget class="QLineEdit" name="lineEdit_search_installed_mods">
                                                             <property name="placeholderText">
-                                                                <string>Search...</string>
+                                                                <string>Search installed mods...</string>
                                                             </property>
                                                             <property name="clearButtonEnabled">
                                                                 <bool>true</bool>
@@ -102,7 +102,10 @@
                                                     </item>
                                                     <item>
                                                         <widget class="QPushButton"
-                                                                name="pushButton_refresh_available_mods">
+                                                                name="pushButton_refresh_installed_mods">
+                                                            <property name="toolTip">
+                                                                <string>Refresh installed mods</string>
+                                                            </property>
                                                             <property name="icon">
                                                                 <iconset resource="../resources.qrc">
                                                                     <normaloff>:/icons/icon/refresh-line.svg</normaloff>
@@ -114,7 +117,7 @@
                                                 </layout>
                                             </item>
                                             <item>
-                                                <widget class="QListWidget" name="listWidget_available_mods">
+                                                <widget class="QListWidget" name="listWidget_installed_mods">
                                                     <property name="acceptDrops">
                                                         <bool>true</bool>
                                                     </property>
@@ -136,9 +139,9 @@
                                                 <layout class="QHBoxLayout"
                                                         name="horizontalLayout_available_mods_actions">
                                                     <item>
-                                                        <widget class="QPushButton" name="pushButton_add">
+                                                        <widget class="QPushButton" name="pushButton_activate">
                                                             <property name="text">
-                                                                <string>Add</string>
+                                                                <string>Activate</string>
                                                             </property>
                                                         </widget>
                                                     </item>
@@ -189,7 +192,7 @@
                                                     <item>
                                                         <widget class="QLineEdit" name="lineEdit_search_active_mods">
                                                             <property name="placeholderText">
-                                                                <string>Search...</string>
+                                                                <string>Search active mods...</string>
                                                             </property>
                                                             <property name="clearButtonEnabled">
                                                                 <bool>true</bool>
@@ -197,7 +200,7 @@
                                                         </widget>
                                                     </item>
                                                     <item>
-                                                        <widget class="QLCDNumber" name="lcdNumber_mods_counter"/>
+                                                        <widget class="QLCDNumber" name="lcdNumber_active_count"/>
                                                     </item>
                                                 </layout>
                                             </item>
@@ -255,30 +258,28 @@
                                                     <item>
                                                         <widget class="QPushButton" name="pushButton_remove">
                                                             <property name="text">
-                                                                <string>Remove</string>
+                                                                <string>Deactivate</string>
                                                             </property>
                                                         </widget>
                                                     </item>
                                                     <item>
                                                         <widget class="QPushButton" name="pushButton_clear_all">
                                                             <property name="text">
-                                                                <string>Clear All</string>
+                                                                <string>Deactivate All</string>
                                                             </property>
                                                         </widget>
                                                     </item>
                                                 </layout>
                                             </item>
                                             <item>
-                                                <widget class="QLabel" name="label_drag_info">
+                                                <widget class="QLabel" name="label_reorder_tip">
                                                     <property name="font">
                                                         <font>
                                                             <italic>true</italic>
                                                         </font>
                                                     </property>
                                                     <property name="text">
-                                                        <string>Tip: Drag and drop mods to reorder them instantly
-
-                                                        </string>
+                                                        <string>Tip: Drag and drop to reorder active mods.</string>
                                                     </property>
                                                     <property name="alignment">
                                                         <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -320,7 +321,7 @@
                                     <number>0</number>
                                 </property>
                                 <item>
-                                    <widget class="QGroupBox" name="groupBox_mod_informations">
+                                    <widget class="QGroupBox" name="groupBox_mod_information">
                                         <property name="minimumSize">
                                             <size>
                                                 <width>0</width>
@@ -328,21 +329,21 @@
                                             </size>
                                         </property>
                                         <property name="title">
-                                            <string>Mod Informations</string>
+                                            <string>Mod Information</string>
                                         </property>
                                         <layout class="QVBoxLayout" name="verticalLayout_mod_info">
                                             <property name="spacing">
                                                 <number>6</number>
                                             </property>
                                             <item>
-                                                <widget class="QLabel" name="label_mod_name">
+                                                <widget class="QLabel" name="label_mod_title">
                                                     <property name="font">
                                                         <font>
                                                             <bold>true</bold>
                                                         </font>
                                                     </property>
                                                     <property name="text">
-                                                        <string>Select a mod to view details</string>
+                                                        <string>Select a mod to view details.</string>
                                                     </property>
                                                     <property name="wordWrap">
                                                         <bool>true</bool>
@@ -381,7 +382,7 @@
                                                 <widget class="QComboBox" name="comboBox_presets">
                                                     <item>
                                                         <property name="text">
-                                                            <string>-- Select or Create Preset --</string>
+                                                            <string>Select or create a preset...</string>
                                                         </property>
                                                     </item>
                                                 </widget>
@@ -478,8 +479,8 @@
                     </widget>
                     <addaction name="menuFont"/>
                 </widget>
-                <addaction name="actionRefresh_2"/>
-                <addaction name="actionShow_mod_informations"/>
+                <addaction name="actionRefresh"/>
+                <addaction name="actionShow_mod_information"/>
                 <addaction name="separator"/>
                 <addaction name="actionZoom_in"/>
                 <addaction name="actionZoom_out"/>
@@ -491,7 +492,8 @@
                 <property name="title">
                     <string>&amp;Help</string>
                 </property>
-                <addaction name="actionUser_manual"/>
+                <addaction name="actionGuided_tour"/>
+                <addaction name="actionGenerate_Help_File"/>
                 <addaction name="actionAbout"/>
             </widget>
             <widget class="QMenu" name="menuImport">
@@ -525,7 +527,7 @@
         </action>
         <action name="actionRefresh">
             <property name="text">
-                <string>Refresh</string>
+                <string>Refresh All</string>
             </property>
             <property name="shortcut">
                 <string>F5</string>
@@ -541,7 +543,7 @@
         </action>
         <action name="actionSettings">
             <property name="text">
-                <string>Settings</string>
+                <string>Preferences</string>
             </property>
         </action>
         <action name="actionClear_Active_Mods">
@@ -552,7 +554,7 @@
                 <string>Ctrl+Shift+C</string>
             </property>
         </action>
-        <action name="actionShow_mod_informations">
+        <action name="actionShow_mod_information">
             <property name="checkable">
                 <bool>true</bool>
             </property>
@@ -560,18 +562,12 @@
                 <bool>true</bool>
             </property>
             <property name="text">
-                <string>Show mod informations</string>
+                <string>Show Mod Information</string>
             </property>
         </action>
-        <action name="actionUser_manual">
+        <action name="actionGuided_tour">
             <property name="text">
-                <string>User manual</string>
-            </property>
-            <property name="toolTip">
-                <string>Open the complete user guide</string>
-            </property>
-            <property name="shortcut">
-                <string>F1</string>
+                <string>Guided Tour...</string>
             </property>
         </action>
         <action name="actionCheck_Updates">
@@ -607,42 +603,37 @@
         </action>
         <action name="actionOpen_game_folder">
             <property name="text">
-                <string>Open game folder</string>
+                <string>Open Game Folder</string>
             </property>
         </action>
         <action name="actionOpen_mods_folder">
             <property name="text">
-                <string>Open mods folder</string>
+                <string>Open Mods Folder</string>
             </property>
         </action>
         <action name="actionOpen_options_file">
             <property name="text">
-                <string>Open options file</string>
+                <string>Open Options File</string>
             </property>
         </action>
         <action name="actionOpen_logs">
             <property name="text">
-                <string>Open logs</string>
+                <string>Open Logs</string>
             </property>
         </action>
         <action name="action_load_order_from_code">
             <property name="text">
-                <string>... load order from code</string>
+                <string>Load Order from Code...</string>
             </property>
         </action>
         <action name="action_load_order_as_code">
             <property name="text">
-                <string>... load order as code</string>
+                <string>Load Order as Code...</string>
             </property>
         </action>
         <action name="action_local_mod">
             <property name="text">
-                <string>... local mod</string>
-            </property>
-        </action>
-        <action name="actionRefresh_2">
-            <property name="text">
-                <string>Refresh</string>
+                <string>Import Local Mod...</string>
             </property>
         </action>
         <action name="actionZoom_in">
@@ -660,12 +651,17 @@
                 <string>Reset zoom</string>
             </property>
         </action>
+        <action name="actionGenerate_Help_File">
+            <property name="text">
+                <string>Generate Help File</string>
+            </property>
+        </action>
     </widget>
     <tabstops>
-        <tabstop>lineEdit_search_available_mods</tabstop>
-        <tabstop>pushButton_refresh_available_mods</tabstop>
-        <tabstop>listWidget_available_mods</tabstop>
-        <tabstop>pushButton_add</tabstop>
+        <tabstop>lineEdit_search_installed_mods</tabstop>
+        <tabstop>pushButton_refresh_installed_mods</tabstop>
+        <tabstop>listWidget_installed_mods</tabstop>
+        <tabstop>pushButton_activate</tabstop>
         <tabstop>lineEdit_search_active_mods</tabstop>
         <tabstop>listWidget_active_mods</tabstop>
         <tabstop>pushButton_move_up</tabstop>

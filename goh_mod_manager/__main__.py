@@ -1,15 +1,15 @@
-"""
-Call to Arms: Gates of Hell - Mod Manager
-Main application entry point.
-"""
-
 import sys
+from pathlib import Path
 
 from PySide6 import QtWidgets
 
-from goh_mod_manager.controller.mod_manager_controller import ModManagerController
-from goh_mod_manager.model.mod_manager_model import ModManagerModel
-from goh_mod_manager.view.mod_manager_view import ModManagerView
+from goh_mod_manager.core.mod_manager_model import ModManagerModel
+from goh_mod_manager.i18n.translator import TranslationManager
+from goh_mod_manager.infrastructure.config_manager import ConfigManager
+from goh_mod_manager.presentation.controller.mod_manager_controller import (
+    ModManagerController,
+)
+from goh_mod_manager.presentation.view.mod_manager_view import ModManagerView
 
 
 class ModManagerApp:
@@ -34,11 +34,11 @@ class ModManagerApp:
 
 def setup_application(app: QtWidgets.QApplication):
     """Configure Qt application properties."""
-    app.setApplicationName("GoH Mod Manager")
     app.setOrganizationName("alexbdka")
     app.setOrganizationDomain("alexbdka.github.io")
-    app.setApplicationVersion("1.3.0")
-    app.setApplicationDisplayName("GoH Mod Manager")
+    app.setApplicationName("GoH Mod Manager")
+    app.setApplicationVersion("1.4.2")
+
 
 def main():
     """Main entry point."""
@@ -46,6 +46,12 @@ def main():
         # Create Qt application
         app = QtWidgets.QApplication(sys.argv)
         setup_application(app)
+
+        config = ConfigManager()
+        translations_dir = Path(__file__).resolve().parent / "i18n"
+        translator = TranslationManager(translations_dir)
+        translator.load(config.get_language())
+        app.translation_manager = translator
 
         # Create and run mod manager
         mod_manager = ModManagerApp()

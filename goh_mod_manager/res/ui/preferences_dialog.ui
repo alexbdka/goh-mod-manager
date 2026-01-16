@@ -26,7 +26,7 @@
             <item>
                 <widget class="QGroupBox" name="pathGroupBox">
                     <property name="title">
-                        <string>Required Paths</string>
+                        <string>Required paths</string>
                     </property>
                     <layout class="QGridLayout" name="gridLayout">
                         <property name="spacing">
@@ -74,7 +74,7 @@
                                     </size>
                                 </property>
                                 <property name="text">
-                                    <string>Options file</string>
+                                    <string>Options.set file</string>
                                 </property>
                             </widget>
                         </item>
@@ -87,7 +87,7 @@
                                     </size>
                                 </property>
                                 <property name="text">
-                                    <string>Mods folder :</string>
+                                    <string>Mods folder</string>
                                 </property>
                             </widget>
                         </item>
@@ -106,6 +106,9 @@
                         </item>
                         <item row="0" column="1">
                             <widget class="QLineEdit" name="gameFolderLineEdit">
+                                <property name="readOnly">
+                                    <bool>true</bool>
+                                </property>
                                 <property name="placeholderText">
                                     <string>Select the game folder...</string>
                                 </property>
@@ -124,6 +127,80 @@
                                     <string>Browse...</string>
                                 </property>
                             </widget>
+                        </item>
+                    </layout>
+                </widget>
+            </item>
+            <item>
+                <widget class="QGroupBox" name="guidedTourGroupBox">
+                    <property name="title">
+                        <string>Guided tour</string>
+                    </property>
+                    <layout class="QHBoxLayout" name="guidedTourLayout">
+                        <property name="spacing">
+                            <number>10</number>
+                        </property>
+                        <item>
+                            <widget class="QCheckBox" name="checkBox_show_guided_tour">
+                                <property name="text">
+                                    <string>Show guided tour on startup</string>
+                                </property>
+                            </widget>
+                        </item>
+                        <item>
+                            <spacer name="guidedTourSpacer">
+                                <property name="orientation">
+                                    <enum>Qt::Orientation::Horizontal</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                    <size>
+                                        <width>40</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </item>
+                        <item>
+                            <widget class="QPushButton" name="pushButton_start_guided_tour">
+                                <property name="text">
+                                    <string>Start guided tour</string>
+                                </property>
+                            </widget>
+                        </item>
+                    </layout>
+                </widget>
+            </item>
+            <item>
+                <widget class="QGroupBox" name="languageGroupBox">
+                    <property name="title">
+                        <string>Language</string>
+                    </property>
+                    <layout class="QHBoxLayout" name="languageLayout">
+                        <property name="spacing">
+                            <number>10</number>
+                        </property>
+                        <item>
+                            <widget class="QLabel" name="languageLabel">
+                                <property name="text">
+                                    <string>App language</string>
+                                </property>
+                            </widget>
+                        </item>
+                        <item>
+                            <widget class="QComboBox" name="comboBox_language"/>
+                        </item>
+                        <item>
+                            <spacer name="languageSpacer">
+                                <property name="orientation">
+                                    <enum>Qt::Orientation::Horizontal</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                    <size>
+                                        <width>40</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
                         </item>
                     </layout>
                 </widget>

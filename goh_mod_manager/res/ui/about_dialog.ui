@@ -47,9 +47,7 @@
             <item>
                 <widget class="QLabel" name="thankYouLabel">
                     <property name="text">
-                        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;
-                            font-weight:600;&quot;&gt;Thank you for using this Mod Manager!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                        </string>
+                        <string>Thank you for using the mod manager!</string>
                     </property>
                     <property name="alignment">
                         <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -59,8 +57,7 @@
             <item>
                 <widget class="QLabel" name="descriptionLabel">
                     <property name="text">
-                        <string>This application is a friendly mod manager designed to make your life easier.
-                            Built with ❤️ using Python and PySide6.
+                        <string>This application helps you manage Gates of Hell mods. Built with Python and PySide6.
                         </string>
                     </property>
                     <property name="alignment">
@@ -74,35 +71,21 @@
             <item>
                 <widget class="QLabel" name="creditsLabel">
                     <property name="text">
-                        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Credits:&lt;/span&gt;&lt;br/&gt;•
-                            Interface: &lt;a href=&quot;https://doc.qt.io/qtforpython/&quot;&gt;&lt;span style=&quot;
-                            text-decoration: underline; color:#55aaff;&quot;&gt;Qt for Python (PySide6)&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;•
-                            Icons: &lt;a href=&quot;https://remixicon.com/&quot;&gt;&lt;span style=&quot;
-                            text-decoration: underline; color:#55aaff;&quot;&gt;Remix Icon, awasde&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;•
-                            Developer: &lt;a href=&quot;https://github.com/alexbdka&quot;&gt;&lt;span style=&quot;
-                            text-decoration: underline; color:#55aaff;&quot;&gt;alex6&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
+                        <string>Credits:
+                            Interface: Qt for Python (PySide6)
+                            Icons: Remix Icon, awasde
+                            Developer: alex6 (GitHub)
                         </string>
-                    </property>
-                    <property name="textFormat">
-                        <enum>Qt::TextFormat::RichText</enum>
                     </property>
                     <property name="wordWrap">
                         <bool>true</bool>
-                    </property>
-                    <property name="openExternalLinks">
-                        <bool>true</bool>
-                    </property>
-                    <property name="textInteractionFlags">
-                        <set>Qt::TextInteractionFlag::TextBrowserInteraction</set>
                     </property>
                 </widget>
             </item>
             <item>
                 <widget class="QLabel" name="versionLabel">
                     <property name="text">
-                        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Version : &lt;span
-                            style=&quot; font-weight:600;&quot;&gt;{VERSION_PLACEHOLDER}&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-                        </string>
+                        <string>Version: {VERSION_PLACEHOLDER}</string>
                     </property>
                     <property name="alignment">
                         <set>Qt::AlignmentFlag::AlignCenter</set>

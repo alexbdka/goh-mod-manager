@@ -1,0 +1,129 @@
+name: Build and Release (UV + PyInstaller)
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            id: linux
+          - os: windows-latest
+            id: windows
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Sync and install dependencies
+        run: uv sync --frozen
+
+      - name: Compile translations (Windows)
+        if: matrix.id == 'windows'
+        shell: pwsh
+        run: |
+          $tsFiles = Get-ChildItem -Path goh_mod_manager\i18n -Filter *.ts
+          if ($tsFiles) {
+            foreach ($file in $tsFiles) {
+              uv run pyside6-lrelease $file.FullName
+            }
+          }
+
+      - name: Compile translations (Linux)
+        if: matrix.id == 'linux'
+        shell: bash
+        run: |
+          shopt -s nullglob
+          files=(goh_mod_manager/i18n/*.ts)
+          if [ ${#files[@]} -gt 0 ]; then
+            for f in "${files[@]}"; do uv run pyside6-lrelease "$f"; done
+          fi
+
+      # WINDOWS BUILD
+      - name: Build (Windows)
+        if: matrix.id == 'windows'
+        shell: pwsh
+        run: |
+          $addData = ""
+          if (Get-ChildItem -Path goh_mod_manager\i18n -Filter *.qm) {
+            $addData = '--add-data "goh_mod_manager\i18n\*.qm;goh_mod_manager/i18n"'
+          }
+          uv run pyinstaller `
+            --onefile `
+            --clean `
+            --windowed `
+            --name "goh_mod_manager" `
+            --icon "goh_mod_manager\res\icon\logo.ico" `
+            $addData `
+            goh_mod_manager\__main__.py
+
+      # LINUX BUILD
+      - name: Build (Linux)
+        if: matrix.id == 'linux'
+        run: |
+          add_data=""
+          if ls goh_mod_manager/i18n/*.qm >/dev/null 2>&1; then
+            add_data="--add-data goh_mod_manager/i18n/*.qm:goh_mod_manager/i18n"
+          fi
+          uv run pyinstaller \
+            --onefile \
+            --clean \
+            --windowed \
+            --name "goh_mod_manager" \
+            --icon "goh_mod_manager/res/icon/logo.png" \
+            $add_data \
+            goh_mod_manager/__main__.py
+
+      # PACKAGE
+      - name: Package output (Linux)
+        if: matrix.id == 'linux'
+        shell: bash
+        run: |
+          mkdir -p out
+          zip -j out/goh_mod_manager-linux-x64.zip dist/goh_mod_manager
+
+      - name: Package output (Windows)
+        if: matrix.id == 'windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path out | Out-Null
+          Compress-Archive -Path dist\goh_mod_manager.exe -DestinationPath out\goh_mod_manager-windows-x64.zip
+
+      # UPLOAD
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: goh_mod_manager-${{ matrix.id }}
+          path: out/*.zip
+
+  # RELEASE JOB
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/**/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
