@@ -14,11 +14,11 @@ dependencies = [
     "vdf>=3.4",
 ]
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
+    "ruff>=0.14.13",
     "pytest>=9.0.2",
     "pytest-qt>=4.5.0",
-    "ruff>=0.14.13",
     "nuitka>=2.8.9",
     "pyinstaller>=6.18.0",
 ]
