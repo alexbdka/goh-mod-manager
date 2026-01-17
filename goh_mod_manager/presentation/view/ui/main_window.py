@@ -20,8 +20,8 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QGrou
     QHBoxLayout, QLCDNumber, QLabel, QLineEdit,
     QListWidget, QListWidgetItem, QMainWindow, QMenu,
     QMenuBar, QPushButton, QSizePolicy, QSpacerItem,
-    QSplitter, QStatusBar, QTextEdit, QVBoxLayout,
-    QWidget)
+    QSplitter, QStatusBar, QTextEdit, QToolBar,
+    QVBoxLayout, QWidget)
 from . import resources_rc
 
 class Ui_MainWindow(object):
@@ -81,6 +81,11 @@ class Ui_MainWindow(object):
         self.actionReset_zoom.setObjectName(u"actionReset_zoom")
         self.actionGenerate_Help_File = QAction(MainWindow)
         self.actionGenerate_Help_File.setObjectName(u"actionGenerate_Help_File")
+        self.actionLaunch_Game = QAction(MainWindow)
+        self.actionLaunch_Game.setObjectName(u"actionLaunch_Game")
+        icon1 = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.MediaPlaybackStart))
+        self.actionLaunch_Game.setIcon(icon1)
+        self.actionLaunch_Game.setMenuRole(QAction.MenuRole.NoRole)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.horizontalLayout_main = QHBoxLayout(self.centralwidget)
@@ -115,9 +120,9 @@ class Ui_MainWindow(object):
 
         self.pushButton_refresh_installed_mods = QPushButton(self.groupBox_installed_mods)
         self.pushButton_refresh_installed_mods.setObjectName(u"pushButton_refresh_installed_mods")
-        icon1 = QIcon()
-        icon1.addFile(u":/icons/icon/refresh-line.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.pushButton_refresh_installed_mods.setIcon(icon1)
+        icon2 = QIcon()
+        icon2.addFile(u":/icons/icon/refresh-line.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.pushButton_refresh_installed_mods.setIcon(icon2)
 
         self.horizontalLayout_search_available_mods.addWidget(self.pushButton_refresh_installed_mods)
 
@@ -334,6 +339,9 @@ class Ui_MainWindow(object):
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        self.toolBar = QToolBar(MainWindow)
+        self.toolBar.setObjectName(u"toolBar")
+        MainWindow.addToolBar(Qt.ToolBarArea.TopToolBarArea, self.toolBar)
         QWidget.setTabOrder(self.lineEdit_search_installed_mods, self.pushButton_refresh_installed_mods)
         QWidget.setTabOrder(self.pushButton_refresh_installed_mods, self.listWidget_installed_mods)
         QWidget.setTabOrder(self.listWidget_installed_mods, self.pushButton_activate)
@@ -381,6 +389,7 @@ class Ui_MainWindow(object):
         self.menuImport.addAction(self.action_load_order_from_code)
         self.menuImport.addAction(self.action_local_mod)
         self.menuExport.addAction(self.action_load_order_as_code)
+        self.toolBar.addAction(self.actionLaunch_Game)
 
         self.retranslateUi(MainWindow)
 
@@ -429,6 +438,10 @@ class Ui_MainWindow(object):
         self.actionZoom_out.setText(QCoreApplication.translate("MainWindow", u"Zoom out", None))
         self.actionReset_zoom.setText(QCoreApplication.translate("MainWindow", u"Reset zoom", None))
         self.actionGenerate_Help_File.setText(QCoreApplication.translate("MainWindow", u"Generate Help File", None))
+        self.actionLaunch_Game.setText(QCoreApplication.translate("MainWindow", u"Launch Game", None))
+#if QT_CONFIG(tooltip)
+        self.actionLaunch_Game.setToolTip(QCoreApplication.translate("MainWindow", u"Launch the game", None))
+#endif // QT_CONFIG(tooltip)
         self.groupBox_installed_mods.setTitle(QCoreApplication.translate("MainWindow", u"Installed Mods", None))
         self.lineEdit_search_installed_mods.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search installed mods...", None))
 #if QT_CONFIG(tooltip)
@@ -458,6 +471,7 @@ class Ui_MainWindow(object):
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"&Help", None))
         self.menuImport.setTitle(QCoreApplication.translate("MainWindow", u"Import", None))
         self.menuExport.setTitle(QCoreApplication.translate("MainWindow", u"Export", None))
+        self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))
         pass
     # retranslateUi
 

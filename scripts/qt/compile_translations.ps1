@@ -19,7 +19,7 @@ if (-not $tsFiles)
 
 foreach ($tsFile in $tsFiles)
 {
-    Write-Host "Compiling $($tsFile.Name)"
+    Write-Host "Compiling $( $tsFile.Name )"
     & pyside6-lrelease $tsFile.FullName
 }
 

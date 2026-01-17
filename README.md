@@ -1,6 +1,8 @@
 # GoH Mod Manager
 
-*A modern mod manager for [Call to Arms: Gates of Hell](https://www.barbed-wire.eu/we-are-barbedwire-studios/our-game-development/), built with PySide6.*
+*A modern mod manager
+for [Call to Arms: Gates of Hell](https://www.barbed-wire.eu/we-are-barbedwire-studios/our-game-development/), built
+with PySide6.*
 
 A user-friendly graphical interface for managing mods, presets, configuration sharing, and more.
 

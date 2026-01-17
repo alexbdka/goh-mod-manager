@@ -25,11 +25,15 @@ def test_save_and_load_active_mods(tmp_path: Path) -> None:
     service = ActiveModsService()
 
     assert service.save_active_mods(str(options_file), mods) is True
-    assert service.load_active_mod_ids(str(options_file)) == ["100", "200"]
+    mod_ids, invalid_entries = service.load_active_mod_ids(str(options_file))
+    assert mod_ids == ["100", "200"]
+    assert invalid_entries == []
 
 
 def test_load_active_mods_missing_file_returns_empty(tmp_path: Path) -> None:
     service = ActiveModsService()
     missing_file = tmp_path / "missing.set"
 
-    assert service.load_active_mod_ids(str(missing_file)) == []
+    mod_ids, invalid_entries = service.load_active_mod_ids(str(missing_file))
+    assert mod_ids == []
+    assert invalid_entries == []

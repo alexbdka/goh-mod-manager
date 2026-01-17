@@ -2,7 +2,8 @@ from PySide6.QtGui import QFont, QFontDatabase
 
 
 class FontService:
-    def load_font(self, font_name: str) -> QFont:
+    @staticmethod
+    def load_font(font_name: str) -> QFont:
         if font_name == "dyslexia":
             QFontDatabase.addApplicationFont(":/assets/font/OpenDyslexic-Regular.otf")
             return QFont("OpenDyslexic", 10)

@@ -4,4 +4,7 @@
     <option name="sdkName" value="uv (goh-mod-manager)" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="uv (goh-mod-manager)" project-jdk-type="Python SDK" />
+  <component name="RuffConfiguration">
+    <option name="enabled" value="true" />
+  </component>
 </project>

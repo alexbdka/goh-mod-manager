@@ -21,6 +21,7 @@ class DialogActionsViewModel:
         )
         return dialog.exec() == QDialog.DialogCode.Accepted
 
-    def open_about(self, parent, version: str) -> None:
+    @staticmethod
+    def open_about(parent, version: str) -> None:
         dialog = AboutDialog(parent, version)
         dialog.exec()

@@ -12,14 +12,22 @@ dependencies = [
     "py7zr>=1.1.0",
     "rarfile>=4.2",
     "vdf>=3.4",
-    "pyinstaller>=6.17.0",
 ]
 
 [tool.uv]
 dev-dependencies = [
     "pytest>=9.0.2",
     "pytest-qt>=4.5.0",
-    "black>=25.12.0",
+    "ruff>=0.14.13",
     "nuitka>=2.8.9",
     "pyinstaller>=6.18.0",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+exclude = [
+    "goh_mod_manager/presentation/view/ui",
+    ".venv",
 ]

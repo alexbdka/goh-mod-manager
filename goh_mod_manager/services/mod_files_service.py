@@ -7,9 +7,9 @@ from goh_mod_manager.infrastructure.mod_manager_logger import logger
 
 
 class ModFilesService:
+    @staticmethod
+    @staticmethod
     def generate_help_file(
-        self,
-        options_file: str,
         game_folder: str,
         mods_folder: str,
         load_order: List[Mod],

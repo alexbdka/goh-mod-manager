@@ -1,6 +1,7 @@
+from pathlib import Path
 from typing import Tuple
 
-from PySide6.QtCore import QObject, Signal, Qt, Slot
+from PySide6.QtCore import QObject, Qt, Signal, Slot
 
 from goh_mod_manager.core.mod import Mod
 from goh_mod_manager.core.mod_manager_model import ModManagerModel
@@ -29,6 +30,23 @@ class FileActionsViewModel(QObject):
 
     def open_game_folder(self) -> Tuple[bool, str]:
         return self._system_actions.open_path(self._config.get_game_directory())
+
+    def launch_game(self) -> Tuple[bool, str]:
+        game_directory_value = self._config.get_game_directory()
+        if not game_directory_value:
+            return False, "Game directory is not set. Check Preferences."
+
+        game_directory = Path(game_directory_value)
+        if not game_directory.exists():
+            return False, "Game directory is not set. Check Preferences."
+
+        exe_path = game_directory / "binaries" / "x64" / "call_to_arms.exe"
+        if not exe_path.exists():
+            return False, f"Game executable not found: {exe_path}"
+
+        return self._system_actions.launch_executable(
+            exe_path, working_dir=exe_path.parent
+        )
 
     def open_mods_folder(self) -> Tuple[bool, str]:
         return self._system_actions.open_path(self._config.get_mods_directory())

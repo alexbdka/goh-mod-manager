@@ -28,9 +28,10 @@ class OptionsSetParser:
     # Constants for better maintainability
     MODS_SECTION_START = "\t{mods\n"
     MODS_SECTION_END = "\t}\n"
-    MOD_ENTRY_PATTERN = re.compile(r'^\t\t"(mod_)?(\d+):0"\n$')
-    WORKSHOP_MOD_PATTERN = re.compile(r'^\t\t"mod_(\d+):0"\n$')
-    MANUAL_MOD_PATTERN = re.compile(r'^\t\t"(\d+):0"\n$')
+    MOD_ENTRY_PATTERN = re.compile(r'^\s*"(mod_)?(\d+):0"\s*$')
+    WORKSHOP_MOD_PATTERN = re.compile(r'^\s*"mod_(\d+):0"\s*$')
+    MANUAL_MOD_PATTERN = re.compile(r'^\s*"(\d+):0"\s*$')
+    MOD_TEMPLATE_PATTERN = re.compile(r'^\s*"mod_template:0"\s*$')
 
     def __init__(self, file_path: str):
         """
@@ -139,7 +140,12 @@ class OptionsSetParser:
             return []
 
         mods = []
-        for line in self.lines:
+        bounds = self._find_mods_section_bounds()
+        if bounds is None:
+            return []
+
+        start_idx, end_idx = bounds
+        for line in self.lines[start_idx + 1 : end_idx]:
             # Check for workshop mod format (mod_NUMBER:0)
             workshop_match = self.WORKSHOP_MOD_PATTERN.match(line)
             if workshop_match:
@@ -153,6 +159,31 @@ class OptionsSetParser:
 
         return mods
 
+    def get_invalid_mod_entries(self) -> List[str]:
+        """
+        Return invalid lines inside the mods section.
+
+        Returns:
+            List[str]: Raw invalid lines (trimmed) found in the mods section
+        """
+        bounds = self._find_mods_section_bounds()
+        if bounds is None:
+            return []
+
+        start_idx, end_idx = bounds
+        invalid_entries = []
+
+        for line in self.lines[start_idx + 1 : end_idx]:
+            if not line.strip():
+                continue
+            if self.MOD_TEMPLATE_PATTERN.match(line):
+                continue
+            if self.MOD_ENTRY_PATTERN.match(line):
+                continue
+            invalid_entries.append(line.rstrip("\n"))
+
+        return invalid_entries
+
     def clear_mods_section(self) -> bool:
         """
         Remove all mod entries from the mods section while preserving the section structure.
@@ -164,13 +195,14 @@ class OptionsSetParser:
             logger.warning("Cannot clear mods section: section does not exist")
             return False
 
-        # Remove all lines matching mod patterns
-        self.lines = [
-            line
-            for line in self.lines
-            if not self.MOD_ENTRY_PATTERN.match(line)
-            and line.strip() != '"mod_template:0"'
-        ]
+        bounds = self._find_mods_section_bounds()
+        if bounds is None:
+            logger.warning("Cannot clear mods section: bounds not found")
+            return False
+
+        start_idx, end_idx = bounds
+        # Keep the section braces, drop everything inside (including invalid entries)
+        self.lines = self.lines[: start_idx + 1] + self.lines[end_idx:]
 
         return self.save()
 

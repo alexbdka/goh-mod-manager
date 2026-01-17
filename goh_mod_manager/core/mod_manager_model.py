@@ -26,6 +26,7 @@ class ModManagerModel(QObject):
     installed_mods_signal = Signal()
     presets_signal = Signal()
     mods_counter_signal = Signal(int)
+    mods_section_invalid_signal = Signal(list)
 
     def __init__(self):
         """Initialize the mod manager with empty collections and configuration."""
@@ -38,6 +39,7 @@ class ModManagerModel(QObject):
         self._active_mods_service = ActiveModsService()
         self._presets_service = PresetsService()
         self._mod_import_service = ModImportService()
+        self._invalid_mod_section_reported = False
 
     # Getters
     def get_config(self) -> ConfigManager:
@@ -220,10 +222,18 @@ class ModManagerModel(QObject):
         options_file = self._config.get_options_file()
 
         try:
-            active_mod_ids = self._active_mods_service.load_active_mod_ids(options_file)
+            active_mod_ids, invalid_entries = (
+                self._active_mods_service.load_active_mod_ids(options_file)
+            )
             self._active_mods = self._mods_catalog.resolve_active_mods(
                 active_mod_ids, self._installed_mods
             )
+            if invalid_entries:
+                if not self._invalid_mod_section_reported:
+                    self.mods_section_invalid_signal.emit(invalid_entries)
+                    self._invalid_mod_section_reported = True
+            else:
+                self._invalid_mod_section_reported = False
         except Exception as e:
             logger.error(f"Error while parsing {options_file}: {e}")
 

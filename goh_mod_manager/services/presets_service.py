@@ -5,8 +5,9 @@ from goh_mod_manager.infrastructure.mod_manager_logger import logger
 
 
 class PresetsService:
+    @staticmethod
     def resolve_presets(
-        self, presets: Dict[str, List[str]], installed_mods: List[Mod]
+        presets: Dict[str, List[str]], installed_mods: List[Mod]
     ) -> Dict[str, List[Mod]]:
         resolved: Dict[str, List[Mod]] = {}
         installed_by_id = {mod.id: mod for mod in installed_mods}

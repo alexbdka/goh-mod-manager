@@ -138,6 +138,9 @@ class ModManagerController(QObject):
         self._view_model.active_mods_count_changed.connect(
             self._view.update_active_mods_count
         )
+        self._model.mods_section_invalid_signal.connect(
+            self._on_invalid_mods_section
+        )
         self._mod_actions_view_model.refresh_installed_started.connect(
             self._on_refresh_started
         )
@@ -161,6 +164,7 @@ class ModManagerController(QObject):
         self._view.ui.actionOpen_options_file.triggered.connect(self._open_options_file)
         self._view.ui.actionOpen_logs.triggered.connect(self._open_logs)
         self._view.ui.actionExit.triggered.connect(self._view.close)
+        self._view.ui.actionLaunch_Game.triggered.connect(self._launch_game)
 
         self._view.ui.actionSettings.triggered.connect(self._open_preferences)
 
@@ -256,6 +260,42 @@ class ModManagerController(QObject):
                 self.tr("Open Folder Error"),
                 self.tr("Failed to open game folder: {error}").format(error=error),
             )
+
+    def _launch_game(self):
+        success, error = self._file_actions_view_model.launch_game()
+        if not success:
+            self._view.show_error(
+                self.tr("Launch Game Error"),
+                self.tr("Failed to launch game: {error}").format(error=error),
+            )
+
+    def _on_invalid_mods_section(self, invalid_entries: List[str]) -> None:
+        if not invalid_entries:
+            return
+
+        preview = invalid_entries[:5]
+        preview_text = "\n".join(preview)
+        if preview_text:
+            preview_text = "\n\n" + self.tr("Examples:\n{lines}").format(
+                lines=preview_text
+            )
+
+        count = len(invalid_entries)
+        message = self.tr(
+            "The mods section in options.set contains {count} invalid entries. "
+            "This can prevent the game from loading mods correctly.\n\n"
+            "Would you like to clear the mods section now?"
+        ).format(count=count)
+        message += preview_text
+
+        if self._view.ask_confirmation(
+            self.tr("Invalid Mods Section"), message, QMessageBox.StandardButton.No
+        ):
+            if not self._model.clear_active_mods():
+                self._view.show_error(
+                    self.tr("Clear Mods Error"),
+                    self.tr("Failed to clear the mods section."),
+                )
 
     def _open_mods_folder(self):
         success, error = self._file_actions_view_model.open_mods_folder()

@@ -6,7 +6,8 @@ from typing import Tuple
 
 
 class SystemActionsService:
-    def open_path(self, path: str | Path) -> Tuple[bool, str]:
+    @staticmethod
+    def open_path(path: str | Path) -> Tuple[bool, str]:
         target = str(path)
         try:
             if sys.platform.startswith("win"):
@@ -21,3 +22,25 @@ class SystemActionsService:
 
     def open_url(self, url: str) -> Tuple[bool, str]:
         return self.open_path(url)
+
+    @staticmethod
+    def launch_executable(
+        exe_path: str | Path, working_dir: str | Path | None = None
+    ) -> Tuple[bool, str]:
+        """
+        Launch an executable with an optional working directory.
+
+        Args:
+            exe_path: Path to the executable to launch
+            working_dir: Working directory for the process (optional)
+
+        Returns:
+            (success, error_message)
+        """
+        target = str(exe_path)
+        cwd = str(working_dir) if working_dir else None
+        try:
+            subprocess.Popen([target], cwd=cwd)
+            return True, ""
+        except Exception as e:
+            return False, str(e)

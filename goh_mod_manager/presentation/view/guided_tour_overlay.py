@@ -276,7 +276,8 @@ class GuidedTourOverlay(QWidget):
         if parent:
             self.setGeometry(parent.rect())
 
-    def _create_blurred_pixmap(self, pixmap: QPixmap) -> QPixmap:
+    @staticmethod
+    def _create_blurred_pixmap(pixmap: QPixmap) -> QPixmap:
         if pixmap.isNull():
             return QPixmap()
 

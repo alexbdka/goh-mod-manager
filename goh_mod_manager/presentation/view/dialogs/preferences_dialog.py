@@ -1,9 +1,9 @@
 from typing import Callable, Optional
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QLocale
 from PySide6.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox
 
-from goh_mod_manager.i18n.translator import SUPPORTED_LANGUAGES, normalize_language
+from goh_mod_manager.i18n.translator import normalize_language
 from goh_mod_manager.infrastructure.config_manager import ConfigManager
 from goh_mod_manager.presentation.view.ui.preferences_dialog import Ui_PreferencesDialog
 
@@ -28,9 +28,7 @@ class PreferencesDialog(QDialog):
         mods_path = self._config.get_mods_directory()
         options_path = self._config.get_options_file()
         show_guided_tour = self._config.get_show_guided_tour()
-        language = normalize_language(
-            self._config.get_language(), SUPPORTED_LANGUAGES
-        )
+        language = self._config.get_language()
 
         self.ui.gameFolderLineEdit.setText(game_path)
         self.ui.modsFolderLineEdit.setText(mods_path)
@@ -39,30 +37,57 @@ class PreferencesDialog(QDialog):
         self._populate_languages(language)
 
     def _populate_languages(self, current_language: str) -> None:
-        language_labels = {
-            "en": "English",
-            "fr": "French",
-            "ru": "Russian",
-            "zh": "Chinese",
-            "de": "German",
-        }
         translator = getattr(QApplication.instance(), "translation_manager", None)
-        available = translator.available_languages() if translator else {"en"}
-        if current_language not in available:
-            current_language = "en"
+        status = translator.language_file_status() if translator else {}
+        available = {"en"} | {
+            code for code, (has_qm, _) in status.items() if has_qm
+        }
+        current_language = normalize_language(current_language, available)
+
+        codes = set(status.keys()) | {"en"}
+        ordered_codes = ["en"] + sorted(code for code in codes if code != "en")
         self.ui.comboBox_language.clear()
-        for code in SUPPORTED_LANGUAGES:
+        for code in ordered_codes:
             self.ui.comboBox_language.addItem(
-                language_labels.get(code, code), code
+                self._format_language_label(code), code
             )
-            if code not in available:
+            has_qm, has_ts = status.get(code, (code == "en", False))
+            if not has_qm:
                 index = self.ui.comboBox_language.count() - 1
                 self.ui.comboBox_language.setItemData(
                     index, 0, Qt.ItemDataRole.UserRole - 1
                 )
+                if has_ts:
+                    self.ui.comboBox_language.setItemData(
+                        index,
+                        self.tr("Translation source available (.ts), compile to enable."),
+                        Qt.ItemDataRole.ToolTipRole,
+                    )
+                else:
+                    self.ui.comboBox_language.setItemData(
+                        index,
+                        self.tr("Translation not available."),
+                        Qt.ItemDataRole.ToolTipRole,
+                    )
         index = self.ui.comboBox_language.findData(current_language)
         if index >= 0:
             self.ui.comboBox_language.setCurrentIndex(index)
+
+    @staticmethod
+    def _format_language_label(code: str) -> str:
+        locale = QLocale(code)
+        if locale.language() == QLocale.Language.C:
+            return code
+
+        language = locale.nativeLanguageName()
+        if not language:
+            language = QLocale.languageToString(locale.language())
+
+        territory = locale.nativeTerritoryName()
+        if territory:
+            return f"{language} ({territory})"
+
+        return language
 
     def _connect_signals(self):
         self.ui.gameFolderButton.clicked.connect(self._browse_game)
