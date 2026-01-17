@@ -32,27 +32,6 @@ jobs:
       - name: Sync and install dependencies
         run: uv sync --frozen
 
-      - name: Compile translations (Windows)
-        if: matrix.id == 'windows'
-        shell: pwsh
-        run: |
-          $tsFiles = Get-ChildItem -Path goh_mod_manager\i18n -Filter *.ts
-          if ($tsFiles) {
-            foreach ($file in $tsFiles) {
-              uv run pyside6-lrelease $file.FullName
-            }
-          }
-
-      - name: Compile translations (Linux)
-        if: matrix.id == 'linux'
-        shell: bash
-        run: |
-          shopt -s nullglob
-          files=(goh_mod_manager/i18n/*.ts)
-          if [ ${#files[@]} -gt 0 ]; then
-            for f in "${files[@]}"; do uv run pyside6-lrelease "$f"; done
-          fi
-
       # WINDOWS BUILD
       - name: Build (Windows)
         if: matrix.id == 'windows'
