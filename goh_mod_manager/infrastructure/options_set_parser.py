@@ -85,10 +85,14 @@ class OptionsSetParser:
         start_idx = None
         end_idx = None
 
+        target_start = self.MODS_SECTION_START.strip()
+        target_end = self.MODS_SECTION_END.strip()
+
         for i, line in enumerate(self.lines):
-            if line == self.MODS_SECTION_START:
+            stripped_line = line.strip()
+            if stripped_line == target_start:
                 start_idx = i
-            elif line == self.MODS_SECTION_END and start_idx is not None:
+            elif stripped_line == target_end and start_idx is not None:
                 end_idx = i
                 break
 

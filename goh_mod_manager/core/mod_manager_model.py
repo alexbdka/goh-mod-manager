@@ -132,10 +132,14 @@ class ModManagerModel(QObject):
         if mod not in self._installed_mods:
             return False
 
+        if not mod.manualInstall:
+            logger.warning(f"Cannot delete workshop mod: {mod.name}")
+            return False
+
         self._installed_mods.remove(mod)
 
         try:
-            mod_path = os.path.join(self._get_game_mods_directory(), str(mod.id))
+            mod_path = mod.folderPath
             if os.path.isdir(mod_path):
                 shutil.rmtree(mod_path)
             return True

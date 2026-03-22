@@ -1,6 +1,7 @@
 import base64
 import json
 import time
+import zlib
 from typing import Dict, List, Tuple
 
 from goh_mod_manager.core.mod import Mod
@@ -78,11 +79,19 @@ class ShareCodeService:
     @staticmethod
     def _encode_payload(payload: Dict | List[Dict]) -> str:
         json_str = json.dumps(payload, separators=(",", ":"))
-        return base64.b64encode(json_str.encode("utf-8")).decode("utf-8")
+        compressed_bytes = zlib.compress(json_str.encode("utf-8"))
+        return base64.b64encode(compressed_bytes).decode("utf-8")
 
     @staticmethod
     def _decode_payload(code: str) -> Dict | List[Dict]:
         clean_code = code.strip().replace(" ", "").replace("\n", "")
-        json_bytes = base64.b64decode(clean_code)
+        raw_bytes = base64.b64decode(clean_code)
+        try:
+            # Try to decompress assuming it's a new version using zlib
+            json_bytes = zlib.decompress(raw_bytes)
+        except zlib.error:
+            # Fallback to uncompressed (backward compatibility with old share codes)
+            json_bytes = raw_bytes
+
         json_string = json_bytes.decode("utf-8")
         return json.loads(json_string)

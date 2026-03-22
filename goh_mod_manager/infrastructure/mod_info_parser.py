@@ -26,8 +26,8 @@ class ModInfoParser:
 
     # Regex patterns for different field types
     FIELD_PATTERN = re.compile(
-        r'\{\s*(name|desc|minGameVersion|maxGameVersion|require)\s+"?([^"}]+)"?\s*}',
-        re.IGNORECASE,
+        r'\{\s*(name|desc|minGameVersion|maxGameVersion|require)\s+"?(.*?)"?\s*}',
+        re.IGNORECASE | re.DOTALL,
     )
 
     # Default values for mod properties
@@ -95,23 +95,22 @@ class ModInfoParser:
         result = self.DEFAULT_VALUES.copy()
         found_fields = set()
 
-        for line_num, line in enumerate(self.lines, 1):
-            matches = self.FIELD_PATTERN.finditer(line)
+        matches = self.FIELD_PATTERN.finditer(self._raw_content)
 
-            for match in matches:
-                key, value = match.groups()
-                key_lower = key.lower()  # Normalize case for lookup
+        for match in matches:
+            key, value = match.groups()
+            key_lower = key.lower()  # Normalize case for lookup
 
-                # Map lowercase key to proper camelCase key
-                if key_lower in self.FIELD_NAME_MAPPING:
-                    proper_key = self.FIELD_NAME_MAPPING[key_lower]
+            # Map lowercase key to proper camelCase key
+            if key_lower in self.FIELD_NAME_MAPPING:
+                proper_key = self.FIELD_NAME_MAPPING[key_lower]
 
-                    # Clean up the value
-                    cleaned_value = value.strip().strip("\"'")
-                    result[proper_key] = cleaned_value
-                    found_fields.add(proper_key)
-                else:
-                    logger.warning(f"Unknown field '{key}' found on line {line_num}")
+                # Clean up the value
+                cleaned_value = value.strip().strip("\"'")
+                result[proper_key] = cleaned_value
+                found_fields.add(proper_key)
+            else:
+                logger.warning(f"Unknown field '{key}' found")
 
         # Log missing fields
         missing_fields = set(self.DEFAULT_VALUES.keys()) - found_fields

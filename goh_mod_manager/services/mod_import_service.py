@@ -58,7 +58,6 @@ class ModImportService:
         with tempfile.TemporaryDirectory() as temp_dir:
             try:
                 self._extract_archive(archive_path, temp_dir)
-                self._mark_as_imported(temp_dir)
                 return self._import_from_directory(temp_dir, game_mods_directory)
             except Exception as e:
                 logger.error(f"Error importing from archive: {e}")
