@@ -221,8 +221,7 @@ wheels = [
 
 [[package]]
 name = "goh-mod-manager"
-version = "1.4.3"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "loguru" },
     { name = "packaging" },

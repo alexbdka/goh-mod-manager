@@ -44,10 +44,12 @@ class ModManagerApp:
 
 def setup_application(app: QtWidgets.QApplication):
     """Configure Qt application properties."""
+    from goh_mod_manager import __version__
+
     app.setOrganizationName("alexbdka")
     app.setOrganizationDomain("alexbdka.github.io")
     app.setApplicationName("GoH Mod Manager")
-    app.setApplicationVersion("1.4.3")
+    app.setApplicationVersion(__version__)
 
 
 def main():
