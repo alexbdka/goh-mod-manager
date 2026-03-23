@@ -10,15 +10,25 @@ from goh_mod_manager.presentation.controller.mod_manager_controller import (
     ModManagerController,
 )
 from goh_mod_manager.presentation.view.mod_manager_view import ModManagerView
+from goh_mod_manager.services.active_mods_service import ActiveModsService
+from goh_mod_manager.services.mod_import_service import ModImportService
+from goh_mod_manager.services.mods_catalog_service import ModsCatalogService
+from goh_mod_manager.services.presets_service import PresetsService
 
 
 class ModManagerApp:
     """Main application class"""
 
-    def __init__(self):
+    def __init__(self, config: ConfigManager):
         """Initialize MVC components."""
         try:
-            self.model = ModManagerModel()
+            self.model = ModManagerModel(
+                config=config,
+                mods_catalog=ModsCatalogService(),
+                active_mods_service=ActiveModsService(),
+                presets_service=PresetsService(),
+                mod_import_service=ModImportService(),
+            )
             self.view = ModManagerView()
             self.controller = ModManagerController(self.model, self.view)
         except Exception as e:
@@ -37,7 +47,7 @@ def setup_application(app: QtWidgets.QApplication):
     app.setOrganizationName("alexbdka")
     app.setOrganizationDomain("alexbdka.github.io")
     app.setApplicationName("GoH Mod Manager")
-    app.setApplicationVersion("1.4.2")
+    app.setApplicationVersion("1.4.3")
 
 
 def main():
@@ -54,7 +64,7 @@ def main():
         app.translation_manager = translator
 
         # Create and run mod manager
-        mod_manager = ModManagerApp()
+        mod_manager = ModManagerApp(config)
         mod_manager.run()
 
         # Start event loop

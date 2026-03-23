@@ -28,17 +28,24 @@ class ModManagerModel(QObject):
     mods_counter_signal = Signal(int)
     mods_section_invalid_signal = Signal(list)
 
-    def __init__(self):
+    def __init__(
+        self,
+        config: ConfigManager = None,
+        mods_catalog: ModsCatalogService = None,
+        active_mods_service: ActiveModsService = None,
+        presets_service: PresetsService = None,
+        mod_import_service: ModImportService = None,
+    ):
         """Initialize the mod manager with empty collections and configuration."""
         super().__init__()
         self._installed_mods: List[Mod] = []
         self._active_mods: List[Mod] = []
         self._presets: Dict[str, List[Mod]] = {}
-        self._config = ConfigManager()
-        self._mods_catalog = ModsCatalogService()
-        self._active_mods_service = ActiveModsService()
-        self._presets_service = PresetsService()
-        self._mod_import_service = ModImportService()
+        self._config = config or ConfigManager()
+        self._mods_catalog = mods_catalog or ModsCatalogService()
+        self._active_mods_service = active_mods_service or ActiveModsService()
+        self._presets_service = presets_service or PresetsService()
+        self._mod_import_service = mod_import_service or ModImportService()
         self._invalid_mod_section_reported = False
 
     # Getters
@@ -277,24 +284,16 @@ class ModManagerModel(QObject):
 
     def _get_game_mods_directory(self) -> str:
         """
-        Derive the game's mods directory from the configured mods directory.
-
-        Assumes Steam installation structure and navigates to the game's
-        actual mods directory from the Steam library path.
+        Derive the game's mods directory from the configured game directory.
 
         Returns:
             Path to the game's mods directory, empty string if not found
         """
-        mods_directory = Path(self._config.get_mods_directory())
-        parts = mods_directory.parts
-
-        if "steamapps" not in parts:
+        game_directory = self._config.get_game_directory()
+        if not game_directory:
             return ""
 
-        # Navigate from steamapps to the game's mods directory
-        idx = parts.index("steamapps")
-        steam_root = Path(*parts[: idx + 1])
-        game_mods_dir = steam_root / "common" / "Call to Arms - Gates of Hell" / "mods"
+        game_mods_dir = Path(game_directory) / "mods"
         return str(game_mods_dir)
 
     def get_game_mods_directory(self) -> str:
