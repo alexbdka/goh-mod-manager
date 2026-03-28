@@ -15,8 +15,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QDialog, QHBoxLayout, QLabel,
-    QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout,
+from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
+    QLabel, QSizePolicy, QSpacerItem, QVBoxLayout,
     QWidget)
 
 class Ui_AboutDialog(object):
@@ -28,9 +28,7 @@ class Ui_AboutDialog(object):
         AboutDialog.setMaximumSize(QSize(450, 240))
         AboutDialog.setModal(True)
         self.verticalLayout = QVBoxLayout(AboutDialog)
-        self.verticalLayout.setSpacing(10)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(20, 15, 20, 15)
         self.thankYouLabel = QLabel(AboutDialog)
         self.thankYouLabel.setObjectName(u"thankYouLabel")
         self.thankYouLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -60,31 +58,18 @@ class Ui_AboutDialog(object):
 
         self.verticalLayout.addItem(self.verticalSpacer)
 
-        self.buttonLayout = QHBoxLayout()
-        self.buttonLayout.setObjectName(u"buttonLayout")
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.buttonBox = QDialogButtonBox(AboutDialog)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Close)
+        self.buttonBox.setCenterButtons(True)
 
-        self.buttonLayout.addItem(self.horizontalSpacer)
-
-        self.closeButton = QPushButton(AboutDialog)
-        self.closeButton.setObjectName(u"closeButton")
-        self.closeButton.setMinimumSize(QSize(80, 30))
-
-        self.buttonLayout.addWidget(self.closeButton)
-
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.buttonLayout.addItem(self.horizontalSpacer_2)
-
-
-        self.verticalLayout.addLayout(self.buttonLayout)
+        self.verticalLayout.addWidget(self.buttonBox)
 
 
         self.retranslateUi(AboutDialog)
-        self.closeButton.clicked.connect(AboutDialog.accept)
-
-        self.closeButton.setDefault(True)
-
+        self.buttonBox.rejected.connect(AboutDialog.reject)
+        self.buttonBox.accepted.connect(AboutDialog.accept)
 
         QMetaObject.connectSlotsByName(AboutDialog)
     # setupUi
@@ -97,9 +82,8 @@ class Ui_AboutDialog(object):
         self.creditsLabel.setText(QCoreApplication.translate("AboutDialog", u"Credits:\n"
 "                            Interface: Qt for Python (PySide6)\n"
 "                            Icons: Remix Icon, awasde\n"
-"                            Developer: alex6 (GitHub)\n"
+"                            Developer: alex6\n"
 "                        ", None))
         self.versionLabel.setText(QCoreApplication.translate("AboutDialog", u"Version: {VERSION_PLACEHOLDER}", None))
-        self.closeButton.setText(QCoreApplication.translate("AboutDialog", u"Close", None))
     # retranslateUi
 

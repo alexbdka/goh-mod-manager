@@ -1,11 +1,12 @@
 import re
 from typing import List, Optional
 
+import qtawesome as qta
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QColor, QFont, QPalette
 from PySide6.QtWidgets import (
-    QApplication,
     QAbstractItemView,
+    QApplication,
     QListWidgetItem,
     QMainWindow,
     QMessageBox,
@@ -32,7 +33,14 @@ class ModManagerView(QMainWindow):
         # Enable custom context menus for the available mods list
         self.ui.listWidget_installed_mods.setContextMenuPolicy(Qt.CustomContextMenu)
         self._configure_drag_and_drop()
+        self._setup_icons()
         self.retranslate()
+
+    def _setup_icons(self) -> None:
+        """Setup dynamic icons using qtawesome."""
+        icon_color = self.palette().color(QPalette.WindowText).name()
+        refresh_icon = qta.icon("ri.refresh-line", color=icon_color)
+        self.ui.pushButton_refresh_installed_mods.setIcon(refresh_icon)
 
     def retranslate(self) -> None:
         self.ui.retranslateUi(self)

@@ -2,7 +2,7 @@
 <RCC version="1.0">
     <qresource prefix="icons">
         <file>icon/logo.ico</file>
-        <file>icon/refresh-line.svg</file>
+        <file>icon/logo.png</file>
     </qresource>
     <qresource prefix="fonts">
         <file>font/Inter-Regular.otf</file>

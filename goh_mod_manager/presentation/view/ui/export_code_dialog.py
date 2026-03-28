@@ -29,7 +29,6 @@ class Ui_ExportCodeDialog(object):
         self.label = QLabel(ExportCodeDialog)
         self.label.setObjectName(u"label")
         font = QFont()
-        font.setPointSize(12)
         font.setBold(True)
         self.label.setFont(font)
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)

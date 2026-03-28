@@ -95,10 +95,10 @@ class PreferencesDialog(QDialog):
         self.ui.settingsFileButton.clicked.connect(self._browse_options)
         self.ui.pushButton_start_guided_tour.clicked.connect(self._start_guided_tour)
         try:
-            self.ui.okButton.clicked.disconnect()
+            self.ui.buttonBox.accepted.disconnect()
         except RuntimeError:
             pass
-        self.ui.okButton.clicked.connect(self._save)
+        self.ui.buttonBox.accepted.connect(self._save)
 
     def _browse_game(self):
         path = QFileDialog.getExistingDirectory(

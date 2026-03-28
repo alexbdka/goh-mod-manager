@@ -1,291 +1,241 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>PreferencesDialog</class>
-    <widget class="QDialog" name="PreferencesDialog">
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>500</width>
-                <height>306</height>
-            </rect>
+ <class>PreferencesDialog</class>
+ <widget class="QDialog" name="PreferencesDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>324</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Preferences</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="pathGroupBox">
+     <property name="title">
+      <string>Required paths</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="modsFolderLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
-        <property name="windowTitle">
-            <string>Preferences</string>
+        <property name="placeholderText">
+         <string>Select the mods folder...</string>
         </property>
-        <property name="modal">
-            <bool>true</bool>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="settingsFileButton">
+        <property name="text">
+         <string>Browse...</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-            <property name="spacing">
-                <number>15</number>
-            </property>
-            <property name="margin" stdset="0">
-                <number>20</number>
-            </property>
-            <item>
-                <widget class="QGroupBox" name="pathGroupBox">
-                    <property name="title">
-                        <string>Required paths</string>
-                    </property>
-                    <layout class="QGridLayout" name="gridLayout">
-                        <property name="spacing">
-                            <number>10</number>
-                        </property>
-                        <item row="1" column="1">
-                            <widget class="QLineEdit" name="modsFolderLineEdit">
-                                <property name="readOnly">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="placeholderText">
-                                    <string>Select the mods folder...</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="2" column="2">
-                            <widget class="QPushButton" name="settingsFileButton">
-                                <property name="maximumSize">
-                                    <size>
-                                        <width>100</width>
-                                        <height>16777215</height>
-                                    </size>
-                                </property>
-                                <property name="text">
-                                    <string>Browse...</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="2" column="1">
-                            <widget class="QLineEdit" name="settingsFileLineEdit">
-                                <property name="readOnly">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="placeholderText">
-                                    <string>Select the options.set file...</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="2" column="0">
-                            <widget class="QLabel" name="settingsFileLabel">
-                                <property name="minimumSize">
-                                    <size>
-                                        <width>80</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
-                                <property name="text">
-                                    <string>Options.set file</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="1" column="0">
-                            <widget class="QLabel" name="modsFolderLabel">
-                                <property name="minimumSize">
-                                    <size>
-                                        <width>80</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
-                                <property name="text">
-                                    <string>Mods folder</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="1" column="2">
-                            <widget class="QPushButton" name="modsFolderButton">
-                                <property name="maximumSize">
-                                    <size>
-                                        <width>100</width>
-                                        <height>16777215</height>
-                                    </size>
-                                </property>
-                                <property name="text">
-                                    <string>Browse...</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="0" column="1">
-                            <widget class="QLineEdit" name="gameFolderLineEdit">
-                                <property name="readOnly">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="placeholderText">
-                                    <string>Select the game folder...</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="0" column="0">
-                            <widget class="QLabel" name="gameFolderLabel">
-                                <property name="text">
-                                    <string>Game folder</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="0" column="2">
-                            <widget class="QPushButton" name="gameFolderButton">
-                                <property name="text">
-                                    <string>Browse...</string>
-                                </property>
-                            </widget>
-                        </item>
-                    </layout>
-                </widget>
-            </item>
-            <item>
-                <widget class="QGroupBox" name="guidedTourGroupBox">
-                    <property name="title">
-                        <string>Guided tour</string>
-                    </property>
-                    <layout class="QHBoxLayout" name="guidedTourLayout">
-                        <property name="spacing">
-                            <number>10</number>
-                        </property>
-                        <item>
-                            <widget class="QCheckBox" name="checkBox_show_guided_tour">
-                                <property name="text">
-                                    <string>Show guided tour on startup</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item>
-                            <spacer name="guidedTourSpacer">
-                                <property name="orientation">
-                                    <enum>Qt::Orientation::Horizontal</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                    <size>
-                                        <width>40</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </item>
-                        <item>
-                            <widget class="QPushButton" name="pushButton_start_guided_tour">
-                                <property name="text">
-                                    <string>Start guided tour</string>
-                                </property>
-                            </widget>
-                        </item>
-                    </layout>
-                </widget>
-            </item>
-            <item>
-                <widget class="QGroupBox" name="languageGroupBox">
-                    <property name="title">
-                        <string>Language</string>
-                    </property>
-                    <layout class="QHBoxLayout" name="languageLayout">
-                        <property name="spacing">
-                            <number>10</number>
-                        </property>
-                        <item>
-                            <widget class="QLabel" name="languageLabel">
-                                <property name="text">
-                                    <string>App language</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item>
-                            <widget class="QComboBox" name="comboBox_language"/>
-                        </item>
-                        <item>
-                            <spacer name="languageSpacer">
-                                <property name="orientation">
-                                    <enum>Qt::Orientation::Horizontal</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                    <size>
-                                        <width>40</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </item>
-                    </layout>
-                </widget>
-            </item>
-            <item>
-                <spacer name="verticalSpacer">
-                    <property name="orientation">
-                        <enum>Qt::Orientation::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                        <size>
-                            <width>20</width>
-                            <height>40</height>
-                        </size>
-                    </property>
-                </spacer>
-            </item>
-            <item>
-                <layout class="QHBoxLayout" name="buttonLayout">
-                    <item>
-                        <widget class="QPushButton" name="okButton">
-                            <property name="minimumSize">
-                                <size>
-                                    <width>80</width>
-                                    <height>30</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string>OK</string>
-                            </property>
-                            <property name="default">
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                    </item>
-                    <item>
-                        <widget class="QPushButton" name="cancelButton">
-                            <property name="minimumSize">
-                                <size>
-                                    <width>80</width>
-                                    <height>30</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string>Cancel</string>
-                            </property>
-                        </widget>
-                    </item>
-                </layout>
-            </item>
-        </layout>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="settingsFileLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="placeholderText">
+         <string>Select the options.set file...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="settingsFileLabel">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Options.set file</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="modsFolderLabel">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Mods folder</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="modsFolderButton">
+        <property name="text">
+         <string>Browse...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="gameFolderLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="placeholderText">
+         <string>Select the game folder...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="gameFolderLabel">
+        <property name="text">
+         <string>Game folder</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="gameFolderButton">
+        <property name="text">
+         <string>Browse...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
-    <resources/>
-    <connections>
-        <connection>
-            <sender>okButton</sender>
-            <signal>clicked()</signal>
-            <receiver>PreferencesDialog</receiver>
-            <slot>accept()</slot>
-            <hints>
-                <hint type="sourcelabel">
-                    <x>430</x>
-                    <y>170</y>
-                </hint>
-                <hint type="destinationlabel">
-                    <x>250</x>
-                    <y>100</y>
-                </hint>
-            </hints>
-        </connection>
-        <connection>
-            <sender>cancelButton</sender>
-            <signal>clicked()</signal>
-            <receiver>PreferencesDialog</receiver>
-            <slot>reject()</slot>
-            <hints>
-                <hint type="sourcelabel">
-                    <x>480</x>
-                    <y>170</y>
-                </hint>
-                <hint type="destinationlabel">
-                    <x>250</x>
-                    <y>100</y>
-                </hint>
-            </hints>
-        </connection>
-    </connections>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="guidedTourGroupBox">
+     <property name="title">
+      <string>Guided tour</string>
+     </property>
+     <layout class="QHBoxLayout" name="guidedTourLayout">
+      <item>
+       <widget class="QCheckBox" name="checkBox_show_guided_tour">
+        <property name="text">
+         <string>Show guided tour on startup</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="guidedTourSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_start_guided_tour">
+        <property name="text">
+         <string>Start guided tour</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="languageGroupBox">
+     <property name="title">
+      <string>Language</string>
+     </property>
+     <layout class="QHBoxLayout" name="languageLayout">
+      <item>
+       <widget class="QLabel" name="languageLabel">
+        <property name="text">
+         <string>App language</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_language"/>
+      </item>
+      <item>
+       <spacer name="languageSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>PreferencesDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>PreferencesDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

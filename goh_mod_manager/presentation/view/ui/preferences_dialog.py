@@ -15,25 +15,22 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDialog,
-    QGridLayout, QGroupBox, QHBoxLayout, QLabel,
-    QLineEdit, QPushButton, QSizePolicy, QSpacerItem,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QComboBox,
+    QDialog, QDialogButtonBox, QGridLayout, QGroupBox,
+    QHBoxLayout, QLabel, QLineEdit, QPushButton,
+    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
 
 class Ui_PreferencesDialog(object):
     def setupUi(self, PreferencesDialog):
         if not PreferencesDialog.objectName():
             PreferencesDialog.setObjectName(u"PreferencesDialog")
-        PreferencesDialog.resize(500, 306)
+        PreferencesDialog.resize(500, 324)
         PreferencesDialog.setModal(True)
         self.verticalLayout = QVBoxLayout(PreferencesDialog)
-        self.verticalLayout.setSpacing(15)
-        self.verticalLayout.setContentsMargins(20, 20, 20, 20)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.pathGroupBox = QGroupBox(PreferencesDialog)
         self.pathGroupBox.setObjectName(u"pathGroupBox")
         self.gridLayout = QGridLayout(self.pathGroupBox)
-        self.gridLayout.setSpacing(10)
         self.gridLayout.setObjectName(u"gridLayout")
         self.modsFolderLineEdit = QLineEdit(self.pathGroupBox)
         self.modsFolderLineEdit.setObjectName(u"modsFolderLineEdit")
@@ -43,7 +40,6 @@ class Ui_PreferencesDialog(object):
 
         self.settingsFileButton = QPushButton(self.pathGroupBox)
         self.settingsFileButton.setObjectName(u"settingsFileButton")
-        self.settingsFileButton.setMaximumSize(QSize(100, 16777215))
 
         self.gridLayout.addWidget(self.settingsFileButton, 2, 2, 1, 1)
 
@@ -67,7 +63,6 @@ class Ui_PreferencesDialog(object):
 
         self.modsFolderButton = QPushButton(self.pathGroupBox)
         self.modsFolderButton.setObjectName(u"modsFolderButton")
-        self.modsFolderButton.setMaximumSize(QSize(100, 16777215))
 
         self.gridLayout.addWidget(self.modsFolderButton, 1, 2, 1, 1)
 
@@ -93,7 +88,6 @@ class Ui_PreferencesDialog(object):
         self.guidedTourGroupBox = QGroupBox(PreferencesDialog)
         self.guidedTourGroupBox.setObjectName(u"guidedTourGroupBox")
         self.guidedTourLayout = QHBoxLayout(self.guidedTourGroupBox)
-        self.guidedTourLayout.setSpacing(10)
         self.guidedTourLayout.setObjectName(u"guidedTourLayout")
         self.checkBox_show_guided_tour = QCheckBox(self.guidedTourGroupBox)
         self.checkBox_show_guided_tour.setObjectName(u"checkBox_show_guided_tour")
@@ -115,7 +109,6 @@ class Ui_PreferencesDialog(object):
         self.languageGroupBox = QGroupBox(PreferencesDialog)
         self.languageGroupBox.setObjectName(u"languageGroupBox")
         self.languageLayout = QHBoxLayout(self.languageGroupBox)
-        self.languageLayout.setSpacing(10)
         self.languageLayout.setObjectName(u"languageLayout")
         self.languageLabel = QLabel(self.languageGroupBox)
         self.languageLabel.setObjectName(u"languageLabel")
@@ -138,30 +131,17 @@ class Ui_PreferencesDialog(object):
 
         self.verticalLayout.addItem(self.verticalSpacer)
 
-        self.buttonLayout = QHBoxLayout()
-        self.buttonLayout.setObjectName(u"buttonLayout")
-        self.okButton = QPushButton(PreferencesDialog)
-        self.okButton.setObjectName(u"okButton")
-        self.okButton.setMinimumSize(QSize(80, 30))
+        self.buttonBox = QDialogButtonBox(PreferencesDialog)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
 
-        self.buttonLayout.addWidget(self.okButton)
-
-        self.cancelButton = QPushButton(PreferencesDialog)
-        self.cancelButton.setObjectName(u"cancelButton")
-        self.cancelButton.setMinimumSize(QSize(80, 30))
-
-        self.buttonLayout.addWidget(self.cancelButton)
-
-
-        self.verticalLayout.addLayout(self.buttonLayout)
+        self.verticalLayout.addWidget(self.buttonBox)
 
 
         self.retranslateUi(PreferencesDialog)
-        self.okButton.clicked.connect(PreferencesDialog.accept)
-        self.cancelButton.clicked.connect(PreferencesDialog.reject)
-
-        self.okButton.setDefault(True)
-
+        self.buttonBox.accepted.connect(PreferencesDialog.accept)
+        self.buttonBox.rejected.connect(PreferencesDialog.reject)
 
         QMetaObject.connectSlotsByName(PreferencesDialog)
     # setupUi
@@ -183,7 +163,5 @@ class Ui_PreferencesDialog(object):
         self.pushButton_start_guided_tour.setText(QCoreApplication.translate("PreferencesDialog", u"Start guided tour", None))
         self.languageGroupBox.setTitle(QCoreApplication.translate("PreferencesDialog", u"Language", None))
         self.languageLabel.setText(QCoreApplication.translate("PreferencesDialog", u"App language", None))
-        self.okButton.setText(QCoreApplication.translate("PreferencesDialog", u"OK", None))
-        self.cancelButton.setText(QCoreApplication.translate("PreferencesDialog", u"Cancel", None))
     # retranslateUi
 

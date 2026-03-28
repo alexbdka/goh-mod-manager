@@ -26,13 +26,10 @@ class Ui_ImportDialog(object):
         ImportDialog.resize(261, 243)
         ImportDialog.setModal(True)
         self.main_layout = QVBoxLayout(ImportDialog)
-        self.main_layout.setSpacing(15)
         self.main_layout.setObjectName(u"main_layout")
-        self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.source_group = QGroupBox(ImportDialog)
         self.source_group.setObjectName(u"source_group")
         self.source_layout = QVBoxLayout(self.source_group)
-        self.source_layout.setSpacing(8)
         self.source_layout.setObjectName(u"source_layout")
         self.path_input = QLineEdit(self.source_group)
         self.path_input.setObjectName(u"path_input")
@@ -41,17 +38,14 @@ class Ui_ImportDialog(object):
         self.source_layout.addWidget(self.path_input)
 
         self.button_layout = QHBoxLayout()
-        self.button_layout.setSpacing(10)
         self.button_layout.setObjectName(u"button_layout")
         self.archive_button = QPushButton(self.source_group)
         self.archive_button.setObjectName(u"archive_button")
-        self.archive_button.setMinimumSize(QSize(0, 35))
 
         self.button_layout.addWidget(self.archive_button)
 
         self.folder_button = QPushButton(self.source_group)
         self.folder_button.setObjectName(u"folder_button")
-        self.folder_button.setMinimumSize(QSize(0, 35))
 
         self.button_layout.addWidget(self.folder_button)
 
@@ -80,13 +74,11 @@ class Ui_ImportDialog(object):
 
         self.import_button = QPushButton(ImportDialog)
         self.import_button.setObjectName(u"import_button")
-        self.import_button.setMinimumSize(QSize(80, 35))
 
         self.action_layout.addWidget(self.import_button)
 
         self.cancel_button = QPushButton(ImportDialog)
         self.cancel_button.setObjectName(u"cancel_button")
-        self.cancel_button.setMinimumSize(QSize(80, 35))
 
         self.action_layout.addWidget(self.cancel_button)
 
