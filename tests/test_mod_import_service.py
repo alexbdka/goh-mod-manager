@@ -1,25 +1,65 @@
-from pathlib import Path
+import os
+import tempfile
+import zipfile
 
-from goh_mod_manager.services.mod_import_service import ModImportService
+import pytest
 
-
-def _create_mod_dir(base: Path, mod_id: str) -> Path:
-    mod_dir = base / mod_id
-    mod_dir.mkdir(parents=True, exist_ok=True)
-    (mod_dir / "mod.info").write_text('{name "Test Mod"}\n', encoding="utf-8")
-    return mod_dir
+from src.core.exceptions import InvalidModPathError, ModInfoNotFoundError
+from src.services.mod_import_service import ModImportService
 
 
-def test_import_mod_from_directory(tmp_path: Path) -> None:
-    source_dir = tmp_path / "source"
-    source_dir.mkdir()
-    _create_mod_dir(source_dir, "123")
+class TestModImportService:
+    def setup_method(self):
+        self.service = ModImportService()
+        self.test_dir = tempfile.TemporaryDirectory()
+        self.game_mods_dir = os.path.join(self.test_dir.name, "mods")
+        os.makedirs(self.game_mods_dir)
 
-    dest_dir = tmp_path / "dest"
-    dest_dir.mkdir()
+    def teardown_method(self):
+        self.test_dir.cleanup()
 
-    service = ModImportService()
-    success = service.import_mod(str(source_dir), str(dest_dir))
+    def test_import_invalid_directory(self):
+        with pytest.raises(InvalidModPathError):
+            self.service.import_mod("non_existent_path", self.game_mods_dir)
 
-    assert success is True
-    assert (dest_dir / "123" / "mod.info").exists()
+    def test_import_from_directory(self):
+        # Create a mock mod directory structure
+        mod_source = os.path.join(self.test_dir.name, "source_mod")
+        os.makedirs(mod_source)
+
+        # Valid mod (contains mod.info)
+        with open(os.path.join(mod_source, "mod.info"), "w") as f:
+            f.write('{mod {name "Test Mod"}}')
+
+        success = self.service.import_mod(mod_source, self.game_mods_dir)
+        assert success
+
+        # Verify it was copied
+        expected_dest = os.path.join(self.game_mods_dir, "source_mod")
+        assert os.path.exists(expected_dest)
+        assert os.path.exists(os.path.join(expected_dest, "mod.info"))
+
+    def test_import_from_directory_no_mod_info(self):
+        mod_source = os.path.join(self.test_dir.name, "empty_mod")
+        os.makedirs(mod_source)
+
+        with pytest.raises(ModInfoNotFoundError):
+            self.service.import_mod(mod_source, self.game_mods_dir)
+
+        assert not os.path.exists(os.path.join(self.game_mods_dir, "empty_mod"))
+
+    def test_import_from_zip(self):
+        # Create a dummy zip file containing a mod
+        zip_path = os.path.join(self.test_dir.name, "test_mod.zip")
+        with zipfile.ZipFile(zip_path, "w") as zf:
+            # Add mod.info inside a subfolder to simulate realistic archives
+            zf.writestr("CoolMod/mod.info", '{mod {name "Cool"}}')
+            zf.writestr("CoolMod/resource/test.txt", "data")
+
+        success = self.service.import_mod(zip_path, self.game_mods_dir)
+        assert success
+
+        expected_dest = os.path.join(self.game_mods_dir, "CoolMod")
+        assert os.path.exists(expected_dest)
+        assert os.path.exists(os.path.join(expected_dest, "mod.info"))
+        assert os.path.exists(os.path.join(expected_dest, "resource/test.txt"))

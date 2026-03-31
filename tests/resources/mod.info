@@ -1,0 +1,12 @@
+{mod
+	{name " [ =<c(B22222)>GOH ARm</c>= - Authenticity and Realism ] v4.02"}
+	{tags "Authenticity Realism ARm DLC Talvisota Scorched earth fortification buildings conquest"}
+
+	{desc "ID:<c(FFFFFF)>2867922286</c> GOH ARm - Authenticity and Realism (not compatible with most GOH mods)	\n <c(bdba09)>STEP I:   Activate MACE + 'apply' button \n STEP II:  Activate ARM(this mod) + 'apply' button\n STEP III: Activate any official addons + 'apply' button</c> \n[ Check updates on official mod blog - <c(FF8C00)>wwww.boosty.to/kazancev1987</c> ] \n (c)MaxDrechsler 2022-2026"}
+
+	{minGameVersion "1.061"}
+	{maxGameVersion "1.061"}
+
+		{require "mod_2905667604"}
+
+}
