@@ -1,10 +1,15 @@
 import os
+import tarfile
 import tempfile
 import zipfile
 
 import pytest
 
-from src.core.exceptions import InvalidModPathError, ModInfoNotFoundError
+from src.core.exceptions import (
+    ArchiveExtractionError,
+    InvalidModPathError,
+    ModInfoNotFoundError,
+)
 from src.services.mod_import_service import ModImportService
 
 
@@ -63,3 +68,23 @@ class TestModImportService:
         assert os.path.exists(expected_dest)
         assert os.path.exists(os.path.join(expected_dest, "mod.info"))
         assert os.path.exists(os.path.join(expected_dest, "resource/test.txt"))
+
+    def test_import_from_zip_rejects_path_traversal(self):
+        zip_path = os.path.join(self.test_dir.name, "unsafe_mod.zip")
+        with zipfile.ZipFile(zip_path, "w") as zf:
+            zf.writestr("../evil/mod.info", '{mod {name "Unsafe"}}')
+
+        with pytest.raises(ArchiveExtractionError, match="unsafe path entry"):
+            self.service.import_mod(zip_path, self.game_mods_dir)
+
+    def test_import_from_tar_rejects_path_traversal(self):
+        tar_path = os.path.join(self.test_dir.name, "unsafe_mod.tar")
+        payload_path = os.path.join(self.test_dir.name, "payload_mod.info")
+        with open(payload_path, "w", encoding="utf-8") as f:
+            f.write('{mod {name "Unsafe"}}')
+
+        with tarfile.open(tar_path, "w") as tf:
+            tf.add(payload_path, arcname="../evil/mod.info")
+
+        with pytest.raises(ArchiveExtractionError, match="unsafe path entry"):
+            self.service.import_mod(tar_path, self.game_mods_dir)

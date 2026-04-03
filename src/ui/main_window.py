@@ -1,11 +1,10 @@
 import datetime
 import os
 import platform
-import sys
+from contextlib import contextmanager
 
 import qtawesome as qta
-from PySide6.QtCore import Qt, QThreadPool, QUrl
-from PySide6.QtGui import QDesktopServices
+from PySide6.QtCore import Qt, QThreadPool, QTimer
 from PySide6.QtWidgets import (
     QDialog,
     QFileDialog,
@@ -24,6 +23,8 @@ from PySide6.QtWidgets import (
 from src.core.events import EventType
 from src.core.exceptions import InvalidShareCodeError, ModImportError
 from src.core.manager import ModManager
+from src.core.mod import ModInfo
+from src.ui.appearance_manager import AppearanceManager
 from src.ui.dialogs.about_dialog import AboutDialog
 from src.ui.dialogs.import_mod_dialog import ImportModDialog
 from src.ui.dialogs.missing_mods_dialog import MissingModsDialog
@@ -35,6 +36,7 @@ from src.ui.widgets.main_menu_bar import MainMenuBar
 from src.ui.widgets.main_tool_bar import MainToolBar
 from src.ui.widgets.mod_details_widget import ModDetailsWidget
 from src.ui.workers.mod_import_worker import ModImportWorker
+from src.utils import app_paths, system_actions
 
 
 class MainWindow(QMainWindow):
@@ -74,6 +76,7 @@ class MainWindow(QMainWindow):
 
         # Main vertical splitter
         main_splitter = QSplitter(Qt.Orientation.Vertical)
+        main_splitter.setHandleWidth(6)
 
         # Top section containing the lists
         top_widget = QWidget()
@@ -99,13 +102,21 @@ class MainWindow(QMainWindow):
         middle_layout.addStretch()
 
         lists_layout.addWidget(self.catalogue_widget, stretch=1)
-        lists_layout.addWidget(middle_widget)
+        lists_layout.addWidget(middle_widget, stretch=0)
         lists_layout.addWidget(self.active_mods_widget, stretch=1)
 
-        main_splitter.addWidget(top_widget)
+        top_container = QWidget()
+        top_container_layout = QVBoxLayout(top_container)
+        top_container_layout.setContentsMargins(0, 0, 0, 6)
+        top_container_layout.addWidget(top_widget)
+        main_splitter.addWidget(top_container)
 
         self.mod_details_widget = ModDetailsWidget()
-        main_splitter.addWidget(self.mod_details_widget)
+        bottom_container = QWidget()
+        bottom_container_layout = QVBoxLayout(bottom_container)
+        bottom_container_layout.setContentsMargins(0, 6, 0, 0)
+        bottom_container_layout.addWidget(self.mod_details_widget)
+        main_splitter.addWidget(bottom_container)
 
         # Set initial sizes for the splitter (e.g., 70% lists, 30% details)
         main_splitter.setSizes([400, 150])
@@ -114,9 +125,69 @@ class MainWindow(QMainWindow):
 
         # Status Bar
         self.statusBar().showMessage(self.tr("Ready"))
+        self.refresh_icons()
+        QTimer.singleShot(0, self.refresh_icons)
+
+    @contextmanager
+    def _signals_blocked(self, *widgets: QWidget):
+        blockers = []
+        try:
+            for widget in widgets:
+                blocker = getattr(widget, "block_list_signals", widget.blockSignals)
+                blocker(True)
+                blockers.append(blocker)
+            yield
+        finally:
+            for blocker in blockers:
+                blocker(False)
+
+    def _get_mod_by_id(self, mod_id: str) -> ModInfo | None:
+        return next(
+            (mod for mod in self.app_model.get_all_mods() if mod.id == mod_id), None
+        )
+
+    def _current_preset_name(self) -> str:
+        return self.active_mods_widget.preset_selector.combo.currentText()
+
+    def _populate_catalogue(self):
+        active_mod_ids = [mod.id for mod in self.app_model.get_active_mods()]
+        self.catalogue_widget.set_active_mod_ids(active_mod_ids)
+        self.catalogue_widget.populate(self.app_model.get_all_mods())
+
+    def _populate_active_mods(self):
+        self.active_mods_widget.populate(self.app_model.get_active_mods())
+
+    def _populate_presets(self):
+        presets = self.app_model.get_all_presets()
+        self.active_mods_widget.preset_selector.populate(
+            list(presets.keys()), self._current_preset_name()
+        )
+
+    def _show_missing_mods_dialog(
+        self,
+        title: str,
+        description: str,
+        missing_mods: list[str] | list[dict[str, str]],
+    ):
+        dialog = MissingModsDialog(self, title, description, missing_mods)
+        dialog.exec()
+
+    def _show_info_message(self, title: str, message: str):
+        QMessageBox.information(self, title, message)
+
+    def _show_error_message(self, title: str, message: str):
+        QMessageBox.critical(self, title, message)
+
+    def _show_warning_message(self, title: str, message: str):
+        QMessageBox.warning(self, title, message)
 
     def _connect_signals(self):
-        # Catalogue actions
+        self._connect_catalogue_signals()
+        self._connect_active_mods_signals()
+        self._connect_preset_signals()
+        self.toolbar.play_requested.connect(self._on_launch_game)
+
+    def _connect_catalogue_signals(self):
         self.btn_add.clicked.connect(self._on_add_mod)
         self.btn_remove.clicked.connect(self._on_remove_mod_selected)
         self.catalogue_widget.list_widget.itemDoubleClicked.connect(self._on_add_mod)
@@ -127,28 +198,22 @@ class MainWindow(QMainWindow):
             self._show_catalogue_context_menu
         )
 
-        # Active mods actions
+    def _connect_active_mods_signals(self):
         self.active_mods_widget.move_up_requested.connect(self._on_move_up)
         self.active_mods_widget.move_down_requested.connect(self._on_move_down)
-
         self.active_mods_widget.clear_requested.connect(self._on_clear_mods)
-        self.active_mods_widget.list_widget.itemDoubleClicked.connect(
-            self._on_remove_mod_from_item
-        )
-        self.active_mods_widget.list_widget.itemSelectionChanged.connect(
+        self.active_mods_widget.mod_double_clicked.connect(self._on_remove_mod)
+        self.active_mods_widget.selection_changed.connect(
             self._on_active_mods_selection_changed
         )
-        self.active_mods_widget.list_widget.customContextMenuRequested.connect(
+        self.active_mods_widget.context_menu_requested.connect(
             self._show_active_mods_context_menu
         )
         self.active_mods_widget.order_changed.connect(
             self._on_active_mods_order_changed
         )
 
-        # Launch Action
-        self.toolbar.play_requested.connect(self._on_launch_game)
-
-        # Preset Actions
+    def _connect_preset_signals(self):
         self.active_mods_widget.preset_selector.preset_applied.connect(
             self._on_apply_preset
         )
@@ -162,17 +227,22 @@ class MainWindow(QMainWindow):
             self._on_delete_preset
         )
 
+    def refresh_icons(self):
+        icon_colors = AppearanceManager.get_icon_colors(self)
+        self.btn_add.setIcon(qta.icon("fa5s.angle-double-right", **icon_colors))
+        self.btn_remove.setIcon(qta.icon("fa5s.angle-double-left", **icon_colors))
+        self.toolbar.refresh_icons()
+        self.active_mods_widget.preset_selector.refresh_icons()
+
     def _connect_model_events(self):
         """Subscribe to backend model events for automatic UI refreshing."""
-        self.app_model.events.subscribe(
+        self.app_model.subscribe(
             EventType.CATALOGUE_CHANGED, self._on_catalogue_changed
         )
-        self.app_model.events.subscribe(
+        self.app_model.subscribe(
             EventType.ACTIVE_MODS_CHANGED, self._on_active_mods_changed
         )
-        self.app_model.events.subscribe(
-            EventType.PRESETS_CHANGED, self._on_presets_changed
-        )
+        self.app_model.subscribe(EventType.PRESETS_CHANGED, self._on_presets_changed)
 
     def _connect_menu_signals(self):
         self.main_menu_bar.import_code_action.triggered.connect(
@@ -208,16 +278,15 @@ class MainWindow(QMainWindow):
         )
 
     def _show_active_mods_context_menu(self, pos):
-        item = self.active_mods_widget.list_widget.itemAt(pos)
-        if not item:
+        mod_id = self.active_mods_widget.get_mod_id_at(pos)
+        if not mod_id:
             return
-        mod_id = item.data(Qt.ItemDataRole.UserRole)
         self._show_mod_context_menu(
-            mod_id, self.active_mods_widget.list_widget.mapToGlobal(pos)
+            mod_id, self.active_mods_widget.map_list_pos_to_global(pos)
         )
 
     def _show_mod_context_menu(self, mod_id: str, global_pos):
-        mod = next((m for m in self.app_model.get_all_mods() if m.id == mod_id), None)
+        mod = self._get_mod_by_id(mod_id)
         if not mod:
             return
 
@@ -231,63 +300,57 @@ class MainWindow(QMainWindow):
         action = menu.exec(global_pos)
 
         if action == open_folder_action:
-            self._open_path(mod.path)
+            self._open_existing_path(mod.path)
         elif open_workshop_action and action == open_workshop_action:
-            url = QUrl(f"steam://url/CommunityFilePage/{mod_id}")
-            QDesktopServices.openUrl(url)
+            system_actions.open_url(f"steam://url/CommunityFilePage/{mod_id}")
 
     def _on_catalogue_selection_changed(self):
         mod_id = self.catalogue_widget.get_selected_mod_id()
         if mod_id:
             # Clear active mods selection to avoid two mods selected at once
-            self.active_mods_widget.list_widget.blockSignals(True)
-            self.active_mods_widget.list_widget.clearSelection()
-            self.active_mods_widget.list_widget.blockSignals(False)
+            with self._signals_blocked(self.active_mods_widget):
+                self.active_mods_widget.clear_selection()
 
-            all_mods = self.app_model.get_all_mods()
-            mod = next((m for m in all_mods if m.id == mod_id), None)
+            mod = self._get_mod_by_id(mod_id)
             self.mod_details_widget.display_mod(mod)
 
     def _on_active_mods_selection_changed(self):
         mod_id = self.active_mods_widget.get_selected_mod_id()
         if mod_id:
             # Clear catalogue selection
-            self.catalogue_widget.list_widget.blockSignals(True)
-            self.catalogue_widget.list_widget.clearSelection()
-            self.catalogue_widget.list_widget.blockSignals(False)
+            with self._signals_blocked(self.catalogue_widget.list_widget):
+                self.catalogue_widget.list_widget.clearSelection()
 
-            all_mods = self.app_model.get_all_mods()
-            mod = next((m for m in all_mods if m.id == mod_id), None)
+            mod = self._get_mod_by_id(mod_id)
             self.mod_details_widget.display_mod(mod)
 
     def refresh_ui(self):
         """
         Fetches the latest state from the ModManager and updates the widgets.
         """
-        # Populate Catalogue
-        all_mods = self.app_model.get_all_mods()
-        self.catalogue_widget.populate(all_mods)
+        self._populate_catalogue()
+        self._populate_active_mods()
+        self._populate_presets()
+        self._update_preset_unsaved_state()
 
-        # It's a common practice to grey out or highlight mods that are already active in the catalogue
-        # but for simplicity, we just display them all for now.
+    def _update_preset_unsaved_state(self):
+        current_preset = self._current_preset_name()
+        if self.active_mods_widget.preset_selector.combo.currentIndex() <= 0:
+            self.active_mods_widget.preset_selector.set_unsaved_state(False)
+            return
 
-        # Populate Active
-        active_mods = self.app_model.get_active_mods()
-        self.active_mods_widget.populate(active_mods)
-
-        # Populate Presets
         presets = self.app_model.get_all_presets()
-        current_preset = self.active_mods_widget.preset_selector.combo.currentText()
-        self.active_mods_widget.preset_selector.populate(
-            list(presets.keys()), current_preset
-        )
+        preset_mods = presets.get(current_preset, [])
+        active_mods = [m.id for m in self.app_model.get_active_mods()]
+
+        is_unsaved = preset_mods != active_mods
+        self.active_mods_widget.preset_selector.set_unsaved_state(is_unsaved)
 
     def _on_add_mod(self):
         mod_ids = self.catalogue_widget.get_selected_mod_ids()
         if not mod_ids:
             return
 
-        all_mods = self.app_model.get_all_mods()
         activated_mods = []
         all_missing_deps = []
 
@@ -311,7 +374,7 @@ class MainWindow(QMainWindow):
 
                 if len(activated_mods) == 1:
                     mod_id = activated_mods[0]
-                    mod = next((m for m in all_mods if m.id == mod_id), None)
+                    mod = self._get_mod_by_id(mod_id)
                     mod_name = mod.name if mod else mod_id
                     desc = self.tr(
                         "The mod '<b>{0}</b>' was activated, but the following required dependencies are missing from your catalogue. You must subscribe to them on the Workshop:"
@@ -321,13 +384,11 @@ class MainWindow(QMainWindow):
                         "The selected mods were activated, but the following required dependencies are missing from your catalogue. You must subscribe to them on the Workshop:"
                     )
 
-                dialog = MissingModsDialog(
-                    self,
+                self._show_missing_mods_dialog(
                     self.tr("Missing Dependencies"),
                     desc,
                     unique_missing,
                 )
-                dialog.exec()
 
     def _on_remove_mod_selected(self):
         mod_id = self.active_mods_widget.get_selected_mod_id()
@@ -346,11 +407,6 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(
                 self.tr("Deactivated mod: {0}").format(mod_id), 3000
             )
-
-    def _on_remove_mod_from_item(self, item):
-        mod_id = item.data(Qt.ItemDataRole.UserRole)
-        if mod_id:
-            self._on_remove_mod(mod_id)
 
     def _on_move_up(self, mod_id: str):
         self.app_model.move_mod_up(mod_id)
@@ -373,19 +429,18 @@ class MainWindow(QMainWindow):
             )
 
             if missing:
-                dialog = MissingModsDialog(
-                    self,
+                self._show_missing_mods_dialog(
                     self.tr("Preset Applied with Warnings"),
                     self.tr(
                         "The preset was applied, but the following mods are missing from your catalogue. You must subscribe to them on the Workshop:"
                     ),
                     missing,
                 )
-                dialog.exec()
 
     def _on_save_preset(self, name: str):
         self.app_model.save_preset(name)
         self.active_mods_widget.preset_selector.set_current_preset(name)
+        self._update_preset_unsaved_state()
         self.statusBar().showMessage(self.tr("Saved preset: {0}").format(name), 3000)
 
     def _on_save_preset_as(self):
@@ -407,6 +462,7 @@ class MainWindow(QMainWindow):
 
             self.app_model.save_preset(name)
             self.active_mods_widget.preset_selector.set_current_preset(name)
+            self._update_preset_unsaved_state()
             self.statusBar().showMessage(
                 self.tr("Saved new preset: {0}").format(name), 3000
             )
@@ -427,8 +483,7 @@ class MainWindow(QMainWindow):
     def _on_export_share_code(self):
         active_mods = self.app_model.get_active_mods()
         if not active_mods:
-            QMessageBox.information(
-                self,
+            self._show_info_message(
                 self.tr("Export Failed"),
                 self.tr("There are no active mods to export."),
             )
@@ -436,57 +491,58 @@ class MainWindow(QMainWindow):
 
         code = self.app_model.export_share_code()
         if code:
-            # Copy to clipboard
-            from PySide6.QtGui import QGuiApplication
-
-            clipboard = QGuiApplication.clipboard()
-            clipboard.setText(code)
-            QMessageBox.information(
-                self,
+            self._copy_to_clipboard(code)
+            self._show_info_message(
                 self.tr("Export Success"),
                 self.tr(
                     "Share Code has been copied to your clipboard!\n\nYou can now paste it to your friends."
                 ),
             )
         else:
-            QMessageBox.critical(
-                self, self.tr("Export Error"), self.tr("Failed to generate Share Code.")
+            self._show_error_message(
+                self.tr("Export Error"), self.tr("Failed to generate Share Code.")
             )
 
     def _on_import_mod(self):
+        path = self._prompt_import_mod_path()
+        if not path:
+            return
+
+        self.statusBar().showMessage(
+            self.tr("Importing mod from {0}... Please wait.").format(path)
+        )
+        worker = self._create_import_worker(path)
+        self.import_progress = self._create_import_progress_dialog()
+        self.import_progress.show()
+        self.thread_pool.start(worker)
+
+    def _prompt_import_mod_path(self) -> str | None:
         dialog = ImportModDialog(self)
-        if dialog.exec() == QDialog.DialogCode.Accepted:
-            path = dialog.get_path()
-            if not path:
-                return
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return None
+        return dialog.get_path()
 
-            self.statusBar().showMessage(
-                self.tr("Importing mod from {0}... Please wait.").format(path)
-            )
+    def _create_import_worker(self, path: str) -> ModImportWorker:
+        worker = ModImportWorker(self.app_model, path)
+        worker.signals.success.connect(self._on_import_success)
+        worker.signals.error.connect(self._on_import_error)
+        worker.signals.progress.connect(self._on_import_progress)
+        worker.signals.conflict.connect(
+            lambda mod_name: self._on_import_conflict(mod_name, worker)
+        )
+        return worker
 
-            # Run the import in a background worker thread
-            worker = ModImportWorker(self.app_model, path)
-            worker.signals.success.connect(self._on_import_success)
-            worker.signals.error.connect(self._on_import_error)
-            worker.signals.progress.connect(self._on_import_progress)
-            worker.signals.conflict.connect(
-                lambda mod_name: self._on_import_conflict(mod_name, worker)
-            )
-
-            # Setup Progress Dialog
-            self.import_progress = QProgressDialog(
-                self.tr("Importing mod..."), self.tr("Cancel"), 0, 100, self
-            )
-            self.import_progress.setWindowTitle(self.tr("Import Mod"))
-            self.import_progress.setCancelButton(None)
-            self.import_progress.setWindowModality(Qt.WindowModality.WindowModal)
-            self.import_progress.setAutoClose(True)
-            self.import_progress.setAutoReset(True)
-            self.import_progress.setValue(0)
-            self.import_progress.show()
-
-            # Start worker in thread pool
-            self.thread_pool.start(worker)
+    def _create_import_progress_dialog(self) -> QProgressDialog:
+        progress = QProgressDialog(
+            self.tr("Importing mod..."), self.tr("Cancel"), 0, 100, self
+        )
+        progress.setWindowTitle(self.tr("Import Mod"))
+        progress.setCancelButton(None)
+        progress.setWindowModality(Qt.WindowModality.WindowModal)
+        progress.setAutoClose(True)
+        progress.setAutoReset(True)
+        progress.setValue(0)
+        return progress
 
     def _on_import_progress(self, percent: int, message: str):
         if hasattr(self, "import_progress"):
@@ -494,18 +550,18 @@ class MainWindow(QMainWindow):
             self.import_progress.setValue(percent)
 
     def _on_import_success(self):
+        self.app_model.reload()
         if hasattr(self, "import_progress"):
             self.import_progress.setValue(100)
-        QMessageBox.information(
-            self, self.tr("Import Success"), self.tr("Mod successfully imported!")
+        self._show_info_message(
+            self.tr("Import Success"), self.tr("Mod successfully imported!")
         )
         self.statusBar().showMessage(self.tr("Mod import complete."), 3000)
 
     def _on_import_error(self, error_msg: str):
         if hasattr(self, "import_progress"):
             self.import_progress.cancel()
-        QMessageBox.critical(
-            self,
+        self._show_error_message(
             self.tr("Import Failed"),
             self.tr("Failed to import mod:\n\n{0}").format(error_msg),
         )
@@ -533,101 +589,95 @@ class MainWindow(QMainWindow):
             worker.set_conflict_resolution("cancel")
 
     def _on_import_share_code(self):
+        code = self._prompt_share_code()
+        if not code:
+            return
+
+        try:
+            success, missing_mods = self.app_model.import_share_code(code)
+
+            if success:
+                self._handle_imported_share_code(missing_mods)
+
+        except InvalidShareCodeError:
+            self._show_error_message(
+                self.tr("Import Error"),
+                self.tr("Invalid or corrupted Share Code."),
+            )
+        except Exception as e:
+            self._show_error_message(
+                self.tr("Import Error"),
+                self.tr("An unexpected error occurred:\n{0}").format(e),
+            )
+
+    def _prompt_share_code(self) -> str | None:
         dialog = ImportShareCodeDialog(self)
-        if dialog.exec() == QDialog.DialogCode.Accepted:
-            code = dialog.get_code()
-            if not code:
-                return
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return None
+        return dialog.get_code()
 
-            try:
-                success, missing_mods = self.app_model.import_share_code(code)
+    def _handle_imported_share_code(self, missing_mods: list[dict[str, str]]):
+        self.active_mods_widget.preset_selector.combo.setCurrentIndex(0)
 
-                if success:
-                    # Visually reset preset selector since we are now in a custom state
-                    self.active_mods_widget.preset_selector.combo.setCurrentIndex(0)
+        if missing_mods:
+            self._show_missing_mods_dialog(
+                self.tr("Imported with Missing Mods"),
+                self.tr(
+                    "The load order was imported, but you are missing the following mods. You must subscribe to them on the Workshop for the preset to work perfectly:"
+                ),
+                missing_mods,
+            )
+            return
 
-                    if missing_mods:
-                        dialog = MissingModsDialog(
-                            self,
-                            self.tr("Imported with Missing Mods"),
-                            self.tr(
-                                "The load order was imported, but you are missing the following mods. You must subscribe to them on the Workshop for the preset to work perfectly:"
-                            ),
-                            missing_mods,
-                        )
-                        dialog.exec()
-                    else:
-                        QMessageBox.information(
-                            self,
-                            self.tr("Import Success"),
-                            self.tr("Share Code successfully applied!"),
-                        )
+        self._show_info_message(
+            self.tr("Import Success"),
+            self.tr("Share Code successfully applied!"),
+        )
 
-            except InvalidShareCodeError:
-                QMessageBox.critical(
-                    self,
-                    self.tr("Import Error"),
-                    self.tr("Invalid or corrupted Share Code."),
-                )
-            except Exception as e:
-                QMessageBox.critical(
-                    self,
-                    self.tr("Import Error"),
-                    self.tr("An unexpected error occurred:\n{0}").format(e),
-                )
-
-    def _open_path(self, path: str):
-        """Cross-platform path opening."""
+    def _open_existing_path(self, path: str):
         if not path or not os.path.exists(path):
-            QMessageBox.warning(
-                self,
+            self._show_warning_message(
                 self.tr("Not Found"),
                 self.tr("Cannot find path:\n{0}").format(path),
             )
             return
 
-        if sys.platform == "win32":
-            os.startfile(path)
-        elif sys.platform == "darwin":
-            import subprocess
-
-            subprocess.Popen(["open", path])
-        else:
-            import subprocess
-
-            subprocess.Popen(["xdg-open", path])
+        system_actions.open_path(path)
 
     def _on_open_game_dir(self):
         config = self.app_model.get_config()
         if config.game_path:
-            self._open_path(config.game_path)
+            self._open_existing_path(config.game_path)
 
     def _on_open_profile(self):
         config = self.app_model.get_config()
         if config.profile_path:
-            # We open the directory containing the file to select it
-            dir_path = os.path.dirname(config.profile_path)
-            self._open_path(dir_path)
+            self._open_existing_path(config.profile_path)
 
     def _on_open_log_file(self):
-        log_path = os.path.abspath(os.path.join("logs", "mod_manager.log"))
-        self._open_path(log_path)
+        self._open_existing_path(str(app_paths.get_log_file_path()))
 
     def _on_refresh_data(self):
         # Prevent UI issues during reload
-        self.catalogue_widget.list_widget.blockSignals(True)
-        self.active_mods_widget.list_widget.blockSignals(True)
-
-        self.app_model.reload()
-
-        self.catalogue_widget.list_widget.blockSignals(False)
-        self.active_mods_widget.list_widget.blockSignals(False)
+        with self._signals_blocked(
+            self.catalogue_widget.list_widget, self.active_mods_widget
+        ):
+            self.app_model.reload()
 
         self.statusBar().showMessage(self.tr("All data refreshed from disk."), 3000)
 
-    def _on_open_settings(self):
+    def open_settings_dialog(self):
         config = self.app_model.get_config()
-        dialog = SettingsDialog(
+        dialog = self._create_settings_dialog(config)
+
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self._apply_settings(dialog.get_paths(), config)
+
+    def _on_open_settings(self):
+        self.open_settings_dialog()
+
+    def _create_settings_dialog(self, config):
+        return SettingsDialog(
             current_game_path=config.game_path,
             current_workshop_path=config.workshop_path,
             current_profile_path=config.profile_path,
@@ -637,135 +687,134 @@ class MainWindow(QMainWindow):
             parent=self,
         )
 
-        if dialog.exec() == QDialog.DialogCode.Accepted:
-            new_paths = dialog.get_paths()
+    def _apply_settings(self, new_paths: dict, config):
+        self.app_model.update_paths(
+            game_path=new_paths["game_path"],
+            workshop_path=new_paths["workshop_path"],
+            profile_path=new_paths["profile_path"],
+            language=new_paths.get("language"),
+            theme=new_paths.get("theme"),
+            font=new_paths.get("font"),
+        )
+        self._apply_appearance_settings(new_paths, config)
+        self._on_refresh_data()
+        self.statusBar().showMessage(self.tr("Settings saved and data reloaded."), 3000)
 
-            # Update paths and auto-save
-            try:
-                self.app_model.update_paths(
-                    game_path=new_paths["game_path"],
-                    workshop_path=new_paths["workshop_path"],
-                    profile_path=new_paths["profile_path"],
-                    language=new_paths.get("language"),
-                    theme=new_paths.get("theme"),
-                    font=new_paths.get("font"),
-                )
-            except TypeError:
-                # Fallback if ModManager.update_paths doesn't support the new arguments yet
-                self.app_model.config_service.update_paths(
-                    game_path=new_paths["game_path"],
-                    workshop_path=new_paths["workshop_path"],
-                    profile_path=new_paths["profile_path"],
-                    language=new_paths.get("language"),
-                    theme=new_paths.get("theme"),
-                    font=new_paths.get("font"),
-                )
+    def _apply_appearance_settings(self, new_paths: dict, config):
+        from PySide6.QtWidgets import QApplication
 
-            # Apply new appearance dynamically
-            from PySide6.QtWidgets import QApplication
-
-            from src.ui.appearance_manager import AppearanceManager
-
-            app = QApplication.instance()
-            if app:
-                AppearanceManager.setup_appearance(
-                    app,
-                    theme=new_paths.get("theme", config.theme),
-                    font_name=new_paths.get("font", config.font),
-                )
-
-            # Reload data with new paths
-            self._on_refresh_data()
-            self.statusBar().showMessage(
-                self.tr("Settings saved and data reloaded."), 3000
+        app = QApplication.instance()
+        if app:
+            AppearanceManager.setup_appearance(
+                app,
+                theme=new_paths.get("theme", config.theme),
+                font_name=new_paths.get("font", config.font),
             )
+            self.refresh_icons()
 
     def _on_generate_report(self):
+        file_path = self._prompt_debug_report_path()
+        if not file_path:
+            return
+
+        try:
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(self._build_debug_report())
+
+            self._show_info_message(
+                self.tr("Success"),
+                self.tr("Debug report saved successfully to:\n{0}").format(file_path),
+            )
+        except Exception as e:
+            self._show_error_message(
+                self.tr("Error"),
+                self.tr("Failed to save debug report:\n{0}").format(e),
+            )
+
+    def _prompt_debug_report_path(self) -> str:
         file_path, _ = QFileDialog.getSaveFileName(
             self,
             self.tr("Save Debug Report"),
             "goh_mod_manager_debug.txt",
             self.tr("Text Files (*.txt);;All Files (*)"),
         )
-        if not file_path:
-            return
+        return file_path
 
-        try:
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.write("--- GoH Mod Manager Debug Report ---\n")
-                f.write(f"Generated at: {datetime.datetime.now()}\n")
-                f.write(
-                    f"OS: {platform.system()} {platform.release()} ({platform.version()})\n"
-                )
+    def _build_debug_report(self) -> str:
+        lines = [
+            "--- GoH Mod Manager Debug Report ---",
+            f"Generated at: {datetime.datetime.now()}",
+            f"OS: {platform.system()} {platform.release()} ({platform.version()})",
+            f"App Version: {app_paths.read_version()}",
+            "",
+            "--- Configuration ---",
+        ]
 
-                try:
-                    with open(".app-version", "r", encoding="utf-8") as vfile:
-                        version = vfile.read().strip()
-                except Exception:
-                    version = "Unknown"
-                f.write(f"App Version: {version}\n")
+        config = self.app_model.get_config()
+        lines.extend(
+            [
+                f"Game Path: {config.game_path}",
+                f"Workshop Path: {config.workshop_path}",
+                f"Profile Path: {config.profile_path}",
+                "",
+                "--- Catalogue Stats ---",
+            ]
+        )
 
-                f.write("\n--- Configuration ---\n")
-                config = self.app_model.get_config()
-                f.write(f"Game Path: {config.game_path}\n")
-                f.write(f"Workshop Path: {config.workshop_path}\n")
-                f.write(f"Profile Path: {config.profile_path}\n")
+        local_mods = self.app_model.get_local_mods()
+        workshop_mods = self.app_model.get_workshop_mods()
+        all_mods = self.app_model.get_all_mods()
+        lines.extend(
+            [
+                f"Total Installed Mods: {len(all_mods)}",
+                f"Local Mods: {len(local_mods)}",
+                f"Workshop Mods: {len(workshop_mods)}",
+                "",
+                "--- Active Mods Load Order ---",
+            ]
+        )
 
-                f.write("\n--- Catalogue Stats ---\n")
-                local_mods = self.app_model.get_local_mods()
-                workshop_mods = self.app_model.get_workshop_mods()
-                all_mods = self.app_model.get_all_mods()
-                f.write(f"Total Installed Mods: {len(all_mods)}\n")
-                f.write(f"Local Mods: {len(local_mods)}\n")
-                f.write(f"Workshop Mods: {len(workshop_mods)}\n")
+        active_mods = self.app_model.get_active_mods()
+        if not active_mods:
+            lines.append("No active mods.")
+        else:
+            for i, mod in enumerate(active_mods):
+                mod_type = "Local" if mod.isLocal else "Workshop"
+                lines.append(f"{i + 1}. {mod.name} (ID: {mod.id}) - {mod_type}")
 
-                f.write("\n--- Active Mods Load Order ---\n")
-                active_mods = self.app_model.get_active_mods()
-                if not active_mods:
-                    f.write("No active mods.\n")
-                for i, mod in enumerate(active_mods):
-                    mod_type = "Local" if mod.isLocal else "Workshop"
-                    f.write(f"{i + 1}. {mod.name} (ID: {mod.id}) - {mod_type}\n")
+        lines.extend(["", "--- Recent Logs (Last 100 Lines) ---"])
+        lines.extend(self._read_recent_log_lines())
+        return "\n".join(lines) + "\n"
 
-                f.write("\n--- Recent Logs (Last 100 Lines) ---\n")
-                log_path = os.path.abspath(os.path.join("logs", "mod_manager.log"))
-                if os.path.exists(log_path):
-                    with open(log_path, "r", encoding="utf-8") as log_file:
-                        lines = log_file.readlines()
-                        f.writelines(lines[-100:])
-                else:
-                    f.write("No log file found.\n")
+    def _read_recent_log_lines(self) -> list[str]:
+        log_path = app_paths.get_log_file_path()
+        if not log_path.exists():
+            return ["No log file found."]
 
-            QMessageBox.information(
-                self,
-                self.tr("Success"),
-                self.tr("Debug report saved successfully to:\n{0}").format(file_path),
-            )
-        except Exception as e:
-            QMessageBox.critical(
-                self,
-                self.tr("Error"),
-                self.tr("Failed to save debug report:\n{0}").format(e),
-            )
+        with open(log_path, "r", encoding="utf-8") as log_file:
+            return [line.rstrip("\n") for line in log_file.readlines()[-100:]]
+
+    def _copy_to_clipboard(self, text: str):
+        from PySide6.QtGui import QGuiApplication
+
+        clipboard = QGuiApplication.clipboard()
+        clipboard.setText(text)
 
     def _on_about(self):
         dialog = AboutDialog(self)
         dialog.exec()
 
     def _on_catalogue_changed(self):
-        all_mods = self.app_model.get_all_mods()
-        self.catalogue_widget.populate(all_mods)
+        self._populate_catalogue()
 
     def _on_active_mods_changed(self):
-        active_mods = self.app_model.get_active_mods()
-        self.active_mods_widget.populate(active_mods)
+        self._populate_catalogue()
+        self._populate_active_mods()
+        self._update_preset_unsaved_state()
 
     def _on_presets_changed(self):
-        presets = self.app_model.get_all_presets()
-        current_preset = self.active_mods_widget.preset_selector.combo.currentText()
-        self.active_mods_widget.preset_selector.populate(
-            list(presets.keys()), current_preset
-        )
+        self._populate_presets()
+        self._update_preset_unsaved_state()
 
     def _on_launch_game(self):
         success = self.app_model.launch_game()
@@ -774,8 +823,7 @@ class MainWindow(QMainWindow):
                 self.tr("Launching Call to Arms - Gates of Hell..."), 5000
             )
         else:
-            QMessageBox.critical(
-                self,
+            self._show_error_message(
                 self.tr("Launch Failed"),
                 self.tr(
                     "Failed to launch the game. Make sure Steam is installed and running."

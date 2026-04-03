@@ -3,13 +3,26 @@ __pycache__/
 *.py[oc]
 build/
 dist/
+out/
 wheels/
 *.egg-info
+.coverage*
 
 # Virtual environments
 .venv
 
-# Project-specific files
+# Local workspace data
 logs/
+
+# Local-only legacy app kept during the refactor/rewrite
 legacy/
+
+# Tool caches
 .pytest_cache/
+.uv-cache/
+
+# Temporary local packaging/debug specs
+goh_mod_manager_*_check.spec
+
+# Local runtime config generated in dev
+config.json

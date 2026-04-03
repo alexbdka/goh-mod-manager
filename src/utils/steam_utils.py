@@ -1,6 +1,7 @@
 # The code below is taken from https://github.com/ModOrganizer2/modorganizer-basic_games/blob/master/steam_utils.py
 # which is greatly inspired by https://github.com/LostDragonist/steam-library-setup-tool with some adjustments
 
+import logging
 import os
 import sys
 
@@ -12,6 +13,8 @@ from pathlib import Path
 from typing import TypedDict, cast
 
 import vdf  # pyright: ignore[reportMissingTypeStubs]
+
+logger = logging.getLogger(__name__)
 
 
 class SteamGame:
@@ -58,13 +61,13 @@ class LibraryFolder:
                     )
                     app_state = info["AppState"]
             except KeyError:
-                print(
-                    f'Unable to read application state from "{filepath}"',
-                    file=sys.stderr,
+                logger.warning(
+                    'Unable to read application state from "%s"',
+                    filepath,
                 )
                 continue
             except Exception as e:
-                print(f'Unable to parse file "{filepath}": {e}', file=sys.stderr)
+                logger.warning('Unable to parse file "%s": %s', filepath, e)
                 continue
 
             try:
@@ -72,10 +75,9 @@ class LibraryFolder:
                 install_dir = app_state["installdir"]
                 self.games.append(SteamGame(app_id, install_dir))
             except KeyError:
-                print(
-                    f"Unable to read application ID or installation folder "
-                    f'from "{filepath}"',
-                    file=sys.stderr,
+                logger.warning(
+                    'Unable to read application ID or installation folder from "%s"',
+                    filepath,
                 )
                 continue
 
@@ -134,10 +136,7 @@ def parse_library_info(library_vdf_path: Path) -> list[LibraryFolder]:
         try:
             library_folders.append(LibraryFolder(Path(path)))
         except Exception as e:
-            print(
-                'Failed to read steam library from "{}", {}'.format(path, repr(e)),
-                file=sys.stderr,
-            )
+            logger.warning('Failed to read steam library from "%s": %r', path, e)
 
     return library_folders
 
@@ -265,7 +264,7 @@ def get_active_steam_id32() -> str | None:
             id32_int = id64_int - 76561197960265728
             return str(id32_int)
     except Exception as e:
-        print(f"Error reading loginusers.vdf: {e}", file=sys.stderr)
+        logger.warning("Error reading loginusers.vdf: %s", e)
 
     return None
 

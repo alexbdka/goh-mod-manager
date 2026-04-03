@@ -4,6 +4,7 @@ import os
 from typing import Optional
 
 from src.core.config import AppConfig
+from src.utils import app_paths
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +17,7 @@ class ConfigService:
 
     def __init__(self, config_path: Optional[str] = None):
         if config_path is None:
-            config_dir = os.path.expanduser(os.path.join("~", ".goh-mod-manager"))
-            self.config_path = os.path.join(config_dir, "config.json")
+            self.config_path = str(app_paths.get_config_file_path())
         else:
             self.config_path = config_path
         self._config: Optional[AppConfig] = None

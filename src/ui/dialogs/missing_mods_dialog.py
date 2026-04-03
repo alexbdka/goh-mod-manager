@@ -9,6 +9,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from src.utils import system_actions
+
 
 class MissingModsDialog(QDialog):
     def __init__(self, parent, title: str, description: str, missing_items: list):
@@ -29,8 +31,8 @@ class MissingModsDialog(QDialog):
 
         label = QLabel()
         label.setTextFormat(Qt.TextFormat.RichText)
-        label.setOpenExternalLinks(True)
         label.setWordWrap(True)
+        label.linkActivated.connect(self._open_link)
 
         # build HTML
         items_html = []
@@ -79,3 +81,6 @@ class MissingModsDialog(QDialog):
         btn_layout.addWidget(ok_btn)
 
         layout.addLayout(btn_layout)
+
+    def _open_link(self, url: str):
+        system_actions.open_url(url)

@@ -128,6 +128,20 @@ class ModsCatalogueService:
                 if d
             ]
 
+            image_name = str(data.get("image", "")).strip('"/\\')
+            image_path = None
+            if image_name:
+                img_path = os.path.join(mod_dir_path, image_name)
+                if os.path.exists(img_path):
+                    image_path = img_path
+
+            if not image_path:
+                for ext in [".jpg", ".png", ".jpeg"]:
+                    img_path = os.path.join(mod_dir_path, f"preview{ext}")
+                    if os.path.exists(img_path):
+                        image_path = img_path
+                        break
+
             return ModInfo(
                 id=mod_id,
                 name=str(name),
@@ -141,6 +155,7 @@ class ModsCatalogueService:
                 # For now, default to False until we add a folder scan for shaders.
                 hasShaders=False,
                 path=mod_dir_path,
+                image_path=image_path,
             )
 
         except Exception as e:

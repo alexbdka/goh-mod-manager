@@ -43,6 +43,9 @@ jobs:
           uv run python --version
           uv run pyinstaller --version
 
+      - name: Run tests
+        run: uv run pytest -q
+
       # WINDOWS BUILD
       - name: Build (Windows)
         if: matrix.id == 'windows'
@@ -54,17 +57,22 @@ jobs:
             "--onefile"
             "--clean"
             "--windowed"
+            "--paths", "."
             "--name", "goh_mod_manager"
-            "--icon", "goh_mod_manager\res\icon\logo.ico"
+            "--icon", "assets\icons\logo.ico"
           )
 
-          $qm = Get-ChildItem -Path "goh_mod_manager\i18n" -Filter *.qm -ErrorAction SilentlyContinue
+          $qm = Get-ChildItem -Path "src\ui\i18n" -Filter *.qm -ErrorAction SilentlyContinue
           if ($qm) {
             $args += "--add-data"
-            $args += "goh_mod_manager\i18n\*.qm;goh_mod_manager\i18n"
+            $args += "src\ui\i18n\*.qm;src\ui\i18n"
           }
 
-          $args += "goh_mod_manager\__main__.py"
+          $args += "--add-data"
+          $args += "assets\fonts;assets\fonts"
+          $args += "--add-data"
+          $args += ".app-version;."
+          $args += "src\main.py"
 
           uv run pyinstaller @args
 
@@ -90,15 +98,18 @@ jobs:
             --onefile
             --clean
             --windowed
+            --paths .
             --name goh_mod_manager
-            --icon goh_mod_manager/res/icon/logo.png
+            --icon assets/icons/logo.png
           )
 
-          if ls goh_mod_manager/i18n/*.qm >/dev/null 2>&1; then
-            args+=(--add-data "goh_mod_manager/i18n/*.qm:goh_mod_manager/i18n")
+          if ls src/ui/i18n/*.qm >/dev/null 2>&1; then
+            args+=(--add-data "src/ui/i18n/*.qm:src/ui/i18n")
           fi
 
-          args+=(goh_mod_manager/__main__.py)
+          args+=(--add-data "assets/fonts:assets/fonts")
+          args+=(--add-data ".app-version:.")
+          args+=(src/main.py)
 
           uv run pyinstaller "${args[@]}"
 

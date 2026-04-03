@@ -2,6 +2,8 @@ import qtawesome as qta
 from PySide6.QtCore import QSize, Signal
 from PySide6.QtWidgets import QPushButton, QToolBar, QWidget
 
+from src.ui.appearance_manager import AppearanceManager
+
 
 class MainToolBar(QToolBar):
     """
@@ -25,9 +27,14 @@ class MainToolBar(QToolBar):
         self.addWidget(spacer)
 
         # Play Button
-        self.btn_play = QPushButton(self.tr(" Launch Game"))
-        self.btn_play.setIcon(qta.icon("fa5s.play", color="white"))
-        self.btn_play.setObjectName("PlayButton")
+        self.btn_play = QPushButton(self.tr("Launch Game"))
+        self.btn_play.setMinimumWidth(170)
         self.addWidget(self.btn_play)
+        self.refresh_icons()
 
         self.btn_play.clicked.connect(self.play_requested.emit)
+
+    def refresh_icons(self):
+        self.btn_play.setIcon(
+            qta.icon("fa5s.play", **AppearanceManager.get_icon_colors())
+        )

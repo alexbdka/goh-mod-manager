@@ -5,6 +5,7 @@ import tarfile
 import tempfile
 import zipfile
 from pathlib import Path
+from typing import Iterable
 
 import rarfile
 from py7zr import py7zr
@@ -169,17 +170,58 @@ class ModImportService:
         try:
             if ext == ".zip":
                 with zipfile.ZipFile(archive_path, "r") as archive:
+                    ModImportService._validate_archive_members(
+                        extract_to, (info.filename for info in archive.infolist())
+                    )
                     archive.extractall(extract_to)
             elif ext == ".7z":
                 with py7zr.SevenZipFile(archive_path, mode="r") as archive:
+                    ModImportService._validate_archive_members(
+                        extract_to, archive.getnames()
+                    )
                     archive.extractall(path=extract_to)
             elif ext == ".rar":
                 with rarfile.RarFile(archive_path) as archive:
+                    ModImportService._validate_archive_members(
+                        extract_to, archive.namelist()
+                    )
                     archive.extractall(path=extract_to)
             elif ext in [".tar", ".gz", ".tgz", ".xz"]:
                 with tarfile.open(archive_path, "r:*") as tar:
+                    members = tar.getmembers()
+                    ModImportService._validate_archive_members(
+                        extract_to, (member.name for member in members)
+                    )
+                    for member in members:
+                        if member.issym() or member.islnk():
+                            raise ArchiveExtractionError(
+                                f"Archive contains unsupported link entry: {member.name}"
+                            )
                     tar.extractall(path=extract_to)
             else:
                 raise ValueError(f"Unsupported archive format: {ext}")
         except Exception as e:
             raise ArchiveExtractionError(f"Failed to extract archive: {e}") from e
+
+    @staticmethod
+    def _validate_archive_members(extract_to: str, member_names: Iterable[str]) -> None:
+        base_path = Path(extract_to).resolve()
+
+        for raw_name in member_names:
+            member_name = str(raw_name).replace("\\", "/").strip()
+            if not member_name:
+                continue
+
+            member_path = Path(member_name)
+            if member_path.is_absolute():
+                raise ArchiveExtractionError(
+                    f"Archive contains an absolute path entry: {member_name}"
+                )
+
+            destination = (base_path / member_path).resolve()
+            try:
+                destination.relative_to(base_path)
+            except ValueError as exc:
+                raise ArchiveExtractionError(
+                    f"Archive contains an unsafe path entry: {member_name}"
+                ) from exc

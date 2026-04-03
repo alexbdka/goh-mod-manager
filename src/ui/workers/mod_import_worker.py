@@ -52,6 +52,7 @@ class ModImportWorker(QRunnable):
                 self.file_path,
                 progress_callback=self._emit_progress,
                 conflict_callback=self._on_conflict,
+                reload_on_success=False,
             )
             if success:
                 self.signals.success.emit()

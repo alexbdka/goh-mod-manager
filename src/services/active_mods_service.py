@@ -66,6 +66,33 @@ class ActiveModsService:
 
         return missing_deps
 
+    def replace_active_mods(self, mod_ids: List[str]) -> List[str]:
+        """
+        Replaces the current load order with the provided mods while resolving
+        dependencies through the same activation path used by the UI.
+        Returns a de-duplicated list of missing mod or dependency IDs.
+        """
+        self.active_mods_ids.clear()
+
+        missing_mods: List[str] = []
+        seen_missing: set[str] = set()
+
+        for mod_id in mod_ids:
+            mod = self.catalogue.get_mod(mod_id)
+            if not mod:
+                if mod_id not in seen_missing:
+                    missing_mods.append(mod_id)
+                    seen_missing.add(mod_id)
+                logger.warning(f"Requested mod {mod_id} not found in catalogue.")
+                continue
+
+            for missing_id in self.activate_mod(mod_id):
+                if missing_id not in seen_missing:
+                    missing_mods.append(missing_id)
+                    seen_missing.add(missing_id)
+
+        return missing_mods
+
     def deactivate_mod(self, mod_id: str) -> None:
         """Removes a mod from the active list."""
         if mod_id in self.active_mods_ids:
@@ -137,7 +164,7 @@ class ActiveModsService:
     def save_to_profile(self, options_set_path: str, catalogue_service=None) -> None:
         """
         Updates the options.set file with the current active mods.
-        Uses regex text replacement to preserve the rest of the options file formatting.
+        Replaces only the {mods ...} block while preserving the rest of the file.
         """
         if not os.path.exists(options_set_path):
             logger.error(f"Cannot save profile, file not found: {options_set_path}")
@@ -167,12 +194,14 @@ class ActiveModsService:
             else:
                 new_mods_block = "{mods}"
 
-            # Replace the existing {mods ...} block
-            # Find the start of the mods block
+            # Replace the existing {mods ...} block using brace matching so we
+            # don't accidentally stop at the first nested closing brace that
+            # appears later in the file.
             mods_start = content.find("{mods")
             if mods_start != -1:
-                # Find the matching closing brace for the mods block
-                mods_end = content.find("}", mods_start) + 1
+                mods_end = self._find_matching_block_end(content, mods_start)
+                if mods_end is None:
+                    raise ValueError("Malformed options.set: unterminated {mods} block")
 
                 updated_content = (
                     content[:mods_start] + new_mods_block + content[mods_end:]
@@ -201,3 +230,43 @@ class ActiveModsService:
 
         except Exception as e:
             logger.error(f"Failed to save profile to {options_set_path}: {e}")
+
+    @staticmethod
+    def _find_matching_block_end(content: str, block_start: int) -> int | None:
+        """
+        Returns the end index (exclusive) of the block that starts at block_start.
+        Handles nested braces and quoted strings.
+        """
+        if (
+            block_start < 0
+            or block_start >= len(content)
+            or content[block_start] != "{"
+        ):
+            return None
+
+        depth = 0
+        in_string = False
+        escaped = False
+
+        for index in range(block_start, len(content)):
+            char = content[index]
+
+            if in_string:
+                if escaped:
+                    escaped = False
+                elif char == "\\":
+                    escaped = True
+                elif char == '"':
+                    in_string = False
+                continue
+
+            if char == '"':
+                in_string = True
+            elif char == "{":
+                depth += 1
+            elif char == "}":
+                depth -= 1
+                if depth == 0:
+                    return index + 1
+
+        return None

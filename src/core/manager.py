@@ -1,6 +1,5 @@
 import logging
 import os
-import subprocess
 from typing import Dict, List, Optional, Tuple
 
 from src.core import constants
@@ -13,7 +12,7 @@ from src.services.mod_import_service import ModImportService
 from src.services.mods_catalogue_service import ModsCatalogueService
 from src.services.preset_service import PresetService
 from src.services.share_code_service import ShareCodeService
-from src.utils import steam_utils
+from src.utils import steam_utils, system_actions
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +34,14 @@ class ModManager:
         )
         self.share_code_service = ShareCodeService()
         self.mod_import_service = ModImportService()
+
+    def subscribe(self, event_type: str, callback) -> None:
+        """Registers a callback on the internal event bus."""
+        self.events.subscribe(event_type, callback)
+
+    def unsubscribe(self, event_type: str, callback) -> None:
+        """Removes a callback from the internal event bus."""
+        self.events.unsubscribe(event_type, callback)
 
     def initialize(self) -> bool:
         """
@@ -248,8 +255,17 @@ class ModManager:
             decoded_data, self.get_all_mods()
         )
 
-        # Apply the found mods
-        self.active_mods.active_mods_ids = [mod.id for mod in found_mods]
+        # Apply the found mods using the same dependency resolution as manual activation.
+        dependency_missing_ids = self.active_mods.replace_active_mods(
+            [mod.id for mod in found_mods]
+        )
+
+        known_missing_ids = {str(item.get("id", "")) for item in missing_mods}
+        for mod_id in dependency_missing_ids:
+            if mod_id not in known_missing_ids:
+                missing_mods.append({"id": mod_id, "name": mod_id})
+                known_missing_ids.add(mod_id)
+
         self.apply_changes()
         self.events.emit(EventType.ACTIVE_MODS_CHANGED)
 
@@ -258,7 +274,11 @@ class ModManager:
     # --- Mod Importing ---
 
     def import_mod(
-        self, path: str, progress_callback=None, conflict_callback=None
+        self,
+        path: str,
+        progress_callback=None,
+        conflict_callback=None,
+        reload_on_success: bool = True,
     ) -> bool:
         """
         Imports a mod from a directory or archive.
@@ -275,7 +295,7 @@ class ModManager:
         success = self.mod_import_service.import_mod(
             path, local_mods_dir, progress_callback, conflict_callback
         )
-        if success:
+        if success and reload_on_success:
             self.reload()
         return success
 
@@ -285,20 +305,10 @@ class ModManager:
         """
         Launches the game via Steam protocol.
         """
-        try:
-            # We use the steam:// protocol to launch the game using its AppID
-            # This ensures Steam handles the DRM, updates, and overlay properly.
-            launch_url = f"steam://rungameid/{constants.STEAM_APP_ID}"
-
-            if os.name == "nt":
-                os.startfile(launch_url)
-            elif os.uname().sysname == "Darwin":
-                subprocess.Popen(["open", launch_url])
-            else:
-                subprocess.Popen(["xdg-open", launch_url])
-
+        launch_url = f"steam://rungameid/{constants.STEAM_APP_ID}"
+        success = system_actions.open_url(launch_url)
+        if success:
             logger.info("Launched game via Steam protocol.")
-            return True
-        except Exception as e:
-            logger.error(f"Failed to launch game: {e}")
-            return False
+        else:
+            logger.error("Failed to launch game via Steam protocol.")
+        return success

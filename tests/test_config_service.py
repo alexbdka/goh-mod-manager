@@ -6,6 +6,7 @@ import pytest
 
 from src.core.config import AppConfig
 from src.services.config_service import ConfigService
+from src.utils import app_paths
 
 
 class TestConfigService:
@@ -76,3 +77,11 @@ class TestConfigService:
         assert (
             config.workshop_path == "D:/SteamLibrary/steamapps/workshop/content/400750"
         )
+
+    def test_default_config_path_uses_app_paths(self, monkeypatch):
+        expected_path = app_paths.Path("X:/workspace/config.json")
+        monkeypatch.setattr(app_paths, "get_config_file_path", lambda: expected_path)
+
+        service = ConfigService()
+
+        assert app_paths.Path(service.config_path) == expected_path

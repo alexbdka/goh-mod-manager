@@ -1,6 +1,8 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QLabel, QVBoxLayout
 
+from src.utils import app_paths
+
 
 class AboutDialog(QDialog):
     """
@@ -16,11 +18,7 @@ class AboutDialog(QDialog):
     def _setup_ui(self):
         layout = QVBoxLayout(self)
 
-        try:
-            with open(".app-version", "r", encoding="utf-8") as f:
-                version = f.read().strip()
-        except Exception:
-            version = self.tr("Unknown")
+        version = app_paths.read_version(default=self.tr("Unknown"))
 
         # Application Info (Rich Text)
         desc = self.tr(

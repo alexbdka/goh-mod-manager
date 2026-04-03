@@ -34,7 +34,7 @@ class SettingsDialog(QDialog):
     ):
         super().__init__(parent)
         self.setWindowTitle(self.tr("Settings"))
-        self.resize(550, 300)
+        self.resize(640, 360)
 
         self.current_game_path = current_game_path or ""
         self.current_workshop_path = current_workshop_path or ""
@@ -83,7 +83,6 @@ class SettingsDialog(QDialog):
                 "Configure the paths used by the Mod Manager to interact with the game."
             )
         )
-        info_label.setObjectName("SettingsInfo")
         layout.addWidget(info_label)
 
         form_layout = QFormLayout()
@@ -116,7 +115,7 @@ class SettingsDialog(QDialog):
         profile_layout = QHBoxLayout()
         profile_layout.addWidget(self.profile_path_input)
         profile_layout.addWidget(btn_browse_profile)
-        form_layout.addRow(self.tr("Preset (options.set):"), profile_layout)
+        form_layout.addRow(self.tr("Profile (options.set):"), profile_layout)
 
         layout.addLayout(form_layout)
         layout.addStretch()
@@ -127,7 +126,6 @@ class SettingsDialog(QDialog):
         info_label = QLabel(
             self.tr("Configure the visual appearance of the application.")
         )
-        info_label.setObjectName("SettingsInfo")
         layout.addWidget(info_label)
 
         form_layout = QFormLayout()
@@ -163,7 +161,6 @@ class SettingsDialog(QDialog):
         info_label = QLabel(
             self.tr("Select the application language. A restart may be required.")
         )
-        info_label.setObjectName("SettingsInfo")
         layout.addWidget(info_label)
 
         form_layout = QFormLayout()

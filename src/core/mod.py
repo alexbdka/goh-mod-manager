@@ -14,3 +14,4 @@ class ModInfo:
     isLocal: bool = False
     hasShaders: bool = False
     path: str = ""
+    image_path: Optional[str] = None

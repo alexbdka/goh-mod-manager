@@ -84,6 +84,25 @@ class TestPresetService:
         # Check if active mods were fully replaced and ordered correctly
         assert self.active_mods.active_mods_ids == ["mod_3", "mod_2"]
 
+    def test_apply_preset_resolves_installed_dependencies(self):
+        self.catalogue._local_mods["dep_mod"] = ModInfo(
+            id="dep_mod", name="Dependency", desc="", isLocal=True
+        )
+        self.catalogue._local_mods["main_mod"] = ModInfo(
+            id="main_mod",
+            name="Main Mod",
+            desc="",
+            dependencies=["dep_mod"],
+            isLocal=True,
+        )
+        self.preset_service.save_preset("WithDeps", ["main_mod"])
+
+        success, missing = self.preset_service.apply_preset("WithDeps")
+
+        assert success
+        assert missing == []
+        assert self.active_mods.active_mods_ids == ["dep_mod", "main_mod"]
+
     def test_apply_preset_with_missing_mods(self):
         # Save a preset with a mod that isn't in our mock catalogue
         self.preset_service.save_preset("MissingModPreset", ["mod_1", "ghost_mod"])

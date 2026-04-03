@@ -28,7 +28,6 @@ class DropZoneWidget(QWidget):
         layout = QVBoxLayout(self)
         self.label = QLabel(self.tr("Drag & Drop a Mod Archive or Folder here"))
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.label.setObjectName("DropZoneLabel")
         layout.addWidget(self.label)
 
     def dragEnterEvent(self, event):
@@ -66,7 +65,7 @@ class ImportModDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle(self.tr("Import Mod"))
-        self.setMinimumSize(450, 300)
+        self.setMinimumSize(520, 320)
         self.selected_path = None
         self._setup_ui()
 

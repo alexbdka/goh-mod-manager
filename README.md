@@ -29,7 +29,7 @@ uv sync
 Run the application:
 
 ```bash
-uv run python main.py
+uv run python -m src.main
 ```
 
 ## Releases
@@ -40,6 +40,8 @@ Precompiled executables are available for Windows and Linux in the [Releases](ht
 
 To compile the application into a standalone executable, PyInstaller is the recommended option for public releases (Nuitka builds may trigger AV false positives on Windows).
 
+Note: build tools such as PyInstaller and Nuitka still take a script path as input, so packaging commands continue to target `src/main.py`.
+
 **PyInstaller (Windows)**
 
 ```bash
@@ -47,11 +49,13 @@ uv run pyinstaller `
             --onedir `
             --clean `
             --windowed `
+            --paths "." `
             --name "goh_mod_manager" `
             --icon "assets\icons\logo.ico" `
             --add-data "assets\fonts;assets\fonts" `
+            --add-data ".app-version;." `
             --add-data "src\ui\i18n\*.qm;src\ui\i18n" `
-            main.py
+            src/main.py
 ```
 
 **PyInstaller (Linux)**
@@ -61,11 +65,13 @@ uv run pyinstaller \
             --onedir \
             --clean \
             --windowed \
+            --paths . \
             --name "goh_mod_manager" \
             --icon "assets/icons/logo.png" \
             --add-data "assets/fonts:assets/fonts" \
+            --add-data ".app-version:." \
             --add-data "src/ui/i18n/*.qm:src/ui/i18n" \
-            main.py
+            src/main.py
 ```
 
 The compiled executable will be available in the `dist` directory.
@@ -87,7 +93,7 @@ uv run nuitka `
             --windows-console-mode=disable `
             --include-data-dir=assets/fonts=assets/fonts `
             --include-data-dir=src/ui/i18n=src/ui/i18n `
-            main.py
+            src/main.py
 ```
 
 **Linux**
@@ -101,7 +107,7 @@ uv run nuitka \
             --nofollow-import-to=tkinter \
             --include-data-dir=assets/fonts=assets/fonts \
             --include-data-dir=src/ui/i18n=src/ui/i18n \
-            main.py
+            src/main.py
 ```
 
 ## Dependencies

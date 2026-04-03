@@ -112,3 +112,52 @@ class TestActiveModsService:
 
         # Check missing dependencies
         assert missing == ["MissingDep"]
+
+    def test_save_profile_preserves_nested_blocks_after_mods(self):
+        with tempfile.NamedTemporaryFile(
+            mode="w", delete=False, suffix=".set", encoding="utf-8"
+        ) as tf:
+            tf.write(
+                "{options\n"
+                '\t{video {adapter "NVIDIA"}}\n'
+                '\t{mods\n\t\t"mod_12345:0"\n\t}\n'
+                '\t{game\n\t\t{multiplayer\n\t\t\t{userName "dummy"}\n\t\t}\n\t}\n'
+                "}"
+            )
+            temp_path = tf.name
+
+        try:
+            self.service.active_mods_ids = ["12345", "67890"]
+            self.service.save_to_profile(temp_path)
+
+            with open(temp_path, "r", encoding="utf-8") as f:
+                content = f.read()
+
+            assert '"mod_12345:0"' in content
+            assert '"mod_67890:0"' in content
+            assert '{userName "dummy"}' in content
+            assert content.count("{mods") == 1
+        finally:
+            os.remove(temp_path)
+
+    def test_save_profile_injects_mods_block_before_options_closing_brace(self):
+        with tempfile.NamedTemporaryFile(
+            mode="w", delete=False, suffix=".set", encoding="utf-8"
+        ) as tf:
+            tf.write(
+                '{options\n\t{video {adapter "NVIDIA"}}\n\t{game {difficulty easy}}\n}'
+            )
+            temp_path = tf.name
+
+        try:
+            self.service.active_mods_ids = ["12345"]
+            self.service.save_to_profile(temp_path)
+
+            with open(temp_path, "r", encoding="utf-8") as f:
+                content = f.read()
+
+            assert "{mods" in content
+            assert '"mod_12345:0"' in content
+            assert content.index("{mods") < content.rfind("}")
+        finally:
+            os.remove(temp_path)

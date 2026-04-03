@@ -1,6 +1,8 @@
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
     QFrame,
+    QHBoxLayout,
     QLabel,
     QTextBrowser,
     QVBoxLayout,
@@ -19,34 +21,57 @@ class ModDetailsWidget(QFrame):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setFrameShape(QFrame.Shape.StyledPanel)
-        self.setFrameShadow(QFrame.Shadow.Sunken)
+        self.setFrameShape(QFrame.Shape.NoFrame)
+        self._current_pixmap = None
         self._setup_ui()
 
     def _setup_ui(self):
         layout = QVBoxLayout(self)
 
+        # Header layout (Left: Title+Meta, Right: Image)
+        header_layout = QHBoxLayout()
+
+        # Left Column (Title + Meta)
+        left_column = QVBoxLayout()
+
         # Mod Title
         self.title_label = QLabel(self.tr("Select a mod to view details"))
         self.title_label.setWordWrap(True)
         self.title_label.setTextFormat(Qt.TextFormat.RichText)
-        # Using a very slight style here just to distinguish the title from the body
-        self.title_label.setObjectName("ModTitle")
-        layout.addWidget(self.title_label)
+        self.title_label.setAlignment(
+            Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft
+        )
+        left_column.addWidget(self.title_label)
 
         # Meta Information (ID, Version, etc.)
         self.meta_label = QLabel("")
         self.meta_label.setWordWrap(True)
-        self.meta_label.setObjectName("ModMeta")
-        layout.addWidget(self.meta_label)
+        self.meta_label.setAlignment(
+            Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft
+        )
+        left_column.addWidget(self.meta_label)
+
+        # Push title and meta to the top
+        left_column.addStretch()
+
+        header_layout.addLayout(left_column, stretch=1)
+
+        # Image / Thumbnail (Fixed size on the right)
+        self.image_label = QLabel()
+        self.image_label.setAlignment(
+            Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignRight
+        )
+        self.image_label.setScaledContents(False)
+        self.image_label.hide()
+        header_layout.addWidget(self.image_label)
+
+        layout.addLayout(header_layout)
 
         # Description (Rich Text)
         self.desc_browser = QTextBrowser()
         self.desc_browser.setOpenExternalLinks(True)
         # Remove border to blend better with the widget
         self.desc_browser.setFrameShape(QFrame.Shape.NoFrame)
-        # Keep background transparent
-        self.desc_browser.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         layout.addWidget(self.desc_browser)
 
     def display_mod(self, mod: ModInfo | None):
@@ -55,10 +80,21 @@ class ModDetailsWidget(QFrame):
         If mod is None, clears the display.
         """
         if not mod:
+            self._current_pixmap = None
+            self._update_image()
             self.title_label.setText(self.tr("Select a mod to view details"))
             self.meta_label.setText("")
             self.desc_browser.clear()
             return
+
+        # Image
+        self._current_pixmap = None
+        if mod.image_path:
+            pixmap = QPixmap(mod.image_path)
+            if not pixmap.isNull():
+                self._current_pixmap = pixmap
+
+        self._update_image()
 
         # Title
         html_title = markup_parser.to_html(mod.name)
@@ -77,8 +113,8 @@ class ModDetailsWidget(QFrame):
             meta_html += self.tr("<b>Tags:</b> {0}<br>").format(", ".join(mod.tags))
 
         if mod.dependencies:
-            meta_html += (
-                self.tr("<b>Requires:</b> {0}<br>").format(", ".join(mod.dependencies))
+            meta_html += self.tr("<b>Requires:</b> {0}<br>").format(
+                ", ".join(mod.dependencies)
             )
 
         self.meta_label.setText(meta_html)
@@ -89,3 +125,17 @@ class ModDetailsWidget(QFrame):
             html_desc = self.tr("<i>No description available.</i>")
 
         self.desc_browser.setHtml(html_desc)
+
+    def _update_image(self):
+        if self._current_pixmap is not None:
+            # Scale to a fixed, reasonable thumbnail size (e.g. 150x150 max)
+            scaled_pixmap = self._current_pixmap.scaled(
+                150,
+                150,
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation,
+            )
+            self.image_label.setPixmap(scaled_pixmap)
+            self.image_label.show()
+        else:
+            self.image_label.hide()

@@ -10,6 +10,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from src.ui.appearance_manager import AppearanceManager
+
 
 class PresetSelectorWidget(QWidget):
     """
@@ -25,6 +27,7 @@ class PresetSelectorWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self._is_unsaved = False
         self._setup_ui()
         self._connect_signals()
 
@@ -33,7 +36,6 @@ class PresetSelectorWidget(QWidget):
         layout.setContentsMargins(0, 0, 0, 10)  # Add a little bottom margin
 
         self.label = QLabel(self.tr("Preset:"))
-        self.label.setObjectName("PresetLabel")
         layout.addWidget(self.label)
 
         self.combo = QComboBox()
@@ -42,22 +44,20 @@ class PresetSelectorWidget(QWidget):
 
         # Action Buttons
         self.btn_save = QPushButton()
-        self.btn_save.setIcon(qta.icon("fa5s.save"))
         self.btn_save.setToolTip(self.tr("Save current load order to this preset"))
         self.btn_save.setFixedWidth(30)
         layout.addWidget(self.btn_save)
 
         self.btn_save_as = QPushButton()
-        self.btn_save_as.setIcon(qta.icon("fa5s.plus"))
         self.btn_save_as.setToolTip(self.tr("Save as new preset"))
         self.btn_save_as.setFixedWidth(30)
         layout.addWidget(self.btn_save_as)
 
         self.btn_delete = QPushButton()
-        self.btn_delete.setIcon(qta.icon("fa5s.trash"))
         self.btn_delete.setToolTip(self.tr("Delete this preset"))
         self.btn_delete.setFixedWidth(30)
         layout.addWidget(self.btn_delete)
+        self.refresh_icons()
 
     def _connect_signals(self):
         # We use 'activated' rather than 'currentIndexChanged' so it only fires
@@ -67,6 +67,28 @@ class PresetSelectorWidget(QWidget):
         self.btn_save.clicked.connect(self._on_save_clicked)
         self.btn_save_as.clicked.connect(self.save_as_requested.emit)
         self.btn_delete.clicked.connect(self._on_delete_clicked)
+
+    def set_unsaved_state(self, is_unsaved: bool):
+        """
+        Visually updates the save button to indicate unsaved changes.
+        """
+        self._is_unsaved = is_unsaved
+        if is_unsaved:
+            self.btn_save.setToolTip(
+                self.tr("Save current load order to this preset (Unsaved changes)")
+            )
+        else:
+            self.btn_save.setToolTip(self.tr("Save current load order to this preset"))
+        self.refresh_icons()
+
+    def refresh_icons(self):
+        icon_colors = AppearanceManager.get_icon_colors(self)
+        if self._is_unsaved:
+            self.btn_save.setIcon(qta.icon("fa5s.save", color="#e67e22"))
+        else:
+            self.btn_save.setIcon(qta.icon("fa5s.save", **icon_colors))
+        self.btn_save_as.setIcon(qta.icon("fa5s.plus", **icon_colors))
+        self.btn_delete.setIcon(qta.icon("fa5s.trash", **icon_colors))
 
     def populate(self, preset_names: List[str], current: str = ""):
         """
@@ -121,3 +143,5 @@ class PresetSelectorWidget(QWidget):
         is_preset = self.combo.currentIndex() > 0
         self.btn_save.setEnabled(is_preset)
         self.btn_delete.setEnabled(is_preset)
+        if not is_preset:
+            self.set_unsaved_state(False)

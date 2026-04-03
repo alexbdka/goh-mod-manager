@@ -1,121 +1,98 @@
-import os
-
 import qdarktheme
-from PySide6.QtGui import QFont, QFontDatabase
-from PySide6.QtWidgets import QApplication
+import qtawesome as qta
+from PySide6.QtGui import QFont, QFontDatabase, QPalette
+from PySide6.QtWidgets import QApplication, QWidget
+
+from src.utils import app_paths
 
 
 class AppearanceManager:
     """
     Centralized manager for application styling.
-    Replaces local stylesheets with global QSS.
+    Uses qdarktheme as the single styling entry point.
     """
 
     @staticmethod
     def setup_appearance(
         app: QApplication, theme: str = "auto", font_name: str = "Inter"
     ):
-        # Load custom fonts
-        font_dir = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "..", "..", "assets", "fonts")
-        )
-        inter_path = os.path.join(font_dir, "Inter-Regular.otf")
-        opendyslexic_path = os.path.join(font_dir, "OpenDyslexic-Regular.otf")
+        AppearanceManager._setup_fonts(app, font_name)
 
-        QFontDatabase.addApplicationFont(opendyslexic_path)
-        QFontDatabase.addApplicationFont(inter_path)
+        normalized_theme = theme if theme in {"auto", "dark", "light"} else "auto"
+
+        app.setStyleSheet("")
+        qdarktheme.setup_theme(normalized_theme)
+        app.setProperty(
+            "resolved_theme_mode",
+            AppearanceManager.resolve_theme_mode(app, normalized_theme),
+        )
+        AppearanceManager._setup_icon_defaults(app)
+
+    @staticmethod
+    def _setup_fonts(app: QApplication, font_name: str):
+        font_dir = app_paths.get_resource_path("assets", "fonts")
+        inter_path = font_dir / "Inter-Regular.otf"
+        opendyslexic_path = font_dir / "OpenDyslexic-Regular.otf"
+
+        QFontDatabase.addApplicationFont(str(opendyslexic_path))
+        QFontDatabase.addApplicationFont(str(inter_path))
 
         if font_name == "default":
             app_font = QFontDatabase.systemFont(QFontDatabase.SystemFont.GeneralFont)
         else:
             app_font = QFont(font_name)
 
-        app_font.setPointSize(10)  # Roughly equivalent to 13px
+        app_font.setPointSize(10)
         app.setFont(app_font)
 
-        global_qss = """
-        /* Specific Labels */
-        QLabel#SectionTitle {
-            font-size: 15px;
-            font-weight: bold;
-            padding-bottom: 5px;
-        }
+    @staticmethod
+    def _setup_icon_defaults(app: QApplication):
+        icon_colors = AppearanceManager.get_icon_colors(app)
 
-        QLabel#PresetLabel {
-            font-weight: bold;
-        }
+        qta.set_defaults(
+            color=icon_colors["color"],
+            color_active=icon_colors["color_active"],
+            color_selected=icon_colors["color_selected"],
+            color_disabled=icon_colors["color_disabled"],
+        )
+        qta.reset_cache()
 
-        QLabel#ModTitle {
-            font-size: 18px;
-            font-weight: bold;
-            padding-bottom: 5px;
-        }
+    @staticmethod
+    def resolve_theme_mode(
+        source: QApplication | QWidget | None = None, configured_theme: str = "auto"
+    ) -> str:
+        if configured_theme in {"dark", "light"}:
+            return configured_theme
 
-        QLabel#ModMeta {
-            color: #666666;
-            margin-top: 5px;
-            margin-bottom: 10px;
-        }
+        if source is None:
+            app = QApplication.instance()
+            palette = app.palette() if app else QPalette()
+        else:
+            palette = source.palette()
 
-        QLabel#SettingsInfo {
-            color: gray;
-            margin-bottom: 10px;
-        }
+        is_dark = palette.color(QPalette.ColorRole.Window).lightness() < 128
+        return "dark" if is_dark else "light"
 
-        QLabel#DropZoneLabel {
-            color: gray;
-            font-size: 16px;
-            border: 2px dashed gray;
-            padding: 40px;
-        }
+    @staticmethod
+    def get_icon_colors(source: QApplication | QWidget | None = None) -> dict[str, str]:
+        app = QApplication.instance()
+        resolved_theme = (
+            app.property("resolved_theme_mode") if app is not None else None
+        )
+        if resolved_theme not in {"dark", "light"}:
+            resolved_theme = AppearanceManager.resolve_theme_mode(source)
 
-        QLabel#DropZoneLabel[dragHover="true"] {
-            color: #2e7d32;
-            border-color: #2e7d32;
-        }
+        if resolved_theme == "dark":
+            return {
+                "color": "#f1f3f4",
+                "color_active": "#ffffff",
+                "color_selected": "#ffffff",
+                "color_disabled": "#6f747a",
+            }
 
-        /* Lists */
-        QListWidget {
-            border: 1px solid #bdc3c7;
-            border-radius: 4px;
+        return {
+            "color": "#202124",
+            "color_active": "#111111",
+            "color_selected": "#111111",
+            "color_disabled": "#9aa0a6",
         }
-
-        QListWidget::item {
-            padding: 2px;
-        }
-
-        QListWidget::item:selected {
-            background-color: #3498db;
-            color: #ffffff;
-        }
-
-        /* Main Toolbar */
-        QToolBar {
-            spacing: 5px;
-        }
-
-        QToolButton {
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
-        QPushButton#PlayButton {
-            background-color: #2e7d32;
-            color: white;
-            font-weight: bold;
-            padding: 8px 16px;
-            border-radius: 4px;
-        }
-
-        QPushButton#PlayButton:hover {
-            background-color: #388e3c;
-        }
-
-        QPushButton#PlayButton:pressed {
-            background-color: #1b5e20;
-        }
-        """
-        try:
-            qdarktheme.setup_theme(theme, additional_qss=global_qss)
-        except Exception:
-            app.setStyleSheet(global_qss)

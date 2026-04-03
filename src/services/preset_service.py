@@ -69,18 +69,7 @@ class PresetService:
             logger.error(f"Attempted to apply unknown preset: '{name}'")
             return False, []
 
-        # Clear currently active mods
-        self.active_mods.active_mods_ids.clear()
-
-        # Add mods from the preset, keeping track of any that aren't installed
-        missing_mods = []
-        for mod_id in preset_mod_ids:
-            if self.catalogue.get_mod(mod_id):
-                # The active_mods_ids is just a list, we can append directly
-                # to avoid triggering the logging noise of 'activate_mod' for every single item
-                self.active_mods.active_mods_ids.append(mod_id)
-            else:
-                missing_mods.append(mod_id)
+        missing_mods = self.active_mods.replace_active_mods(preset_mod_ids)
 
         if missing_mods:
             logger.warning(
