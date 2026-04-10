@@ -11,16 +11,31 @@ class AboutDialog(QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle(self.tr("About GoH Mod Manager"))
         self.setFixedSize(350, 180)
         self._setup_ui()
+        self.retranslate_ui()
 
     def _setup_ui(self):
         layout = QVBoxLayout(self)
 
-        version = app_paths.read_version(default=self.tr("Unknown"))
+        self.label = QLabel()
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setWordWrap(True)
+        self.label.setOpenExternalLinks(True)
+        layout.addWidget(self.label)
 
-        # Application Info (Rich Text)
+        # OK Button
+        self.button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
+        self.button_box.accepted.connect(self.accept)
+
+        # Center the button
+        self.button_box.setCenterButtons(True)
+        layout.addWidget(self.button_box)
+
+    def retranslate_ui(self):
+        self.setWindowTitle(self.tr("About GoH Mod Manager"))
+
+        version = app_paths.read_version(default=self.tr("Unknown"))
         desc = self.tr(
             "A modern, lightweight mod manager for Call to Arms - Gates of Hell."
         )
@@ -41,18 +56,4 @@ class AboutDialog(QDialog):
             f"{icons}<br>"
             f"{made}</p>"
         )
-        label = QLabel(text)
-        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        label.setWordWrap(True)
-        # Open links in browser if we ever add any
-        label.setOpenExternalLinks(True)
-
-        layout.addWidget(label)
-
-        # OK Button
-        button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
-        button_box.accepted.connect(self.accept)
-
-        # Center the button
-        button_box.setCenterButtons(True)
-        layout.addWidget(button_box)
+        self.label.setText(text)

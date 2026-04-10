@@ -13,10 +13,11 @@ class MainToolBar(QToolBar):
     play_requested = Signal()
 
     def __init__(self, parent=None):
-        super().__init__(self.tr("Main Toolbar"), parent)
+        super().__init__("", parent)
         self.setIconSize(QSize(32, 32))
         self.setMovable(False)
         self._setup_ui()
+        self.retranslate_ui()
 
     def _setup_ui(self):
         # Spacer to push the play button to the right
@@ -27,12 +28,16 @@ class MainToolBar(QToolBar):
         self.addWidget(spacer)
 
         # Play Button
-        self.btn_play = QPushButton(self.tr("Launch Game"))
+        self.btn_play = QPushButton()
         self.btn_play.setMinimumWidth(170)
         self.addWidget(self.btn_play)
         self.refresh_icons()
 
         self.btn_play.clicked.connect(self.play_requested.emit)
+
+    def retranslate_ui(self):
+        self.setWindowTitle(self.tr("Main Toolbar"))
+        self.btn_play.setText(self.tr("Launch Game"))
 
     def refresh_icons(self):
         self.btn_play.setIcon(

@@ -46,6 +46,15 @@ class InvalidShareCodeError(ShareCodeError):
     pass
 
 
+class ProfileWriteError(ModManagerError):
+    """Raised when the game profile file cannot be updated."""
+
+    def __init__(self, path: str, reason: str):
+        self.path = path
+        self.reason = reason
+        super().__init__(f"Failed to update profile file '{path}': {reason}")
+
+
 class PresetError(ModManagerError):
     """Raised when an operation on a preset fails."""
 

@@ -1,13 +1,13 @@
 import logging
 import sys
 
-from PySide6.QtCore import QTranslator
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QMessageBox
 
 from src.core.manager import ModManager
 from src.ui.appearance_manager import AppearanceManager
 from src.ui.main_window import MainWindow
+from src.ui.translation_manager import TranslationManager
 from src.utils import app_paths
 from src.utils.logger import configure_logging
 
@@ -33,11 +33,7 @@ def main():
     AppearanceManager.setup_appearance(app, theme=config.theme, font_name=config.font)
 
     # Load translation
-    language = config.language
-    translator = QTranslator()
-    i18n_path = app_paths.get_resource_path("src", "ui", "i18n")
-    if translator.load(f"{language}.qm", str(i18n_path)):
-        app.installTranslator(translator)
+    TranslationManager.apply_language(app, config.language)
 
     # Initialize and show the Main Window (View)
     # We inject the manager so the UI can read data and send commands.

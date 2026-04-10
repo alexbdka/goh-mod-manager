@@ -4,8 +4,10 @@ import re
 from typing import List, Optional
 
 from src.core import constants
+from src.core.exceptions import ProfileWriteError
 from src.core.mod import ModInfo
 from src.services.mods_catalogue_service import ModsCatalogueService
+from src.utils.file_utils import atomic_write_text
 from src.utils.gem_parser import parse_gem_file
 
 logger = logging.getLogger(__name__)
@@ -221,15 +223,18 @@ class ActiveModsService:
                     # Very malformed file, just append
                     updated_content = content + "\n" + new_mods_block
 
-            with open(options_set_path, "w", encoding="utf-8") as f:
-                f.write(updated_content)
+            atomic_write_text(options_set_path, updated_content)
 
             logger.info(
                 f"Successfully saved {len(self.active_mods_ids)} active mods to profile."
             )
 
+        except OSError as e:
+            logger.error(f"Failed to save profile to {options_set_path}: {e}")
+            raise ProfileWriteError(options_set_path, str(e)) from e
         except Exception as e:
             logger.error(f"Failed to save profile to {options_set_path}: {e}")
+            raise ProfileWriteError(options_set_path, str(e)) from e
 
     @staticmethod
     def _find_matching_block_end(content: str, block_start: int) -> int | None:

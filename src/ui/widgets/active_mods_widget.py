@@ -42,14 +42,16 @@ class ActiveModsWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self._current_mods: List[ModInfo] = []
         self._setup_ui()
         self._connect_signals()
+        self.retranslate_ui()
 
     def _setup_ui(self):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
 
-        self.title_label = QLabel(self.tr("Load Order (Active Mods)"))
+        self.title_label = QLabel()
         layout.addWidget(self.title_label)
 
         self.preset_selector = PresetSelectorWidget()
@@ -57,7 +59,7 @@ class ActiveModsWidget(QWidget):
 
         self.list_widget = InternalTree(self)
         self.list_widget.setColumnCount(2)
-        self.list_widget.setHeaderLabels([self.tr("Order"), self.tr("Mod Name")])
+        self.list_widget.setHeaderLabels(["", ""])
         self.list_widget.header().setSectionResizeMode(
             0, QHeaderView.ResizeMode.ResizeToContents
         )
@@ -75,9 +77,9 @@ class ActiveModsWidget(QWidget):
         layout.addWidget(self.list_widget)
 
         buttons_layout = QHBoxLayout()
-        self.btn_up = QPushButton(self.tr("Move Up"))
-        self.btn_down = QPushButton(self.tr("Move Down"))
-        self.btn_clear = QPushButton(self.tr("Clear"))
+        self.btn_up = QPushButton()
+        self.btn_down = QPushButton()
+        self.btn_clear = QPushButton()
         buttons_layout.addWidget(self.btn_up)
         buttons_layout.addWidget(self.btn_down)
         buttons_layout.addWidget(self.btn_clear)
@@ -99,6 +101,7 @@ class ActiveModsWidget(QWidget):
         Clears the current list and populates it with the provided active mods.
         The order of the list matters.
         """
+        self._current_mods = list(mods)
         self.list_widget.clear()
 
         for i, mod in enumerate(mods):
@@ -161,3 +164,13 @@ class ActiveModsWidget(QWidget):
             if mod_id:
                 new_order.append(mod_id)
         self.order_changed.emit(new_order)
+
+    def retranslate_ui(self):
+        self.title_label.setText(self.tr("Load Order (Active Mods)"))
+        self.list_widget.setHeaderLabels([self.tr("Order"), self.tr("Mod Name")])
+        self.btn_up.setText(self.tr("Move Up"))
+        self.btn_down.setText(self.tr("Move Down"))
+        self.btn_clear.setText(self.tr("Clear"))
+        self.preset_selector.retranslate_ui()
+        if self._current_mods:
+            self.populate(self._current_mods)

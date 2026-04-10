@@ -6,6 +6,7 @@ a = Analysis(
     pathex=["."],
     binaries=[],
     datas=[
+        ("assets/icons", "assets/icons"),
         ("assets/fonts", "assets/fonts"),
         ("src/ui/i18n/*.qm", "src/ui/i18n"),
         (".app-version", "."),

@@ -12,6 +12,8 @@ class AppearanceManager:
     Uses qdarktheme as the single styling entry point.
     """
 
+    _fonts_loaded = False
+
     @staticmethod
     def setup_appearance(
         app: QApplication, theme: str = "auto", font_name: str = "Inter"
@@ -30,12 +32,14 @@ class AppearanceManager:
 
     @staticmethod
     def _setup_fonts(app: QApplication, font_name: str):
-        font_dir = app_paths.get_resource_path("assets", "fonts")
-        inter_path = font_dir / "Inter-Regular.otf"
-        opendyslexic_path = font_dir / "OpenDyslexic-Regular.otf"
+        if not AppearanceManager._fonts_loaded:
+            font_dir = app_paths.get_resource_path("assets", "fonts")
+            inter_path = font_dir / "Inter-Regular.otf"
+            opendyslexic_path = font_dir / "OpenDyslexic-Regular.otf"
 
-        QFontDatabase.addApplicationFont(str(opendyslexic_path))
-        QFontDatabase.addApplicationFont(str(inter_path))
+            QFontDatabase.addApplicationFont(str(opendyslexic_path))
+            QFontDatabase.addApplicationFont(str(inter_path))
+            AppearanceManager._fonts_loaded = True
 
         if font_name == "default":
             app_font = QFontDatabase.systemFont(QFontDatabase.SystemFont.GeneralFont)

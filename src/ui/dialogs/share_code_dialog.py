@@ -14,15 +14,15 @@ class ImportShareCodeDialog(QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle(self.tr("Import Share Code"))
         self.setMinimumWidth(400)
         self._setup_ui()
+        self.retranslate_ui()
 
     def _setup_ui(self):
         layout = QVBoxLayout(self)
 
-        label = QLabel(self.tr("Paste the Share Code below:"))
-        layout.addWidget(label)
+        self.label = QLabel()
+        layout.addWidget(self.label)
 
         self.code_input = QLineEdit()
         self.code_input.setPlaceholderText(self.tr("e.g. eJzT0y..."))
@@ -40,3 +40,8 @@ class ImportShareCodeDialog(QDialog):
     def get_code(self) -> str:
         """Returns the cleaned string entered by the user."""
         return self.code_input.text().strip()
+
+    def retranslate_ui(self):
+        self.setWindowTitle(self.tr("Import Share Code"))
+        self.label.setText(self.tr("Paste the Share Code below:"))
+        self.code_input.setPlaceholderText(self.tr("e.g. eJzT0y..."))

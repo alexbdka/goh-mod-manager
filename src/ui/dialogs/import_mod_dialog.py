@@ -23,12 +23,16 @@ class DropZoneWidget(QWidget):
         super().__init__(parent)
         self.setAcceptDrops(True)
         self._setup_ui()
+        self.retranslate_ui()
 
     def _setup_ui(self):
         layout = QVBoxLayout(self)
-        self.label = QLabel(self.tr("Drag & Drop a Mod Archive or Folder here"))
+        self.label = QLabel()
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.label)
+
+    def retranslate_ui(self):
+        self.label.setText(self.tr("Drag & Drop a Mod Archive or Folder here"))
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
@@ -64,10 +68,10 @@ class ImportModDialog(QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle(self.tr("Import Mod"))
         self.setMinimumSize(520, 320)
         self.selected_path = None
         self._setup_ui()
+        self.retranslate_ui()
 
     def _setup_ui(self):
         layout = QVBoxLayout(self)
@@ -80,16 +84,14 @@ class ImportModDialog(QDialog):
         # Fallback Buttons
         buttons_layout = QHBoxLayout()
 
-        btn_archive = QPushButton(self.tr("Select Archive..."))
-        btn_archive.setToolTip(self.tr("Import from .zip, .rar, .7z, etc."))
-        btn_archive.clicked.connect(self._on_select_archive)
+        self.btn_archive = QPushButton()
+        self.btn_archive.clicked.connect(self._on_select_archive)
 
-        btn_folder = QPushButton(self.tr("Select Folder..."))
-        btn_folder.setToolTip(self.tr("Import an uncompressed mod folder"))
-        btn_folder.clicked.connect(self._on_select_folder)
+        self.btn_folder = QPushButton()
+        self.btn_folder.clicked.connect(self._on_select_folder)
 
-        buttons_layout.addWidget(btn_archive)
-        buttons_layout.addWidget(btn_folder)
+        buttons_layout.addWidget(self.btn_archive)
+        buttons_layout.addWidget(self.btn_folder)
 
         layout.addLayout(buttons_layout)
 
@@ -118,3 +120,11 @@ class ImportModDialog(QDialog):
 
     def get_path(self) -> str | None:
         return self.selected_path
+
+    def retranslate_ui(self):
+        self.setWindowTitle(self.tr("Import Mod"))
+        self.drop_zone.retranslate_ui()
+        self.btn_archive.setText(self.tr("Select Archive..."))
+        self.btn_archive.setToolTip(self.tr("Import from .zip, .rar, .7z, etc."))
+        self.btn_folder.setText(self.tr("Select Folder..."))
+        self.btn_folder.setToolTip(self.tr("Import an uncompressed mod folder"))

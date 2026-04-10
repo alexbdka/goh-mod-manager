@@ -5,6 +5,7 @@ from typing import Optional
 
 from src.core.config import AppConfig
 from src.utils import app_paths
+from src.utils.file_utils import atomic_write_text
 
 logger = logging.getLogger(__name__)
 
@@ -89,13 +90,7 @@ class ConfigService:
         }
 
         try:
-            # Ensure directory exists if config_path includes directories
-            os.makedirs(
-                os.path.dirname(os.path.abspath(self.config_path)), exist_ok=True
-            )
-
-            with open(self.config_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=4)
+            atomic_write_text(self.config_path, json.dumps(data, indent=4))
 
             logger.info(f"Configuration saved to {self.config_path}")
         except Exception as e:

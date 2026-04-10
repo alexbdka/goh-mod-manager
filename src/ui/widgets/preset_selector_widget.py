@@ -28,14 +28,16 @@ class PresetSelectorWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._is_unsaved = False
+        self._preset_names: List[str] = []
         self._setup_ui()
         self._connect_signals()
+        self.retranslate_ui()
 
     def _setup_ui(self):
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 10)  # Add a little bottom margin
 
-        self.label = QLabel(self.tr("Preset:"))
+        self.label = QLabel()
         layout.addWidget(self.label)
 
         self.combo = QComboBox()
@@ -44,17 +46,14 @@ class PresetSelectorWidget(QWidget):
 
         # Action Buttons
         self.btn_save = QPushButton()
-        self.btn_save.setToolTip(self.tr("Save current load order to this preset"))
         self.btn_save.setFixedWidth(30)
         layout.addWidget(self.btn_save)
 
         self.btn_save_as = QPushButton()
-        self.btn_save_as.setToolTip(self.tr("Save as new preset"))
         self.btn_save_as.setFixedWidth(30)
         layout.addWidget(self.btn_save_as)
 
         self.btn_delete = QPushButton()
-        self.btn_delete.setToolTip(self.tr("Delete this preset"))
         self.btn_delete.setFixedWidth(30)
         layout.addWidget(self.btn_delete)
         self.refresh_icons()
@@ -73,12 +72,7 @@ class PresetSelectorWidget(QWidget):
         Visually updates the save button to indicate unsaved changes.
         """
         self._is_unsaved = is_unsaved
-        if is_unsaved:
-            self.btn_save.setToolTip(
-                self.tr("Save current load order to this preset (Unsaved changes)")
-            )
-        else:
-            self.btn_save.setToolTip(self.tr("Save current load order to this preset"))
+        self.retranslate_ui()
         self.refresh_icons()
 
     def refresh_icons(self):
@@ -94,18 +88,32 @@ class PresetSelectorWidget(QWidget):
         """
         Populates the combobox with available presets.
         """
+        self._preset_names = list(preset_names)
         self.combo.blockSignals(True)
         self.combo.clear()
 
         # Always provide a fallback "Unsaved / Custom" entry at index 0
-        self.combo.addItem(self.tr("-- Custom Load Order --"))
-        self.combo.addItems(preset_names)
+        self.combo.addItem("")
+        self.combo.addItems(self._preset_names)
 
         if current:
             self.set_current_preset(current)
         else:
             self.combo.setCurrentIndex(0)
 
+        self.combo.blockSignals(False)
+        self._update_buttons()
+        self.retranslate_ui()
+
+    def current_preset_name(self) -> str:
+        return self.combo.currentText()
+
+    def has_selected_preset(self) -> bool:
+        return self.combo.currentIndex() > 0
+
+    def reset_to_custom_load_order(self):
+        self.combo.blockSignals(True)
+        self.combo.setCurrentIndex(0)
         self.combo.blockSignals(False)
         self._update_buttons()
 
@@ -145,3 +153,16 @@ class PresetSelectorWidget(QWidget):
         self.btn_delete.setEnabled(is_preset)
         if not is_preset:
             self.set_unsaved_state(False)
+
+    def retranslate_ui(self):
+        self.label.setText(self.tr("Preset:"))
+        if self.combo.count() > 0:
+            self.combo.setItemText(0, self.tr("-- Custom Load Order --"))
+        if self._is_unsaved:
+            self.btn_save.setToolTip(
+                self.tr("Save current load order to this preset (Unsaved changes)")
+            )
+        else:
+            self.btn_save.setToolTip(self.tr("Save current load order to this preset"))
+        self.btn_save_as.setToolTip(self.tr("Save as new preset"))
+        self.btn_delete.setToolTip(self.tr("Delete this preset"))

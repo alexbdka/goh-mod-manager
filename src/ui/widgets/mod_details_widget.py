@@ -21,9 +21,11 @@ class ModDetailsWidget(QFrame):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self._current_mod: ModInfo | None = None
         self.setFrameShape(QFrame.Shape.NoFrame)
         self._current_pixmap = None
         self._setup_ui()
+        self.retranslate_ui()
 
     def _setup_ui(self):
         layout = QVBoxLayout(self)
@@ -35,7 +37,7 @@ class ModDetailsWidget(QFrame):
         left_column = QVBoxLayout()
 
         # Mod Title
-        self.title_label = QLabel(self.tr("Select a mod to view details"))
+        self.title_label = QLabel()
         self.title_label.setWordWrap(True)
         self.title_label.setTextFormat(Qt.TextFormat.RichText)
         self.title_label.setAlignment(
@@ -79,6 +81,7 @@ class ModDetailsWidget(QFrame):
         Updates the widget to show the details of the given mod.
         If mod is None, clears the display.
         """
+        self._current_mod = mod
         if not mod:
             self._current_pixmap = None
             self._update_image()
@@ -125,6 +128,9 @@ class ModDetailsWidget(QFrame):
             html_desc = self.tr("<i>No description available.</i>")
 
         self.desc_browser.setHtml(html_desc)
+
+    def retranslate_ui(self):
+        self.display_mod(self._current_mod)
 
     def _update_image(self):
         if self._current_pixmap is not None:

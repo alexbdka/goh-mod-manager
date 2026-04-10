@@ -21,7 +21,11 @@ from PySide6.QtWidgets import (
 )
 
 from src.core.events import EventType
-from src.core.exceptions import InvalidShareCodeError, ModImportError
+from src.core.exceptions import (
+    InvalidShareCodeError,
+    ModImportError,
+    ProfileWriteError,
+)
 from src.core.manager import ModManager
 from src.core.mod import ModInfo
 from src.ui.appearance_manager import AppearanceManager
@@ -30,6 +34,7 @@ from src.ui.dialogs.import_mod_dialog import ImportModDialog
 from src.ui.dialogs.missing_mods_dialog import MissingModsDialog
 from src.ui.dialogs.settings_dialog import SettingsDialog
 from src.ui.dialogs.share_code_dialog import ImportShareCodeDialog
+from src.ui.translation_manager import TranslationManager
 from src.ui.widgets.active_mods_widget import ActiveModsWidget
 from src.ui.widgets.catalogue_widget import CatalogueWidget
 from src.ui.widgets.main_menu_bar import MainMenuBar
@@ -44,7 +49,6 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.app_model = app_model
 
-        self.setWindowTitle(self.tr("GoH Mod Manager"))
         self.resize(1000, 1000)
 
         self.thread_pool = QThreadPool()
@@ -56,6 +60,7 @@ class MainWindow(QMainWindow):
         self._connect_signals()
         self._connect_menu_signals()
         self._connect_model_events()
+        self.retranslate_ui()
 
         # Initial UI population
         self.refresh_ui()
@@ -92,10 +97,8 @@ class MainWindow(QMainWindow):
         middle_layout.setContentsMargins(5, 0, 5, 0)
         self.btn_add = QPushButton()
         self.btn_add.setIcon(qta.icon("fa5s.angle-double-right"))
-        self.btn_add.setToolTip(self.tr("Add selected mod"))
         self.btn_remove = QPushButton()
         self.btn_remove.setIcon(qta.icon("fa5s.angle-double-left"))
-        self.btn_remove.setToolTip(self.tr("Remove selected mod"))
         middle_layout.addStretch()
         middle_layout.addWidget(self.btn_add)
         middle_layout.addWidget(self.btn_remove)
@@ -124,7 +127,8 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(main_splitter)
 
         # Status Bar
-        self.statusBar().showMessage(self.tr("Ready"))
+        self.statusBar().showMessage("")
+        self._apply_view_fonts()
         self.refresh_icons()
         QTimer.singleShot(0, self.refresh_icons)
 
@@ -147,7 +151,7 @@ class MainWindow(QMainWindow):
         )
 
     def _current_preset_name(self) -> str:
-        return self.active_mods_widget.preset_selector.combo.currentText()
+        return self.active_mods_widget.preset_selector.current_preset_name()
 
     def _populate_catalogue(self):
         active_mod_ids = [mod.id for mod in self.app_model.get_active_mods()]
@@ -181,6 +185,53 @@ class MainWindow(QMainWindow):
     def _show_warning_message(self, title: str, message: str):
         QMessageBox.warning(self, title, message)
 
+    def retranslate_ui(self):
+        self.setWindowTitle(self.tr("GoH Mod Manager"))
+        self.btn_add.setToolTip(self.tr("Add selected mod"))
+        self.btn_remove.setToolTip(self.tr("Remove selected mod"))
+        self.main_menu_bar.retranslate_ui()
+        self.toolbar.retranslate_ui()
+        self.catalogue_widget.retranslate_ui()
+        self.active_mods_widget.retranslate_ui()
+        self.mod_details_widget.retranslate_ui()
+        if not self.statusBar().currentMessage():
+            self.statusBar().showMessage(self.tr("Ready"))
+
+    def _apply_view_fonts(self):
+        from PySide6.QtWidgets import QApplication
+
+        app = QApplication.instance()
+        if not app:
+            return
+
+        app_font = app.font()
+
+        self.catalogue_widget.setFont(app_font)
+        self.catalogue_widget.list_widget.setFont(app_font)
+        self.catalogue_widget.search_bar.setFont(app_font)
+        self.catalogue_widget.tab_bar.setFont(app_font)
+        self.catalogue_widget.btn_toggle_view.setFont(app_font)
+
+        self.active_mods_widget.setFont(app_font)
+        self.active_mods_widget.list_widget.setFont(app_font)
+        self.active_mods_widget.list_widget.header().setFont(app_font)
+        self.active_mods_widget.preset_selector.setFont(app_font)
+        self.active_mods_widget.preset_selector.combo.setFont(app_font)
+
+    def _handle_profile_write_error(self, error: ProfileWriteError):
+        with self._signals_blocked(self.catalogue_widget, self.active_mods_widget):
+            self.app_model.reload()
+
+        self._show_error_message(
+            self.tr("Profile Update Failed"),
+            self.tr(
+                "Could not update the game's profile file:\n{0}\n\n"
+                "Close the game or any tool using options.set, then try again.\n\n"
+                "Technical details:\n{1}"
+            ).format(error.path, error.reason),
+        )
+        self.statusBar().showMessage(self.tr("Profile update failed."), 5000)
+
     def _connect_signals(self):
         self._connect_catalogue_signals()
         self._connect_active_mods_signals()
@@ -190,11 +241,11 @@ class MainWindow(QMainWindow):
     def _connect_catalogue_signals(self):
         self.btn_add.clicked.connect(self._on_add_mod)
         self.btn_remove.clicked.connect(self._on_remove_mod_selected)
-        self.catalogue_widget.list_widget.itemDoubleClicked.connect(self._on_add_mod)
-        self.catalogue_widget.list_widget.itemSelectionChanged.connect(
+        self.catalogue_widget.mod_double_clicked.connect(self._on_add_mod)
+        self.catalogue_widget.selection_changed.connect(
             self._on_catalogue_selection_changed
         )
-        self.catalogue_widget.list_widget.customContextMenuRequested.connect(
+        self.catalogue_widget.context_menu_requested.connect(
             self._show_catalogue_context_menu
         )
 
@@ -233,6 +284,7 @@ class MainWindow(QMainWindow):
         self.btn_remove.setIcon(qta.icon("fa5s.angle-double-left", **icon_colors))
         self.toolbar.refresh_icons()
         self.active_mods_widget.preset_selector.refresh_icons()
+        self.catalogue_widget.refresh_icons()
 
     def _connect_model_events(self):
         """Subscribe to backend model events for automatic UI refreshing."""
@@ -269,12 +321,11 @@ class MainWindow(QMainWindow):
         self.main_menu_bar.about_action.triggered.connect(self._on_about)
 
     def _show_catalogue_context_menu(self, pos):
-        item = self.catalogue_widget.list_widget.itemAt(pos)
-        if not item:
+        mod_id = self.catalogue_widget.get_mod_id_at(pos)
+        if not mod_id:
             return
-        mod_id = item.data(Qt.ItemDataRole.UserRole)
         self._show_mod_context_menu(
-            mod_id, self.catalogue_widget.list_widget.mapToGlobal(pos)
+            mod_id, self.catalogue_widget.map_list_pos_to_global(pos)
         )
 
     def _show_active_mods_context_menu(self, pos):
@@ -318,8 +369,8 @@ class MainWindow(QMainWindow):
         mod_id = self.active_mods_widget.get_selected_mod_id()
         if mod_id:
             # Clear catalogue selection
-            with self._signals_blocked(self.catalogue_widget.list_widget):
-                self.catalogue_widget.list_widget.clearSelection()
+            with self._signals_blocked(self.catalogue_widget):
+                self.catalogue_widget.clear_selection()
 
             mod = self._get_mod_by_id(mod_id)
             self.mod_details_widget.display_mod(mod)
@@ -335,7 +386,7 @@ class MainWindow(QMainWindow):
 
     def _update_preset_unsaved_state(self):
         current_preset = self._current_preset_name()
-        if self.active_mods_widget.preset_selector.combo.currentIndex() <= 0:
+        if not self.active_mods_widget.preset_selector.has_selected_preset():
             self.active_mods_widget.preset_selector.set_unsaved_state(False)
             return
 
@@ -356,7 +407,11 @@ class MainWindow(QMainWindow):
 
         for mod_id in mod_ids:
             if not self.app_model.is_mod_active(mod_id):
-                missing_deps = self.app_model.toggle_mod(mod_id)
+                try:
+                    missing_deps = self.app_model.toggle_mod(mod_id)
+                except ProfileWriteError as error:
+                    self._handle_profile_write_error(error)
+                    return
                 activated_mods.append(mod_id)
                 if missing_deps:
                     all_missing_deps.extend(missing_deps)
@@ -398,30 +453,54 @@ class MainWindow(QMainWindow):
     def _on_clear_mods(self):
         if self.app_model.get_active_mods():
             # Clear all active mods
-            self.app_model.clear_active_mods()
+            try:
+                self.app_model.clear_active_mods()
+            except ProfileWriteError as error:
+                self._handle_profile_write_error(error)
+                return
             self.statusBar().showMessage(self.tr("Cleared all active mods"), 3000)
 
     def _on_remove_mod(self, mod_id: str):
         if self.app_model.is_mod_active(mod_id):
-            self.app_model.toggle_mod(mod_id)
+            try:
+                self.app_model.toggle_mod(mod_id)
+            except ProfileWriteError as error:
+                self._handle_profile_write_error(error)
+                return
             self.statusBar().showMessage(
                 self.tr("Deactivated mod: {0}").format(mod_id), 3000
             )
 
     def _on_move_up(self, mod_id: str):
-        self.app_model.move_mod_up(mod_id)
+        try:
+            self.app_model.move_mod_up(mod_id)
+        except ProfileWriteError as error:
+            self._handle_profile_write_error(error)
+            return
         self.statusBar().showMessage(self.tr("Moved mod {0} up").format(mod_id), 3000)
 
     def _on_move_down(self, mod_id: str):
-        self.app_model.move_mod_down(mod_id)
+        try:
+            self.app_model.move_mod_down(mod_id)
+        except ProfileWriteError as error:
+            self._handle_profile_write_error(error)
+            return
         self.statusBar().showMessage(self.tr("Moved mod {0} down").format(mod_id), 3000)
 
     def _on_active_mods_order_changed(self, new_order: list[str]):
-        self.app_model.set_active_mods_order(new_order)
+        try:
+            self.app_model.set_active_mods_order(new_order)
+        except ProfileWriteError as error:
+            self._handle_profile_write_error(error)
+            return
         self.statusBar().showMessage(self.tr("Mod load order updated"), 3000)
 
     def _on_apply_preset(self, name: str):
-        success, missing = self.app_model.apply_preset(name)
+        try:
+            success, missing = self.app_model.apply_preset(name)
+        except ProfileWriteError as error:
+            self._handle_profile_write_error(error)
+            return
         if success:
             self.active_mods_widget.preset_selector.set_current_preset(name)
             self.statusBar().showMessage(
@@ -438,7 +517,11 @@ class MainWindow(QMainWindow):
                 )
 
     def _on_save_preset(self, name: str):
-        self.app_model.save_preset(name)
+        try:
+            self.app_model.save_preset(name)
+        except ProfileWriteError as error:
+            self._handle_profile_write_error(error)
+            return
         self.active_mods_widget.preset_selector.set_current_preset(name)
         self._update_preset_unsaved_state()
         self.statusBar().showMessage(self.tr("Saved preset: {0}").format(name), 3000)
@@ -460,7 +543,11 @@ class MainWindow(QMainWindow):
                 if reply == QMessageBox.StandardButton.No:
                     return
 
-            self.app_model.save_preset(name)
+            try:
+                self.app_model.save_preset(name)
+            except ProfileWriteError as error:
+                self._handle_profile_write_error(error)
+                return
             self.active_mods_widget.preset_selector.set_current_preset(name)
             self._update_preset_unsaved_state()
             self.statusBar().showMessage(
@@ -604,6 +691,8 @@ class MainWindow(QMainWindow):
                 self.tr("Import Error"),
                 self.tr("Invalid or corrupted Share Code."),
             )
+        except ProfileWriteError as error:
+            self._handle_profile_write_error(error)
         except Exception as e:
             self._show_error_message(
                 self.tr("Import Error"),
@@ -617,7 +706,7 @@ class MainWindow(QMainWindow):
         return dialog.get_code()
 
     def _handle_imported_share_code(self, missing_mods: list[dict[str, str]]):
-        self.active_mods_widget.preset_selector.combo.setCurrentIndex(0)
+        self.active_mods_widget.preset_selector.reset_to_custom_load_order()
 
         if missing_mods:
             self._show_missing_mods_dialog(
@@ -660,7 +749,7 @@ class MainWindow(QMainWindow):
     def _on_refresh_data(self):
         # Prevent UI issues during reload
         with self._signals_blocked(
-            self.catalogue_widget.list_widget, self.active_mods_widget
+            self.catalogue_widget, self.active_mods_widget
         ):
             self.app_model.reload()
 
@@ -688,6 +777,21 @@ class MainWindow(QMainWindow):
         )
 
     def _apply_settings(self, new_paths: dict, config):
+        path_changed = any(
+            [
+                new_paths["game_path"] != config.game_path,
+                new_paths["workshop_path"] != config.workshop_path,
+                new_paths["profile_path"] != config.profile_path,
+            ]
+        )
+        language_changed = new_paths.get("language") != config.language
+        appearance_changed = any(
+            [
+                new_paths.get("theme") != config.theme,
+                new_paths.get("font") != config.font,
+            ]
+        )
+
         self.app_model.update_paths(
             game_path=new_paths["game_path"],
             workshop_path=new_paths["workshop_path"],
@@ -696,9 +800,32 @@ class MainWindow(QMainWindow):
             theme=new_paths.get("theme"),
             font=new_paths.get("font"),
         )
-        self._apply_appearance_settings(new_paths, config)
-        self._on_refresh_data()
-        self.statusBar().showMessage(self.tr("Settings saved and data reloaded."), 3000)
+
+        if appearance_changed:
+            self._apply_appearance_settings(new_paths, config)
+
+        if language_changed:
+            self._apply_language_settings(new_paths, config)
+
+        if path_changed:
+            self._on_refresh_data()
+            self.statusBar().showMessage(
+                self.tr("Settings saved and data reloaded."), 3000
+            )
+        elif language_changed and appearance_changed:
+            self.statusBar().showMessage(
+                self.tr("Language and appearance settings applied."), 3000
+            )
+        elif language_changed:
+            self.statusBar().showMessage(
+                self.tr("Language settings applied."), 3000
+            )
+        elif appearance_changed:
+            self.statusBar().showMessage(
+                self.tr("Appearance settings applied."), 3000
+            )
+        else:
+            self.statusBar().showMessage(self.tr("Settings saved."), 3000)
 
     def _apply_appearance_settings(self, new_paths: dict, config):
         from PySide6.QtWidgets import QApplication
@@ -710,7 +837,27 @@ class MainWindow(QMainWindow):
                 theme=new_paths.get("theme", config.theme),
                 font_name=new_paths.get("font", config.font),
             )
+            self._apply_view_fonts()
+
+            # Rebuild visible item views so custom-rendered and tree-based rows pick
+            # up the new application font immediately.
+            self.refresh_ui()
+            self.catalogue_widget.list_widget.doItemsLayout()
+            self.catalogue_widget.list_widget.viewport().update()
+            self.active_mods_widget.list_widget.doItemsLayout()
+            self.active_mods_widget.list_widget.viewport().update()
             self.refresh_icons()
+
+    def _apply_language_settings(self, new_paths: dict, config):
+        from PySide6.QtWidgets import QApplication
+
+        app = QApplication.instance()
+        if app:
+            TranslationManager.apply_language(
+                app,
+                new_paths.get("language", config.language),
+            )
+            self.retranslate_ui()
 
     def _on_generate_report(self):
         file_path = self._prompt_debug_report_path()
