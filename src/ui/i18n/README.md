@@ -8,14 +8,14 @@ files (`.qm`).
 Translation files must use locale-based names such as:
 
 - `en_US.ts`
-- `fr_FR.ts`
-- `zh_CN.ts`
+- `fr.ts`
+- `zh_Hans.ts`
 
 Compiled runtime files follow the same convention:
 
 - `en_US.qm`
-- `fr_FR.qm`
-- `zh_CN.qm`
+- `fr.qm`
+- `zh_Hans.qm`
 
 Invalid names or inconsistent metadata are rejected by
 `scripts/validate_translations.py`.

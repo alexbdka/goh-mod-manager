@@ -84,7 +84,8 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE).
 UI translations are managed through **Weblate** and stored in
 `src/ui/i18n/*.ts`. Runtime `.qm` files are generated from those source files.
 
-- Translation source files follow locale naming such as `en_US.ts` or `zh_CN.ts`
+- Translation source files follow Qt/Weblate locale naming such as
+  `en_US.ts`, `fr.ts`, or `zh_Hans.ts`
 - Runtime language availability is discovered dynamically by the app
 - Translation metadata and filenames are validated in CI
 
