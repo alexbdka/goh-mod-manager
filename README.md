@@ -1,30 +1,26 @@
 # GoH Mod Manager
 
-*A modern mod manager for [Call to Arms: Gates of Hell](https://www.barbed-wire.eu/we-are-barbedwire-studios/our-game-development/), built with PySide6.*
-
-A user-friendly graphical interface for managing mods, presets, configuration sharing, and more.
+GoH Mod Manager is a PySide6 desktop application for managing mods for
+[Call to Arms: Gates of Hell](https://www.barbed-wire.eu/we-are-barbedwire-studios/our-game-development/).
+It focuses on local and Workshop mod discovery, load order management, presets,
+share codes, and a polished desktop workflow.
 
 ## Requirements
 
 - Python **3.12+**
-- uv
+- [uv](https://docs.astral.sh/uv/)
 
 ## Installation
 
-1. Clone the repository:
+Clone the repository and install dependencies:
 
 ```bash
 git clone https://github.com/alexbdka/goh-mod-manager.git
 cd goh-mod-manager
-```
-
-2. Install dependencies using uv:
-
-```bash
 uv sync
 ```
 
-For development tooling and documentation:
+For development, quality tooling, and documentation:
 
 ```bash
 uv sync --group dev --group docs
@@ -32,23 +28,22 @@ uv sync --group dev --group docs
 
 ## Usage
 
-Run the application:
+Run the application locally with:
 
 ```bash
 uv run python -m src.main
 ```
 
-## Development Checks
+## Development Guidelines
 
-Common local quality commands:
+Common local checks:
 
 ```bash
-uv run ruff check .
-uv run ruff format --check .
-uv run basedpyright
-uv run pytest -q
-uv run deptry .
-uv run --group docs mkdocs build
+uv run --group dev ruff check .
+uv run --group dev ruff format --check .
+uv run --group dev basedpyright
+uv run --group dev deptry .
+uv run --group dev pytest -q
 uv run pre-commit validate-config
 ```
 
@@ -58,6 +53,12 @@ Install git hooks locally:
 uv run pre-commit install
 ```
 
+The repository uses:
+- `ruff` for linting and formatting
+- `basedpyright` for type checking
+- `pytest` for tests
+- `deptry` for dependency validation
+
 ## Documentation
 
 Build the documentation locally:
@@ -66,9 +67,13 @@ Build the documentation locally:
 uv run --group docs mkdocs build
 ```
 
-The repository also deploys the MkDocs site automatically to GitHub Pages from
-`main`. In the repository settings, set `Settings > Pages > Source` to
-`GitHub Actions`.
+Serve it during development:
+
+```bash
+uv run --group docs mkdocs serve
+```
+
+The documentation site is deployed automatically to GitHub Pages from `main`.
 
 ## License
 
@@ -76,76 +81,60 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE).
 
 ## Translations
 
-Qt translation sources live in `src/ui/i18n/*.ts`. Runtime binaries
-(`.qm`) are generated from those sources.
+UI translations are managed through **Weblate** and stored in
+`src/ui/i18n/*.ts`. Runtime `.qm` files are generated from those source files.
 
-- Translators should edit `.ts` files, ideally through Weblate once it is
-  connected.
-- Developers should validate and compile translations with:
+- Translation source files follow locale naming such as `en_US.ts` or `zh_CN.ts`
+- Runtime language availability is discovered dynamically by the app
+- Translation metadata and filenames are validated in CI
+
+Useful commands:
 
 ```bash
 uv run python scripts/validate_translations.py
 uv run python scripts/build_translations.py
 ```
 
-- The settings UI discovers languages dynamically from the available runtime
-  translations, so adding `zh_CN.ts` and compiling `zh_CN.qm` is enough to make
-  the language selectable.
-- The repository enforces locale file naming such as `fr_FR.ts` or `zh_CN.ts`.
+Additional translation workflow details are documented in
+[src/ui/i18n/README.md](src/ui/i18n/README.md) and [docs/translations.md](docs/translations.md).
 
 ## Releases
 
-Precompiled executables are available for Windows and Linux in the [Releases](https://github.com/alexbdka/goh-mod-manager/releases) section.
+Prebuilt Windows and Linux binaries are published in
+[GitHub Releases](https://github.com/alexbdka/goh-mod-manager/releases).
 
-## Building
+## Builds
 
-To compile the application into a standalone executable, PyInstaller is the recommended option for public releases (Nuitka builds may trigger AV false positives on Windows).
-
-Note: build tools such as PyInstaller and Nuitka still take a script path as input, so packaging commands continue to target `src/main.py`.
-
-**PyInstaller (Windows)**
+Use the local build helper:
 
 ```bash
-uv run pyinstaller `
-            --onedir `
-            --clean `
-            --windowed `
-            --paths "." `
-            --name "goh_mod_manager" `
-            --icon "assets\icons\logo.ico" `
-            --add-data "assets\fonts;assets\fonts" `
-            --add-data ".app-version;." `
-            --add-data "src\ui\i18n\*.qm;src\ui\i18n" `
-            src/main.py
+uv run python scripts/build_app.py
 ```
 
-**PyInstaller (Linux)**
+Useful variants:
 
 ```bash
-uv run pyinstaller \
-            --onedir \
-            --clean \
-            --windowed \
-            --paths . \
-            --name "goh_mod_manager" \
-            --icon "assets/icons/logo.png" \
-            --add-data "assets/fonts:assets/fonts" \
-            --add-data ".app-version:." \
-            --add-data "src/ui/i18n/*.qm:src/ui/i18n" \
-            src/main.py
+uv run python scripts/build_app.py --onedir
+uv run python scripts/build_app.py --onefile --package
+uv run python scripts/build_app.py --skip-tests
 ```
 
-The compiled executable will be available in the `dist` directory.
+The script rebuilds translations, runs compile checks, optionally runs tests,
+and packages the application with PyInstaller using the same conventions as CI.
 
 ## Dependencies
 
-- PySide6 - Qt for Python GUI framework
-- pyqtdarktheme - Modern dark/light themes
-- PyInstaller - Standalone executable builder (recommended for releases)
+Main runtime dependencies:
 
-## Credits
+- `PySide6` for the desktop UI
+- `pyqtdarktheme` for light and dark themes
+- `qtawesome` for icon integration
+- `py7zr`, `rarfile`, and `vdf` for archive and Steam-related workflows
+
+## Acknowledgements
 
 - Logo design by [awasde](https://www.linkedin.com/in/amélie-rakowiecki-970818350)
-- Original mod manager concept by [Elaindil (MrCookie)](https://github.com/Elaindil/ModManager)
-  as an acknowledged predecessor. This repository is an independent
-  implementation and does not reuse its code.
+- Original mod manager concept by
+  [Elaindil (MrCookie)](https://github.com/Elaindil/ModManager) as an
+  acknowledged predecessor; this repository is an independent implementation
+  and does not reuse its code
