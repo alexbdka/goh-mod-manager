@@ -1,5 +1,3 @@
-import pytest
-
 from src.utils.markup_parser import strip_markup, to_html
 
 
@@ -25,7 +23,10 @@ class TestMarkupParser:
 
         # Complex description from real mod.info
         text = "ID:<c(FFFFFF)>286</c> GOH\n <c(bdba09)>STEP I</c>"
-        expected = 'ID:<span style="color:#FFFFFF;">286</span> GOH<br> <span style="color:#bdba09;">STEP I</span>'
+        expected = (
+            'ID:<span style="color:#FFFFFF;">286</span> GOH<br> '
+            '<span style="color:#bdba09;">STEP I</span>'
+        )
         assert to_html(text) == expected
 
         # Literal \n vs Actual newline

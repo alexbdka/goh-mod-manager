@@ -20,6 +20,8 @@ legacy/
 # Tool caches
 .pytest_cache/
 .uv-cache/
+.ruff_cache/
+site/
 
 # Temporary local packaging/debug specs
 goh_mod_manager_*_check.spec

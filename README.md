@@ -24,6 +24,12 @@ cd goh-mod-manager
 uv sync
 ```
 
+For development tooling and documentation:
+
+```bash
+uv sync --group dev --group docs
+```
+
 ## Usage
 
 Run the application:
@@ -31,6 +37,61 @@ Run the application:
 ```bash
 uv run python -m src.main
 ```
+
+## Development Checks
+
+Common local quality commands:
+
+```bash
+uv run ruff check .
+uv run ruff format --check .
+uv run basedpyright
+uv run pytest -q
+uv run deptry .
+uv run --group docs mkdocs build
+uv run pre-commit validate-config
+```
+
+Install git hooks locally:
+
+```bash
+uv run pre-commit install
+```
+
+## Documentation
+
+Build the documentation locally:
+
+```bash
+uv run --group docs mkdocs build
+```
+
+The repository also deploys the MkDocs site automatically to GitHub Pages from
+`main`. In the repository settings, set `Settings > Pages > Source` to
+`GitHub Actions`.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
+
+## Translations
+
+Qt translation sources live in `src/ui/i18n/*.ts`. Runtime binaries
+(`.qm`) are generated from those sources.
+
+- Translators should edit `.ts` files, ideally through Weblate once it is
+  connected.
+- Developers should validate and compile translations with:
+
+```bash
+uv run python scripts/validate_translations.py
+uv run python scripts/build_translations.py
+```
+
+- The settings UI discovers languages dynamically from the available runtime
+  translations, so adding `zh_CN.ts` and compiling `zh_CN.qm` is enough to make
+  the language selectable.
+- The repository enforces locale file naming such as `fr_FR.ts` or `zh_CN.ts`.
 
 ## Releases
 
@@ -76,40 +137,6 @@ uv run pyinstaller \
 
 The compiled executable will be available in the `dist` directory.
 
-**Nuitka (optional)**
-
-Nuitka can produce smaller binaries, but tends to trigger antivirus false positives for public Windows releases. Use at your own discretion.
-
-**Windows**
-
-```bash
-uv run nuitka `
-            --standalone `
-            --enable-plugin=pyside6 `
-            --output-dir=dist `
-            --output-filename=goh_mod_manager `
-            --nofollow-import-to=tkinter `
-            --windows-icon-from-ico=assets/icons/logo.ico `
-            --windows-console-mode=disable `
-            --include-data-dir=assets/fonts=assets/fonts `
-            --include-data-dir=src/ui/i18n=src/ui/i18n `
-            src/main.py
-```
-
-**Linux**
-
-```bash
-uv run nuitka \
-            --standalone \
-            --enable-plugin=pyside6 \
-            --output-dir=dist \
-            --output-filename=goh_mod_manager \
-            --nofollow-import-to=tkinter \
-            --include-data-dir=assets/fonts=assets/fonts \
-            --include-data-dir=src/ui/i18n=src/ui/i18n \
-            src/main.py
-```
-
 ## Dependencies
 
 - PySide6 - Qt for Python GUI framework
@@ -119,4 +146,6 @@ uv run nuitka \
 ## Credits
 
 - Logo design by [awasde](https://www.linkedin.com/in/amélie-rakowiecki-970818350)
-- Original mod manager by [Elaindil (MrCookie)](https://github.com/Elaindil/ModManager)
+- Original mod manager concept by [Elaindil (MrCookie)](https://github.com/Elaindil/ModManager)
+  as an acknowledged predecessor. This repository is an independent
+  implementation and does not reuse its code.

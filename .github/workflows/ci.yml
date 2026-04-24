@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  quality:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Sync dependencies
+        run: uv sync --group dev --group docs --frozen
+
+      - name: Show tool versions
+        run: |
+          uv --version
+          uv run python --version
+          uv run ruff --version
+          uv run basedpyright --version
+          uv run deptry --version
+          uv run mkdocs --version
+
+      - name: Validate pre-commit configuration
+        run: uv run pre-commit validate-config
+
+      - name: Run static checks
+        run: |
+          uv run python -m compileall -q src tests scripts
+          uv run python scripts/validate_translations.py
+          uv run python scripts/build_translations.py --no-update
+          uv run deptry .
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run basedpyright
+
+      - name: Run tests
+        run: uv run pytest -q
+
+      - name: Build documentation
+        run: uv run --group docs mkdocs build

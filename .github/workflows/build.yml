@@ -35,13 +35,26 @@ jobs:
         run: pip install uv
 
       - name: Sync dependencies (locked)
-        run: uv sync --frozen
+        run: uv sync --group dev --frozen
 
       - name: Show tool versions
         run: |
           uv --version
           uv run python --version
+          uv run ruff --version
+          uv run basedpyright --version
+          uv run deptry --version
           uv run pyinstaller --version
+
+      - name: Run static checks
+        run: |
+          uv run python -m compileall -q src tests scripts
+          uv run python scripts/validate_translations.py
+          uv run python scripts/build_translations.py --no-update
+          uv run deptry .
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run basedpyright
 
       - name: Run tests
         run: uv run pytest -q

@@ -2,15 +2,10 @@
 
 
 a = Analysis(
-    ["src/main.py"],
-    pathex=["."],
+    ['src\\main.py'],
+    pathex=['.'],
     binaries=[],
-    datas=[
-        ("assets/icons", "assets/icons"),
-        ("assets/fonts", "assets/fonts"),
-        ("src/ui/i18n/*.qm", "src/ui/i18n"),
-        (".app-version", "."),
-    ],
+    datas=[('assets/icons', 'assets/icons'), ('assets/fonts', 'assets/fonts'), ('.app-version', '.'), ('src/ui/i18n/*.qm', 'src/ui/i18n')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -24,27 +19,21 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz,
     a.scripts,
+    a.binaries,
+    a.datas,
     [],
-    exclude_binaries=True,
-    name="GoH Mod Manager",
+    name='GoH Mod Manager',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon="assets/icons/logo.ico",
-)
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name="GoH Mod Manager",
+    icon=['C:\\Users\\alex\\Documents\\My Projects\\GoH Mod Manager\\assets\\icons\\logo.ico'],
 )
