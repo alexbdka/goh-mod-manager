@@ -6,14 +6,13 @@ from PySide6.QtWidgets import (
     QLabel,
     QTextBrowser,
     QVBoxLayout,
-    QWidget,
 )
-
-from src.core.mod import ModInfo
+from src.application.state import ModState
+from src.ui.language_change_mixin import LanguageChangeMixin
 from src.utils import markup_parser
 
 
-class ModDetailsWidget(QFrame):
+class ModDetailsWidget(LanguageChangeMixin, QFrame):
     """
     Widget displaying the detailed information of a selected mod.
     Parses GEM markup tags to display rich text descriptions.
@@ -21,7 +20,7 @@ class ModDetailsWidget(QFrame):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._current_mod: ModInfo | None = None
+        self._current_mod: ModState | None = None
         self.setFrameShape(QFrame.Shape.NoFrame)
         self._current_pixmap = None
         self._setup_ui()
@@ -76,7 +75,7 @@ class ModDetailsWidget(QFrame):
         self.desc_browser.setFrameShape(QFrame.Shape.NoFrame)
         layout.addWidget(self.desc_browser)
 
-    def display_mod(self, mod: ModInfo | None):
+    def display_mod(self, mod: ModState | None):
         """
         Updates the widget to show the details of the given mod.
         If mod is None, clears the display.
@@ -106,10 +105,12 @@ class ModDetailsWidget(QFrame):
         # Meta Info
         meta_html = f"<b>ID:</b> {mod.id}<br>"
 
-        if mod.minGameVersion:
-            meta_html += self.tr("<b>Game Version:</b> {0}").format(mod.minGameVersion)
-            if mod.maxGameVersion and mod.maxGameVersion != mod.minGameVersion:
-                meta_html += f" - {mod.maxGameVersion}"
+        if mod.min_game_version:
+            meta_html += self.tr("<b>Game Version:</b> {0}").format(
+                mod.min_game_version
+            )
+            if mod.max_game_version and mod.max_game_version != mod.min_game_version:
+                meta_html += f" - {mod.max_game_version}"
             meta_html += "<br>"
 
         if mod.tags:
@@ -123,7 +124,7 @@ class ModDetailsWidget(QFrame):
         self.meta_label.setText(meta_html)
 
         # Description (HTML)
-        html_desc = markup_parser.to_html(mod.desc)
+        html_desc = markup_parser.to_html(mod.description)
         if not html_desc:
             html_desc = self.tr("<i>No description available.</i>")
 

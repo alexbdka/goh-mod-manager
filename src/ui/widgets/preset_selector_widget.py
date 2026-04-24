@@ -1,5 +1,3 @@
-from typing import List
-
 import qtawesome as qta
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
@@ -9,11 +7,11 @@ from PySide6.QtWidgets import (
     QPushButton,
     QWidget,
 )
-
 from src.ui.appearance_manager import AppearanceManager
+from src.ui.language_change_mixin import LanguageChangeMixin
 
 
-class PresetSelectorWidget(QWidget):
+class PresetSelectorWidget(LanguageChangeMixin, QWidget):
     """
     Widget allowing the user to select, save, and delete load order presets.
     Sits above the active mods list.
@@ -28,7 +26,7 @@ class PresetSelectorWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._is_unsaved = False
-        self._preset_names: List[str] = []
+        self._preset_names: list[str] = []
         self._setup_ui()
         self._connect_signals()
         self.retranslate_ui()
@@ -84,7 +82,7 @@ class PresetSelectorWidget(QWidget):
         self.btn_save_as.setIcon(qta.icon("fa5s.plus", **icon_colors))
         self.btn_delete.setIcon(qta.icon("fa5s.trash", **icon_colors))
 
-    def populate(self, preset_names: List[str], current: str = ""):
+    def populate(self, preset_names: list[str], current: str = ""):
         """
         Populates the combobox with available presets.
         """
@@ -106,6 +104,8 @@ class PresetSelectorWidget(QWidget):
         self.retranslate_ui()
 
     def current_preset_name(self) -> str:
+        if self.combo.currentIndex() <= 0:
+            return ""
         return self.combo.currentText()
 
     def has_selected_preset(self) -> bool:
@@ -146,7 +146,8 @@ class PresetSelectorWidget(QWidget):
 
     def _update_buttons(self):
         """
-        Disables Save and Delete buttons if the user is on the "-- Custom --" fallback item.
+        Disable Save and Delete when the combobox is on the custom fallback
+        entry.
         """
         is_preset = self.combo.currentIndex() > 0
         self.btn_save.setEnabled(is_preset)

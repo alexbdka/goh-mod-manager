@@ -1,5 +1,3 @@
-from typing import List
-
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
@@ -13,20 +11,20 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-
-from src.core.mod import ModInfo
+from src.application.state import CatalogueState, ModState
+from src.ui.language_change_mixin import LanguageChangeMixin
 from src.ui.widgets.catalogue_item_delegate import (
-    CatalogueItemDelegate,
     ROLE_IS_ACTIVE,
     ROLE_MOD_ID,
     ROLE_PIXMAP,
     ROLE_STATUS_ENTRIES,
     ROLE_TITLE,
+    CatalogueItemDelegate,
 )
 from src.utils import markup_parser
 
 
-class CatalogueWidget(QWidget):
+class CatalogueWidget(LanguageChangeMixin, QWidget):
     """
     Widget displaying the catalogue of available mods (Local + Workshop).
     """
@@ -37,8 +35,7 @@ class CatalogueWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._all_mods: List[ModInfo] = []
-        self._active_mod_ids: set[str] = set()
+        self._catalogue_items: list[ModState] = []
         self._setup_ui()
         self.retranslate_ui()
 
@@ -90,17 +87,14 @@ class CatalogueWidget(QWidget):
         self.list_widget.doItemsLayout()
         self.list_widget.viewport().update()
 
-    def populate(self, mods: List[ModInfo]):
+    def populate(self, catalogue_state: CatalogueState):
         """
-        Saves the provided mods and applies current filters to populate the list.
+        Saves the provided catalogue state and applies current filters.
         """
-        self._all_mods = sorted(
-            mods, key=lambda m: markup_parser.strip_markup(m.name).lower()
+        self._catalogue_items = sorted(
+            catalogue_state.items,
+            key=lambda m: markup_parser.strip_markup(m.name).lower(),
         )
-        self._apply_filters()
-
-    def set_active_mod_ids(self, mod_ids: List[str]):
-        self._active_mod_ids = set(mod_ids)
         self._apply_filters()
 
     def refresh_icons(self):
@@ -114,7 +108,7 @@ class CatalogueWidget(QWidget):
         self.tab_bar.setTabText(0, self.tr("All"))
         self.tab_bar.setTabText(1, self.tr("Workshop"))
         self.tab_bar.setTabText(2, self.tr("Local"))
-        if self._all_mods:
+        if self._catalogue_items:
             self._apply_filters()
 
     def _apply_filters(self):
@@ -123,10 +117,10 @@ class CatalogueWidget(QWidget):
         search_text = self.search_bar.text().lower()
         current_tab = self.tab_bar.currentIndex()
 
-        for mod in self._all_mods:
-            if current_tab == 1 and mod.isLocal:
+        for mod in self._catalogue_items:
+            if current_tab == 1 and mod.is_local:
                 continue
-            if current_tab == 2 and not mod.isLocal:
+            if current_tab == 2 and not mod.is_local:
                 continue
 
             if search_text and search_text not in mod.name.lower():
@@ -134,7 +128,7 @@ class CatalogueWidget(QWidget):
 
             clean_name = markup_parser.strip_markup(mod.name)
             tooltip = self._build_tooltip(mod)
-            if mod.id in self._active_mod_ids:
+            if mod.is_active:
                 tooltip = self.tr("{0}\nAlready active in the load order.").format(
                     tooltip
                 )
@@ -145,13 +139,13 @@ class CatalogueWidget(QWidget):
             item.setData(ROLE_TITLE, clean_name)
             item.setData(ROLE_PIXMAP, self._build_thumbnail_pixmap(mod))
             item.setData(ROLE_STATUS_ENTRIES, self._build_status_entries(mod))
-            item.setData(ROLE_IS_ACTIVE, mod.id in self._active_mod_ids)
+            item.setData(ROLE_IS_ACTIVE, mod.is_active)
             self.list_widget.addItem(item)
 
             if mod.id in selected_mod_ids:
                 item.setSelected(True)
 
-    def _build_thumbnail_pixmap(self, mod: ModInfo) -> QPixmap | None:
+    def _build_thumbnail_pixmap(self, mod: ModState) -> QPixmap | None:
         if not mod.image_path:
             return None
 
@@ -166,9 +160,11 @@ class CatalogueWidget(QWidget):
             Qt.TransformationMode.SmoothTransformation,
         )
 
-    def _build_tooltip(self, mod: ModInfo) -> str:
-        tooltip_lines = [self.tr("Local Mod") if mod.isLocal else self.tr("Workshop Mod")]
-        missing_dependencies = self._get_missing_dependency_ids(mod)
+    def _build_tooltip(self, mod: ModState) -> str:
+        tooltip_lines = [
+            self.tr("Local Mod") if mod.is_local else self.tr("Workshop Mod")
+        ]
+        missing_dependencies = mod.missing_dependencies
 
         if missing_dependencies:
             tooltip_lines.append(
@@ -183,18 +179,11 @@ class CatalogueWidget(QWidget):
 
         return "\n".join(tooltip_lines)
 
-    def _get_missing_dependency_ids(self, mod: ModInfo) -> List[str]:
+    def _build_status_entries(self, mod: ModState) -> list[dict[str, str]]:
         if not mod.dependencies:
             return []
 
-        known_mod_ids = {catalogue_mod.id for catalogue_mod in self._all_mods}
-        return [dep_id for dep_id in mod.dependencies if dep_id not in known_mod_ids]
-
-    def _build_status_entries(self, mod: ModInfo) -> list[dict[str, str]]:
-        if not mod.dependencies:
-            return []
-
-        missing_dependencies = self._get_missing_dependency_ids(mod)
+        missing_dependencies = mod.missing_dependencies
         if missing_dependencies:
             return [
                 {
@@ -235,7 +224,7 @@ class CatalogueWidget(QWidget):
             return None
         return selected_items[0].data(ROLE_MOD_ID)
 
-    def get_selected_mod_ids(self) -> List[str]:
+    def get_selected_mod_ids(self) -> list[str]:
         return [item.data(ROLE_MOD_ID) for item in self.list_widget.selectedItems()]
 
     def _on_item_double_clicked(self, _item):

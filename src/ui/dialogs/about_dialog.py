@@ -1,10 +1,10 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QLabel, QVBoxLayout
-
+from src.ui.language_change_mixin import LanguageChangeMixin
 from src.utils import app_paths
 
 
-class AboutDialog(QDialog):
+class AboutDialog(LanguageChangeMixin, QDialog):
     """
     Dialog displaying information about the application.
     """

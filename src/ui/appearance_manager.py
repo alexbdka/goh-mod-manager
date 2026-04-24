@@ -70,7 +70,7 @@ class AppearanceManager:
 
         if source is None:
             app = QApplication.instance()
-            palette = app.palette() if app else QPalette()
+            palette = app.palette() if isinstance(app, QApplication) else QPalette()
         else:
             palette = source.palette()
 

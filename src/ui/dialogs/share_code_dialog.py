@@ -5,9 +5,10 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QVBoxLayout,
 )
+from src.ui.language_change_mixin import LanguageChangeMixin
 
 
-class ImportShareCodeDialog(QDialog):
+class ImportShareCodeDialog(LanguageChangeMixin, QDialog):
     """
     Dialog specifically designed to prompt the user for a Share Code.
     """

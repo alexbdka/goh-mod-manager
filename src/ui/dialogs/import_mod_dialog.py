@@ -10,9 +10,10 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from src.ui.language_change_mixin import LanguageChangeMixin
 
 
-class DropZoneWidget(QWidget):
+class DropZoneWidget(LanguageChangeMixin, QWidget):
     """
     A custom widget that accepts drag and drop events for files and folders.
     """
@@ -61,7 +62,7 @@ class DropZoneWidget(QWidget):
         event.acceptProposedAction()
 
 
-class ImportModDialog(QDialog):
+class ImportModDialog(LanguageChangeMixin, QDialog):
     """
     Dialog allowing users to import a mod via Drag & Drop or file/folder browsers.
     """
@@ -123,7 +124,6 @@ class ImportModDialog(QDialog):
 
     def retranslate_ui(self):
         self.setWindowTitle(self.tr("Import Mod"))
-        self.drop_zone.retranslate_ui()
         self.btn_archive.setText(self.tr("Select Archive..."))
         self.btn_archive.setToolTip(self.tr("Import from .zip, .rar, .7z, etc."))
         self.btn_folder.setText(self.tr("Select Folder..."))

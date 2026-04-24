@@ -1,8 +1,9 @@
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QMenuBar
+from PySide6.QtWidgets import QMainWindow, QMenuBar
+from src.ui.language_change_mixin import LanguageChangeMixin
 
 
-class MainMenuBar(QMenuBar):
+class MainMenuBar(LanguageChangeMixin, QMenuBar):
     """
     Modular component for the application's main menu bar.
     """
@@ -41,9 +42,9 @@ class MainMenuBar(QMenuBar):
 
         self.exit_action = QAction(self)
         self.exit_action.setShortcut("Ctrl+Q")
-        # If a parent (like MainWindow) is provided, connect the exit action to its close slot
-        if self.parent():
-            self.exit_action.triggered.connect(self.parent().close)
+        parent_window = self.parentWidget()
+        if isinstance(parent_window, QMainWindow):
+            self.exit_action.triggered.connect(parent_window.close)
 
         self.file_menu.addAction(self.exit_action)
 
@@ -62,6 +63,8 @@ class MainMenuBar(QMenuBar):
         self.help_menu = self.addMenu("")
         self.generate_report_action = QAction(self)
         self.help_menu.addAction(self.generate_report_action)
+        self.interface_tour_action = QAction(self)
+        self.help_menu.addAction(self.interface_tour_action)
         self.help_menu.addSeparator()
         self.about_action = QAction(self)
         self.help_menu.addAction(self.about_action)
@@ -82,4 +85,5 @@ class MainMenuBar(QMenuBar):
         self.refresh_action.setText(self.tr("Refresh"))
         self.help_menu.setTitle(self.tr("&Help"))
         self.generate_report_action.setText(self.tr("Generate Debug Report..."))
+        self.interface_tour_action.setText(self.tr("Interface Tour..."))
         self.about_action.setText(self.tr("About"))

@@ -8,7 +8,6 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-
 from src.utils import system_actions
 
 
@@ -52,9 +51,13 @@ class MissingModsDialog(QDialog):
                 )
                 open_steam = self.tr("Open in Steam")
                 browser = self.tr("Browser")
-                links = f'<a href="{steam_url}">{open_steam}</a> | <a href="{web_url}">{browser}</a>'
+                links = (
+                    f'<a href="{steam_url}">{open_steam}</a> | '
+                    f'<a href="{web_url}">{browser}</a>'
+                )
                 items_html.append(
-                    f'<li style="margin-bottom: 5px;"><b>{mod_name}</b> (ID: {mod_id})<br/>{links}</li>'
+                    '<li style="margin-bottom: 5px;">'
+                    f"<b>{mod_name}</b> (ID: {mod_id})<br/>{links}</li>"
                 )
             else:
                 local_id = self.tr("(Local/Unknown ID)")

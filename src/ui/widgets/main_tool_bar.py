@@ -1,11 +1,11 @@
 import qtawesome as qta
 from PySide6.QtCore import QSize, Signal
 from PySide6.QtWidgets import QPushButton, QToolBar, QWidget
-
 from src.ui.appearance_manager import AppearanceManager
+from src.ui.language_change_mixin import LanguageChangeMixin
 
 
-class MainToolBar(QToolBar):
+class MainToolBar(LanguageChangeMixin, QToolBar):
     """
     Main toolbar of the application, containing global actions like 'Launch Game'.
     """

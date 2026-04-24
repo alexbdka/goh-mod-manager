@@ -14,33 +14,42 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from src.application.state import SettingsState
+from src.ui.i18n_registry import (
+    TranslationLocale,
+    discover_runtime_languages,
+    language_label,
+)
+from src.ui.language_change_mixin import LanguageChangeMixin
 
 
-class SettingsDialog(QDialog):
+class SettingsDialog(LanguageChangeMixin, QDialog):
     """
-    Dialog for application preferences and settings.
-    Designed with a TabWidget to allow future expansion (Appearance, Language, etc.).
+    Dialog for editing application paths, appearance, and language settings.
     """
 
     def __init__(
         self,
-        current_game_path: str = "",
-        current_workshop_path: str = "",
-        current_profile_path: str = "",
-        current_language: str = "en_US",
-        current_theme: str = "auto",
-        current_font: str = "Inter",
+        settings_state: SettingsState | None = None,
         parent=None,
     ):
         super().__init__(parent)
         self.resize(640, 360)
 
-        self.current_game_path = current_game_path or ""
-        self.current_workshop_path = current_workshop_path or ""
-        self.current_profile_path = current_profile_path or ""
-        self.current_language = current_language
-        self.current_theme = current_theme
-        self.current_font = current_font
+        settings_state = settings_state or SettingsState(
+            game_path="",
+            workshop_path="",
+            profile_path="",
+            language="en_US",
+            theme="auto",
+            font="Inter",
+        )
+        self.current_game_path = settings_state.game_path or ""
+        self.current_workshop_path = settings_state.workshop_path or ""
+        self.current_profile_path = settings_state.profile_path or ""
+        self.current_language = settings_state.language
+        self.current_theme = settings_state.theme
+        self.current_font = settings_state.font
 
         self._setup_ui()
         self.retranslate_ui()
@@ -48,26 +57,21 @@ class SettingsDialog(QDialog):
     def _setup_ui(self):
         main_layout = QVBoxLayout(self)
 
-        # Tab Widget for modularity
         self.tabs = QTabWidget()
         main_layout.addWidget(self.tabs)
 
-        # Tab 1: Paths
         self.paths_tab = QWidget()
         self._setup_paths_tab()
         self.tabs.addTab(self.paths_tab, "")
 
-        # Tab 2: Appearance
         self.appearance_tab = QWidget()
         self._setup_appearance_tab()
         self.tabs.addTab(self.appearance_tab, "")
 
-        # Tab 3: Language
         self.language_tab = QWidget()
         self._setup_language_tab()
         self.tabs.addTab(self.language_tab, "")
 
-        # Dialog Buttons (OK / Cancel)
         self.button_box = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
         )
@@ -83,7 +87,6 @@ class SettingsDialog(QDialog):
 
         self.paths_form_layout = QFormLayout()
 
-        # Game Path
         self.game_path_input = QLineEdit(self.current_game_path)
         self.btn_browse_game = QPushButton()
         self.btn_browse_game.clicked.connect(self._browse_game_path)
@@ -94,7 +97,6 @@ class SettingsDialog(QDialog):
         self.game_path_label = QLabel()
         self.paths_form_layout.addRow(self.game_path_label, game_layout)
 
-        # Workshop Path
         self.workshop_path_input = QLineEdit(self.current_workshop_path)
         self.btn_browse_workshop = QPushButton()
         self.btn_browse_workshop.clicked.connect(self._browse_workshop_path)
@@ -105,7 +107,6 @@ class SettingsDialog(QDialog):
         self.workshop_path_label = QLabel()
         self.paths_form_layout.addRow(self.workshop_path_label, workshop_layout)
 
-        # Profile Path
         self.profile_path_input = QLineEdit(self.current_profile_path)
         self.btn_browse_profile = QPushButton()
         self.btn_browse_profile.clicked.connect(self._browse_profile_path)
@@ -163,14 +164,7 @@ class SettingsDialog(QDialog):
         self.language_form_layout = QFormLayout()
 
         self.language_combo = QComboBox()
-        self.language_combo.addItem("", "en_US")
-        self.language_combo.addItem("", "fr_FR")
-
-        # Set current
-        idx = self.language_combo.findData(self.current_language)
-        if idx >= 0:
-            self.language_combo.setCurrentIndex(idx)
-
+        self._populate_language_options()
         self.language_label = QLabel()
         self.language_form_layout.addRow(self.language_label, self.language_combo)
 
@@ -209,9 +203,7 @@ class SettingsDialog(QDialog):
             self.profile_path_input.setText(os.path.normpath(file_path))
 
     def get_paths(self) -> dict:
-        """
-        Returns the paths and settings currently entered in the dialog.
-        """
+        """Return the current dialog values as a plain mapping."""
         return {
             "game_path": self.game_path_input.text().strip(),
             "workshop_path": self.workshop_path_input.text().strip(),
@@ -220,6 +212,42 @@ class SettingsDialog(QDialog):
             "theme": self.theme_combo.currentData(),
             "font": self.font_combo.currentData(),
         }
+
+    def _populate_language_options(self) -> None:
+        """Populate the language selector from the runtime translation registry."""
+        current_code = self.language_combo.currentData() or self.current_language
+        locales = discover_runtime_languages()
+
+        if not any(locale.code == current_code for locale in locales):
+            locales.append(
+                TranslationLocale(
+                    code=current_code,
+                    label=self.tr("{0} (Unavailable)").format(
+                        language_label(current_code)
+                    ),
+                )
+            )
+
+        self.language_combo.blockSignals(True)
+        self.language_combo.clear()
+        for locale in locales:
+            self.language_combo.addItem(locale.label, locale.code)
+
+        idx = self.language_combo.findData(current_code)
+        if idx >= 0:
+            self.language_combo.setCurrentIndex(idx)
+        self.language_combo.blockSignals(False)
+
+    def get_settings_state(self) -> SettingsState:
+        """Return the current dialog values as a typed ``SettingsState``."""
+        return SettingsState(
+            game_path=self.game_path_input.text().strip(),
+            workshop_path=self.workshop_path_input.text().strip(),
+            profile_path=self.profile_path_input.text().strip(),
+            language=self.language_combo.currentData(),
+            theme=self.theme_combo.currentData(),
+            font=self.font_combo.currentData(),
+        )
 
     def retranslate_ui(self):
         self.setWindowTitle(self.tr("Settings"))
@@ -252,6 +280,5 @@ class SettingsDialog(QDialog):
         self.language_info_label.setText(
             self.tr("Select the application language. A restart may be required.")
         )
-        self.language_combo.setItemText(0, self.tr("English"))
-        self.language_combo.setItemText(1, self.tr("Français"))
+        self._populate_language_options()
         self.language_label.setText(self.tr("Language:"))

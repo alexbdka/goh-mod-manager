@@ -1,7 +1,7 @@
 from PySide6.QtCore import QTranslator
 from PySide6.QtWidgets import QApplication
 
-from src.utils import app_paths
+from src.ui.i18n_registry import DEFAULT_LANGUAGE_CODE, get_i18n_dir
 
 
 class TranslationManager:
@@ -13,8 +13,12 @@ class TranslationManager:
             app.removeTranslator(cls._translator)
             cls._translator = None
 
+        if language == DEFAULT_LANGUAGE_CODE:
+            app.setProperty("current_language", language)
+            return True
+
         translator = QTranslator(app)
-        i18n_path = app_paths.get_resource_path("src", "ui", "i18n")
+        i18n_path = get_i18n_dir()
         if not translator.load(f"{language}.qm", str(i18n_path)):
             return False
 

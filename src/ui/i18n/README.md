@@ -1,48 +1,47 @@
-# Translation sources (.ts) and compiled Qt binaries (.qm) live here.
+# Translation sources (`.ts`) and compiled Qt binaries (`.qm`) live here.
 
-## Expected names:
+## Naming
 
-- en_US.ts
-- fr_FR.ts
-- ru_RU.ts
-- zh_CN.ts
-- de_DE.ts
-- ...
+Use locale-based file names:
 
-Compiled binaries (generated from the `.ts` sources):
+- `en_US.ts`
+- `fr_FR.ts`
+- `ru_RU.ts`
+- `zh_CN.ts`
+- `de_DE.ts`
 
-- en_US.qm
-- fr_FR.qm
-- ru_RU.qm
-- zh_CN.qm
-- de_DE.qm
-- ...
+The same naming applies to compiled runtime files:
 
-## Workflow:
+- `en_US.qm`
+- `fr_FR.qm`
+- `ru_RU.qm`
+- `zh_CN.qm`
+- `de_DE.qm`
 
-1) Generate or update translation source files:
+Invalid names are rejected by `scripts/validate_translations.py`.
 
-   From the project root, run the translation script to scan the Python files and update the `.ts` files:
+## Workflow
+
+1. Update the source catalog from Python code:
+
    ```bash
-   uv run python scripts/build_translations.py
+   uv run python scripts/build_translations.py --no-compile
    ```
 
-2) Translate with Qt Linguist:
+2. Translate the `.ts` files in Qt Linguist or Weblate.
 
-   Open the target `.ts` file with Qt Linguist to add or modify translations.
+3. Validate translation metadata and naming:
+
    ```bash
-   pyside6-linguist src/ui/i18n/fr_FR.ts
+   uv run python scripts/validate_translations.py
    ```
 
-3) Compile to a `.qm` binary:
+4. Compile runtime `.qm` files:
 
-   The `.qm` binaries are automatically generated when you run the build script:
    ```bash
-   uv run python scripts/build_translations.py
-   ```
-   Or you can compile a single file manually:
-   ```bash
-   pyside6-lrelease src/ui/i18n/fr_FR.ts
+   uv run python scripts/build_translations.py --no-update
    ```
 
-The translation system uses QTranslator and requires the `.qm` files to be present at runtime.
+The application discovers selectable languages dynamically from the compiled
+runtime files, so a language becomes available in the settings UI as soon as
+its `.qm` file exists.

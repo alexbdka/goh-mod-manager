@@ -1,8 +1,13 @@
 import qtawesome as qta
 from PySide6.QtCore import QRect, QSize, Qt
 from PySide6.QtGui import QIcon, QPainter, QPalette, QPixmap
-from PySide6.QtWidgets import QApplication, QStyledItemDelegate, QStyle, QStyleOptionViewItem, QWidget
-
+from PySide6.QtWidgets import (
+    QApplication,
+    QStyle,
+    QStyledItemDelegate,
+    QStyleOptionViewItem,
+    QWidget,
+)
 from src.ui.appearance_manager import AppearanceManager
 
 ROLE_MOD_ID = Qt.ItemDataRole.UserRole
@@ -32,7 +37,9 @@ class CatalogueItemDelegate(QStyledItemDelegate):
 
         widget = opt.widget
         style = widget.style() if widget else QApplication.style()
-        style.drawPrimitive(QStyle.PrimitiveElement.PE_PanelItemViewItem, opt, painter, widget)
+        style.drawPrimitive(
+            QStyle.PrimitiveElement.PE_PanelItemViewItem, opt, painter, widget
+        )
 
         title = index.data(ROLE_TITLE) or ""
         thumbnail = index.data(ROLE_PIXMAP)
@@ -53,7 +60,11 @@ class CatalogueItemDelegate(QStyledItemDelegate):
             text_left = thumbnail_rect.right() + 8
 
         status_width = len(status_entries) * 16 + max(0, len(status_entries) - 1) * 4
-        status_left = content_rect.right() - status_width + 1 if status_entries else content_rect.right() + 1
+        status_left = (
+            content_rect.right() - status_width + 1
+            if status_entries
+            else content_rect.right() + 1
+        )
         text_rect = QRect(
             text_left,
             content_rect.top(),
@@ -64,7 +75,9 @@ class CatalogueItemDelegate(QStyledItemDelegate):
         text_color = (
             opt.palette.color(QPalette.ColorRole.HighlightedText)
             if opt.state & QStyle.StateFlag.State_Selected
-            else opt.palette.color(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Text)
+            else opt.palette.color(
+                QPalette.ColorGroup.Disabled, QPalette.ColorRole.Text
+            )
             if is_active
             else opt.palette.color(QPalette.ColorRole.Text)
         )
@@ -97,7 +110,9 @@ class CatalogueItemDelegate(QStyledItemDelegate):
             x += 20
 
     def sizeHint(self, option: QStyleOptionViewItem, index):
-        height = max(option.fontMetrics.height() + 8, 36 if self._thumbnail_enabled else 24)
+        height = max(
+            option.fontMetrics.height() + 8, 36 if self._thumbnail_enabled else 24
+        )
         return QSize(0, height)
 
     def _build_status_icon(self, entry: dict, source: QWidget | None) -> QIcon:

@@ -1,5 +1,3 @@
-from typing import List
-
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -12,8 +10,8 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-
-from src.core.mod import ModInfo
+from src.application.state import ActiveModsState, ModState
+from src.ui.language_change_mixin import LanguageChangeMixin
 from src.ui.widgets.preset_selector_widget import PresetSelectorWidget
 from src.utils import markup_parser
 
@@ -26,7 +24,7 @@ class InternalTree(QTreeWidget):
         self.order_dropped.emit()
 
 
-class ActiveModsWidget(QWidget):
+class ActiveModsWidget(LanguageChangeMixin, QWidget):
     """
     Widget displaying the currently active mods and their load order.
     It emits signals when the user wants to reorder or remove a mod.
@@ -42,7 +40,7 @@ class ActiveModsWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._current_mods: List[ModInfo] = []
+        self._current_mods: list[ModState] = []
         self._setup_ui()
         self._connect_signals()
         self.retranslate_ui()
@@ -96,20 +94,21 @@ class ActiveModsWidget(QWidget):
         )
         self.list_widget.itemDoubleClicked.connect(self._on_item_double_clicked)
 
-    def populate(self, mods: List[ModInfo]):
+    def populate(self, active_mods_state: ActiveModsState):
         """
-        Clears the current list and populates it with the provided active mods.
+        Clears the current list and populates it with the provided active mods state.
         The order of the list matters.
         """
-        self._current_mods = list(mods)
+        self._current_mods = list(active_mods_state.items)
         self.list_widget.clear()
 
-        for i, mod in enumerate(mods):
+        for i, mod in enumerate(self._current_mods):
             clean_name = markup_parser.strip_markup(mod.name)
-            item = QTreeWidgetItem([str(i + 1), clean_name])
+            order_text = str(mod.load_order if mod.load_order is not None else i + 1)
+            item = QTreeWidgetItem([order_text, clean_name])
             item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsDropEnabled)
             item.setData(0, Qt.ItemDataRole.UserRole, mod.id)
-            if mod.isLocal:
+            if mod.is_local:
                 item.setToolTip(1, self.tr("Local Mod"))
             else:
                 item.setToolTip(1, self.tr("Workshop Mod"))
@@ -159,6 +158,8 @@ class ActiveModsWidget(QWidget):
         new_order = []
         for i in range(self.list_widget.topLevelItemCount()):
             item = self.list_widget.topLevelItem(i)
+            if item is None:
+                continue
             item.setText(0, str(i + 1))
             mod_id = item.data(0, Qt.ItemDataRole.UserRole)
             if mod_id:
@@ -171,6 +172,5 @@ class ActiveModsWidget(QWidget):
         self.btn_up.setText(self.tr("Move Up"))
         self.btn_down.setText(self.tr("Move Down"))
         self.btn_clear.setText(self.tr("Clear"))
-        self.preset_selector.retranslate_ui()
         if self._current_mods:
-            self.populate(self._current_mods)
+            self.populate(ActiveModsState(items=self._current_mods))
