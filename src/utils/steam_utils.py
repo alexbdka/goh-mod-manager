@@ -1,5 +1,10 @@
-# The code below is taken from https://github.com/ModOrganizer2/modorganizer-basic_games/blob/master/steam_utils.py
-# which is greatly inspired by https://github.com/LostDragonist/steam-library-setup-tool with some adjustments
+"""
+Steam discovery helpers for game install, Workshop content, and profile files.
+
+This module adapts ideas from ModOrganizer2's basic game support and from the
+steam-library-setup-tool project to locate the Gates of Hell installation,
+Workshop directory, and the most relevant ``options.set`` profile.
+"""
 
 import logging
 import os
@@ -18,6 +23,8 @@ logger = logging.getLogger(__name__)
 
 
 class SteamGame:
+    """Small value object describing one discovered Steam app entry."""
+
     def __init__(self, appid: str, installdir: str):
         self.appid = appid
         self.installdir = installdir
@@ -26,7 +33,7 @@ class SteamGame:
         return str(self)
 
     def __str__(self):
-        return "{} ({})".format(self.appid, self.installdir)
+        return f"{self.appid} ({self.installdir})"
 
 
 class _AppState(TypedDict):
@@ -48,13 +55,15 @@ class _LibraryFolders(TypedDict, total=False):
 
 
 class LibraryFolder:
+    """Represent one Steam library and the app manifests discovered inside it."""
+
     def __init__(self, path: Path):
         self.path = path
 
         self.games: list[SteamGame] = []
         for filepath in path.joinpath("steamapps").glob("appmanifest_*.acf"):
             try:
-                with open(filepath, "r", encoding="utf-8") as fp:
+                with open(filepath, encoding="utf-8") as fp:
                     info = cast(
                         _AppManifest,
                         vdf.load(fp),  # pyright: ignore[reportUnknownMemberType]
@@ -85,7 +94,7 @@ class LibraryFolder:
         return str(self)
 
     def __str__(self):
-        return "LibraryFolder at {}: {}".format(self.path, self.games)
+        return f"LibraryFolder at {self.path}: {self.games}"
 
 
 def parse_library_info(library_vdf_path: Path) -> list[LibraryFolder]:
@@ -100,7 +109,7 @@ def parse_library_info(library_vdf_path: Path) -> list[LibraryFolder]:
         A list of LibraryFolder, for each library found.
     """
 
-    with open(library_vdf_path, "r", encoding="utf-8") as f:
+    with open(library_vdf_path, encoding="utf-8") as f:
         info = cast(
             _LibraryFolders,
             vdf.load(f),  # pyright: ignore[reportUnknownMemberType]
@@ -109,11 +118,9 @@ def parse_library_info(library_vdf_path: Path) -> list[LibraryFolder]:
     info_folders: dict[str, str] | dict[str, _LibraryFolder]
 
     if "libraryfolders" in info:
-        # new format
         info_folders = info["libraryfolders"]
 
     elif "LibraryFolders" in info:
-        # old format
         info_folders = info["LibraryFolders"]
 
     else:
@@ -122,7 +129,6 @@ def parse_library_info(library_vdf_path: Path) -> list[LibraryFolder]:
     library_folders: list[LibraryFolder] = []
 
     for key, value in info_folders.items():
-        # only keys that are integer values contains library folder
         try:
             int(key)
         except ValueError:
@@ -142,11 +148,7 @@ def parse_library_info(library_vdf_path: Path) -> list[LibraryFolder]:
 
 
 def find_steam_path() -> Path | None:
-    """
-    Retrieve the Steam path, if available.
-    Works on Windows and Linux.
-    """
-    # Windows
+    """Return the Steam installation root for the current platform, if found."""
     if sys.platform == "win32":
         try:
             with winreg.OpenKey(
@@ -157,11 +159,10 @@ def find_steam_path() -> Path | None:
         except FileNotFoundError:
             return None
 
-    # Linux / macOS
     possible_paths = [
         Path.home() / ".local/share/Steam",
         Path.home() / ".steam/steam",
-        Path.home() / ".var/app/com.valvesoftware.Steam/.local/share/Steam",  # Flatpak
+        Path.home() / ".var/app/com.valvesoftware.Steam/.local/share/Steam",
     ]
 
     for path in possible_paths:
@@ -213,13 +214,9 @@ def get_goh_game_path() -> Path | None:
 
 
 def get_goh_workshop_path() -> Path | None:
-    """
-    Returns the workshop directory for Call to Arms - Gates of Hell.
-    """
+    """Return the Steam Workshop content directory for Gates of Hell."""
     game_path = get_goh_game_path()
     if game_path:
-        # game_path is typically something like "C:/SteamLibrary/steamapps/common/Call to Arms - Gates of Hell"
-        # The workshop is at "C:/SteamLibrary/steamapps/workshop/content/400750"
         workshop_path = (
             game_path.parent.parent / "workshop" / "content" / constants.STEAM_APP_ID
         )
@@ -229,9 +226,7 @@ def get_goh_workshop_path() -> Path | None:
 
 
 def get_active_steam_id32() -> str | None:
-    """
-    Parses Steam's loginusers.vdf to find the most recent user's SteamID32.
-    """
+    """Return the most recent Steam user as a SteamID32 string, if available."""
     steam_path = find_steam_path()
     if not steam_path:
         return None
@@ -241,25 +236,21 @@ def get_active_steam_id32() -> str | None:
         return None
 
     try:
-        with open(loginusers_path, "r", encoding="utf-8") as f:
+        with open(loginusers_path, encoding="utf-8") as f:
             data = vdf.load(f)  # pyright: ignore[reportUnknownMemberType]
 
         users = data.get("users", {})
         recent_id64 = None
 
-        # Find the most recently logged in user
         for uid, info in users.items():
             if info.get("MostRecent") == "1":
                 recent_id64 = uid
                 break
 
-        # Fallback to the first user if MostRecent isn't found
         if not recent_id64 and users:
             recent_id64 = list(users.keys())[0]
 
         if recent_id64:
-            # Convert SteamID64 to SteamID32
-            # The magic constant is 76561197960265728
             id64_int = int(recent_id64)
             id32_int = id64_int - 76561197960265728
             return str(id32_int)
@@ -271,9 +262,10 @@ def get_active_steam_id32() -> str | None:
 
 def get_goh_profile_path() -> Path | None:
     """
-    Returns the path to the most recently modified options.set file for the game.
-    First tries to use the active Steam User ID to precisely locate the folder.
-    Falls back to scanning and finding the most recently modified file.
+    Return the best candidate ``options.set`` path for the current machine.
+
+    The resolver first tries an exact match for the active Steam user and then
+    falls back to scanning known profile roots for the newest file.
     """
     steam_id32 = get_active_steam_id32()
 
@@ -288,22 +280,18 @@ def get_goh_profile_path() -> Path | None:
             / "gates of hell"
         )
 
-    # Attempt to find exactly matching the SteamID32 folder first
     if steam_id32:
         for base in potential_bases:
             exact_path = base / steam_id32 / constants.OPTIONS_SET_FILE
             if exact_path.exists():
                 return exact_path
 
-    # Fallback: scan all potential bases and pick the most recently modified options.set
     options_files: list[Path] = []
 
     for base in potential_bases:
         if not base.exists():
             continue
 
-        # There might be multiple profiles (like user ID folders)
-        # We ignore the "offline" profile folder as it's rarely the main one
         files = [
             f
             for f in base.rglob(constants.OPTIONS_SET_FILE)
@@ -314,6 +302,5 @@ def get_goh_profile_path() -> Path | None:
     if not options_files:
         return None
 
-    # Sort by modification time to get the most recently played profile
     options_files.sort(key=lambda f: f.stat().st_mtime, reverse=True)
     return options_files[0]

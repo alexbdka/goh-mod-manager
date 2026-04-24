@@ -1,7 +1,5 @@
 import logging
 import os
-import re
-from typing import List, Optional
 
 from src.core import constants
 from src.core.exceptions import ProfileWriteError
@@ -14,15 +12,14 @@ logger = logging.getLogger(__name__)
 
 
 class ActiveModsService:
+    """Manage the active load order and its serialization to ``options.set``."""
+
     def __init__(self, catalogue: ModsCatalogueService):
         self.catalogue = catalogue
-        self.active_mods_ids: List[str] = []
+        self.active_mods_ids: list[str] = []
 
-    def get_active_mods(self) -> List[ModInfo]:
-        """
-        Returns a list of ModInfo objects for the currently active mods,
-        preserving the load order (which is crucial for GEM engine).
-        """
+    def get_active_mods(self) -> list[ModInfo]:
+        """Return active mods in the exact order expected by the game engine."""
         active_mods = []
         for mod_id in self.active_mods_ids:
             mod = self.catalogue.get_mod(mod_id)
@@ -32,11 +29,12 @@ class ActiveModsService:
                 logger.warning(f"Active mod with ID {mod_id} not found in catalogue.")
         return active_mods
 
-    def activate_mod(self, mod_id: str, _visited: Optional[set] = None) -> List[str]:
+    def activate_mod(self, mod_id: str, _visited: set | None = None) -> list[str]:
         """
-        Adds a mod to the active list (at the end/highest priority).
-        Also attempts to activate its dependencies first.
-        Returns a list of missing dependency IDs.
+        Activate a mod and recursively activate any known dependencies first.
+
+        Returns a list of dependency IDs that were referenced by the target mod
+        but are missing from the catalogue.
         """
         if _visited is None:
             _visited = set()
@@ -60,7 +58,8 @@ class ActiveModsService:
                         else:
                             missing_deps.append(dep)
                             logger.warning(
-                                f"Dependency {dep} for mod {mod_id} not found in catalogue."
+                                f"Dependency {dep} for mod {mod_id} "
+                                "not found in catalogue."
                             )
 
             self.active_mods_ids.append(mod_id)
@@ -68,15 +67,15 @@ class ActiveModsService:
 
         return missing_deps
 
-    def replace_active_mods(self, mod_ids: List[str]) -> List[str]:
+    def replace_active_mods(self, mod_ids: list[str]) -> list[str]:
         """
-        Replaces the current load order with the provided mods while resolving
-        dependencies through the same activation path used by the UI.
+        Replace the current load order while resolving dependencies consistently.
+
         Returns a de-duplicated list of missing mod or dependency IDs.
         """
         self.active_mods_ids.clear()
 
-        missing_mods: List[str] = []
+        missing_mods: list[str] = []
         seen_missing: set[str] = set()
 
         for mod_id in mod_ids:
@@ -109,16 +108,17 @@ class ActiveModsService:
                 self.active_mods_ids.insert(index - 1, self.active_mods_ids.pop(index))
 
     def move_mod_down(self, mod_id: str) -> None:
-        """Moves a mod down in the load order (loads later, higher priority / overwrites previous)."""
+        """
+        Move a mod down in the load order so it loads later and can override
+        earlier entries.
+        """
         if mod_id in self.active_mods_ids:
             index = self.active_mods_ids.index(mod_id)
             if index < len(self.active_mods_ids) - 1:
                 self.active_mods_ids.insert(index + 1, self.active_mods_ids.pop(index))
 
     def load_from_profile(self, options_set_path: str) -> None:
-        """
-        Reads the options.set file to find the currently active mods.
-        """
+        """Load active mods from the game's ``options.set`` profile file."""
         self.active_mods_ids.clear()
 
         if not os.path.exists(options_set_path):
@@ -140,16 +140,12 @@ class ActiveModsService:
             if not mods_node:
                 return
 
-            # Active mods are usually saved as "mod_id:0"
             for raw_mod_str in mods_node.values:
-                # Strip quotes if present and split by colon
                 clean_str = raw_mod_str.strip('"')
                 mod_id_with_prefix = (
                     clean_str.split(":")[0] if ":" in clean_str else clean_str
                 )
 
-                # The game engine prepends "mod_" to the actual folder/workshop ID
-                # We need to strip it to match our catalogue IDs
                 if mod_id_with_prefix.startswith(constants.MOD_PREFIX):
                     mod_id = mod_id_with_prefix[len(constants.MOD_PREFIX) :]
                 else:
@@ -165,18 +161,19 @@ class ActiveModsService:
 
     def save_to_profile(self, options_set_path: str, catalogue_service=None) -> None:
         """
-        Updates the options.set file with the current active mods.
-        Replaces only the {mods ...} block while preserving the rest of the file.
+        Write the current active load order back to ``options.set``.
+
+        Only the ``{mods ...}`` block is replaced so the rest of the file
+        remains untouched.
         """
         if not os.path.exists(options_set_path):
             logger.error(f"Cannot save profile, file not found: {options_set_path}")
             return
 
         try:
-            with open(options_set_path, "r", encoding="utf-8") as f:
+            with open(options_set_path, encoding="utf-8") as f:
                 content = f.read()
 
-            # Format the active mods into the GEM format string
             if self.active_mods_ids:
                 mods_lines_list = []
                 for mod_id in self.active_mods_ids:
@@ -196,9 +193,8 @@ class ActiveModsService:
             else:
                 new_mods_block = "{mods}"
 
-            # Replace the existing {mods ...} block using brace matching so we
-            # don't accidentally stop at the first nested closing brace that
-            # appears later in the file.
+            # Brace matching avoids stopping at the wrong closing brace if other
+            # nested blocks appear later in the file.
             mods_start = content.find("{mods")
             if mods_start != -1:
                 mods_end = self._find_matching_block_end(content, mods_start)
@@ -209,7 +205,6 @@ class ActiveModsService:
                     content[:mods_start] + new_mods_block + content[mods_end:]
                 )
             else:
-                # If {mods} block doesn't exist, inject it right before the last closing brace of {options}
                 last_brace_idx = content.rfind("}")
                 if last_brace_idx != -1:
                     updated_content = (
@@ -220,13 +215,13 @@ class ActiveModsService:
                         + content[last_brace_idx:]
                     )
                 else:
-                    # Very malformed file, just append
                     updated_content = content + "\n" + new_mods_block
 
             atomic_write_text(options_set_path, updated_content)
 
             logger.info(
-                f"Successfully saved {len(self.active_mods_ids)} active mods to profile."
+                "Successfully saved "
+                f"{len(self.active_mods_ids)} active mods to profile."
             )
 
         except OSError as e:

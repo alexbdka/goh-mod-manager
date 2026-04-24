@@ -3,7 +3,6 @@ import json
 import logging
 import time
 import zlib
-from typing import Dict, List, Tuple
 
 from src.core.exceptions import InvalidShareCodeError
 from src.core.mod import ModInfo
@@ -22,7 +21,7 @@ class ShareCodeService:
         # changes to the share code format without breaking old codes.
         self.CURRENT_VERSION = 1
 
-    def encode(self, mods: List[ModInfo]) -> str:
+    def encode(self, mods: list[ModInfo]) -> str:
         """
         Encodes a list of active mods into a shareable Base64 string.
         Includes both ID and Name to help identify missing mods on the recipient's end.
@@ -43,7 +42,7 @@ class ShareCodeService:
             logger.error(f"Failed to encode share code: {e}")
             return ""
 
-    def decode(self, code: str) -> List[Dict[str, str]]:
+    def decode(self, code: str) -> list[dict[str, str]]:
         """
         Decodes a share code back into a list of basic dictionaries
         containing 'id' and 'name' of the mods.
@@ -52,7 +51,7 @@ class ShareCodeService:
             return []
 
         try:
-            # Clean up the string just in case it was copied with weird spaces or newlines
+            # Clean the string in case it was copied with extra spaces or newlines.
             clean_code = code.strip().replace(" ", "").replace("\n", "")
             raw_bytes = base64.b64decode(clean_code)
 
@@ -64,17 +63,17 @@ class ShareCodeService:
             # Support for the format we just generated
             if isinstance(payload, dict) and "m" in payload:
                 # Map our minified keys back to readable ones
-                return [
-                    {"id": m.get("i", ""), "name": m.get("n", "")} for m in payload["m"]
-                ]
+                return self._normalize_mod_entries(
+                    payload["m"], id_key="i", name_key="n"
+                )
 
             # Support for the legacy format (from your old project)
             if isinstance(payload, dict) and "mods" in payload:
-                return payload["mods"]
+                return self._normalize_mod_entries(payload["mods"])
 
             # Super legacy (just a raw list)
             if isinstance(payload, list):
-                return payload
+                return self._normalize_mod_entries(payload)
 
             raise InvalidShareCodeError("Unrecognized payload structure.")
 
@@ -83,8 +82,8 @@ class ShareCodeService:
             raise InvalidShareCodeError(f"Invalid share code: {e}") from e
 
     def resolve_mods(
-        self, decoded_mods_data: List[Dict[str, str]], catalogue_mods: List[ModInfo]
-    ) -> Tuple[List[ModInfo], List[Dict[str, str]]]:
+        self, decoded_mods_data: list[dict[str, str]], catalogue_mods: list[ModInfo]
+    ) -> tuple[list[ModInfo], list[dict[str, str]]]:
         """
         Takes the decoded list of IDs/Names and matches them against the
         local catalogue to return actual ModInfo objects.
@@ -94,8 +93,8 @@ class ShareCodeService:
         """
         mods_by_id = {mod.id: mod for mod in catalogue_mods}
 
-        found_mods: List[ModInfo] = []
-        missing_mods: List[Dict[str, str]] = []
+        found_mods: list[ModInfo] = []
+        missing_mods: list[dict[str, str]] = []
 
         for item in decoded_mods_data:
             mod_id = item.get("id", "").strip()
@@ -108,3 +107,28 @@ class ShareCodeService:
                 missing_mods.append({"id": mod_id, "name": mod_name})
 
         return found_mods, missing_mods
+
+    @staticmethod
+    def _normalize_mod_entries(
+        entries: object, id_key: str = "id", name_key: str = "name"
+    ) -> list[dict[str, str]]:
+        if not isinstance(entries, list):
+            raise InvalidShareCodeError("Share code mods payload must be a list.")
+
+        normalized: list[dict[str, str]] = []
+        for item in entries:
+            if not isinstance(item, dict):
+                raise InvalidShareCodeError(
+                    "Share code mod entries must be JSON objects."
+                )
+
+            mod_id = item.get(id_key, "")
+            mod_name = item.get(name_key, "")
+            if not isinstance(mod_id, str) or not isinstance(mod_name, str):
+                raise InvalidShareCodeError(
+                    "Share code mod IDs and names must be strings."
+                )
+
+            normalized.append({"id": mod_id, "name": mod_name})
+
+        return normalized

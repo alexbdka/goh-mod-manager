@@ -4,8 +4,8 @@ import shutil
 import tarfile
 import tempfile
 import zipfile
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import rarfile
 from py7zr import py7zr
@@ -23,9 +23,10 @@ logger = logging.getLogger(__name__)
 
 class ModImportService:
     """
-    Service responsible for importing mods from directories or compressed archives.
-    It automatically finds the 'mod.info' file inside the source and copies the root
-    folder of the mod into the game's local 'mods' directory.
+    Import mods from directories or archives into the local mods directory.
+
+    The service locates the imported mod root by finding ``mod.info`` and then
+    copies that root directory into the game's local ``mods`` folder.
     """
 
     def import_mod(
@@ -36,8 +37,10 @@ class ModImportService:
         conflict_callback=None,
     ) -> bool:
         """
-        Main entry point to import a mod from a given path (folder or archive).
-        Returns True if successful. Raises subclasses of ModImportError on failure.
+        Import a mod from a directory or archive path.
+
+        Returns ``True`` on success and raises a ``ModImportError`` subclass on
+        failure.
         """
         if not game_mods_directory or not os.path.exists(game_mods_directory):
             raise InvalidModPathError(
@@ -64,9 +67,7 @@ class ModImportService:
         progress_callback=None,
         conflict_callback=None,
     ) -> bool:
-        """
-        Recursively searches for 'mod.info' and copies the parent directory.
-        """
+        """Search recursively for ``mod.info`` and copy the containing mod root."""
         if progress_callback:
             progress_callback(0, "Searching for mod.info...")
 
@@ -77,7 +78,8 @@ class ModImportService:
                 )
 
         raise ModInfoNotFoundError(
-            f"No '{constants.MOD_INFO_FILE}' found in directory or subdirectories of {dir_path}"
+            f"No '{constants.MOD_INFO_FILE}' found in directory "
+            f"or subdirectories of {dir_path}"
         )
 
     def _copy_mod_directory(
@@ -87,17 +89,16 @@ class ModImportService:
         progress_callback=None,
         conflict_callback=None,
     ) -> bool:
-        """
-        Copies the mod directory to the destination.
-        """
+        """Copy a resolved mod directory into the destination mods folder."""
         mod_name = os.path.basename(mod_dir)
         dest = os.path.join(game_mods_directory, mod_name)
+        overwrite_existing = False
 
         if os.path.exists(dest):
             if conflict_callback:
                 action = conflict_callback(mod_name)
                 if action == "overwrite":
-                    shutil.rmtree(dest, ignore_errors=True)
+                    overwrite_existing = True
                 elif action == "skip":
                     return True
                 else:
@@ -127,18 +128,41 @@ class ModImportService:
                     percent, f"Copying files... ({copied_files}/{total_files})"
                 )
 
+        temp_root = tempfile.mkdtemp(
+            dir=game_mods_directory, prefix=f".{mod_name}.import-"
+        )
+        temp_dest = os.path.join(temp_root, mod_name)
+        backup_dest = None
+
         try:
-            shutil.copytree(mod_dir, dest, copy_function=copy_function)
+            shutil.copytree(mod_dir, temp_dest, copy_function=copy_function)
+            if overwrite_existing:
+                backup_dest = tempfile.mkdtemp(
+                    dir=game_mods_directory, prefix=f".{mod_name}.backup-"
+                )
+                shutil.rmtree(backup_dest)
+                # Swap the existing install out of the way only after the
+                # replacement was copied successfully to a temporary location.
+                os.replace(dest, backup_dest)
+
+            os.replace(temp_dest, dest)
+
+            if backup_dest and os.path.exists(backup_dest):
+                shutil.rmtree(backup_dest, ignore_errors=True)
+
             if progress_callback:
                 progress_callback(100, "Done")
             logger.info(f"Mod imported successfully to: {dest}")
             return True
         except Exception as e:
             logger.error(f"Error copying mod directory: {e}")
-            # Cleanup on failure to prevent corrupted partial imports
-            if os.path.exists(dest):
-                shutil.rmtree(dest, ignore_errors=True)
+            if backup_dest and os.path.exists(backup_dest) and not os.path.exists(dest):
+                os.replace(backup_dest, dest)
             raise
+        finally:
+            shutil.rmtree(temp_root, ignore_errors=True)
+            if backup_dest and os.path.exists(backup_dest):
+                shutil.rmtree(backup_dest, ignore_errors=True)
 
     def _import_from_archive(
         self,
@@ -147,9 +171,7 @@ class ModImportService:
         progress_callback=None,
         conflict_callback=None,
     ) -> bool:
-        """
-        Extracts an archive to a temporary directory and delegates to directory import.
-        """
+        """Extract an archive to a temporary directory, then import from there."""
         if progress_callback:
             progress_callback(0, "Extracting archive...")
 
@@ -161,9 +183,7 @@ class ModImportService:
 
     @staticmethod
     def _extract_archive(archive_path: str, extract_to: str) -> None:
-        """
-        Extracts a given archive based on its extension.
-        """
+        """Extract an archive after validating that all members stay in bounds."""
         ext = Path(archive_path).suffix.lower()
         os.makedirs(extract_to, exist_ok=True)
 
@@ -195,7 +215,8 @@ class ModImportService:
                     for member in members:
                         if member.issym() or member.islnk():
                             raise ArchiveExtractionError(
-                                f"Archive contains unsupported link entry: {member.name}"
+                                "Archive contains unsupported link entry: "
+                                f"{member.name}"
                             )
                     tar.extractall(path=extract_to)
             else:
@@ -205,6 +226,7 @@ class ModImportService:
 
     @staticmethod
     def _validate_archive_members(extract_to: str, member_names: Iterable[str]) -> None:
+        """Reject archive members that would escape the extraction directory."""
         base_path = Path(extract_to).resolve()
 
         for raw_name in member_names:

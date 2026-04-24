@@ -45,7 +45,8 @@ def main():
             window,
             window.tr("Initialization Warning"),
             window.tr(
-                "Could not automatically detect the game installation or profile path.\n"
+                "Could not automatically detect the game installation "
+                "or profile path.\n"
                 "Please configure them in the settings."
             ),
         )

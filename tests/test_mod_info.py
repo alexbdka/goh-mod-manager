@@ -1,7 +1,7 @@
 import os
-import pytest
+from typing import cast
 
-from src.utils.gem_parser import parse_gem_file
+from src.utils.gem_parser import GemNodeValue, parse_gem_file
 
 RESOURCES_DIR = os.path.join(os.path.dirname(__file__), "resources")
 
@@ -15,11 +15,10 @@ class TestModInfo:
         mod_node = nodes[0]
         assert mod_node.name == "mod"
 
-        data = mod_node.to_dict()
+        data = cast(dict[str, GemNodeValue], mod_node.to_dict())
         assert "name" in data
-        assert "GOH ARm" in data["name"]
+        name = cast(str, data["name"])
+        assert "GOH ARm" in name
         assert data["minGameVersion"] == "1.061"
         assert data["maxGameVersion"] == "1.061"
         assert data["require"] == "mod_2905667604"
-
-

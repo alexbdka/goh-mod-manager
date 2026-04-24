@@ -1,7 +1,7 @@
 import os
-import pytest
+from typing import cast
 
-from src.utils.gem_parser import parse_gem_file
+from src.utils.gem_parser import GemNodeValue, parse_gem_file
 
 RESOURCES_DIR = os.path.join(os.path.dirname(__file__), "resources")
 
@@ -15,24 +15,28 @@ class TestOptionsSet:
         options_node = nodes[0]
         assert options_node.name == "options"
 
-        data = options_node.to_dict()
+        data = cast(dict[str, GemNodeValue], options_node.to_dict())
         assert "video" in data
         assert "sound" in data
         assert "game" in data
         assert "mods" in data
 
-        assert data["video"]["adapter"] == "NVIDIA GeForce 256"
-        assert data["video"]["resolution"]["custom_mode"] == "1280x720"
-        assert data["video"]["resolution"]["mode"] == "desktop"
+        video = cast(dict[str, GemNodeValue], data["video"])
+        game = cast(dict[str, GemNodeValue], data["game"])
+        mods = cast(list[str], data["mods"])
+        resolution = cast(dict[str, GemNodeValue], video["resolution"])
+        multiplayer = cast(dict[str, GemNodeValue], game["multiplayer"])
 
-        assert data["game"]["difficulty"] == "easy"
-        assert data["game"]["multiplayer"]["userName"] == "dummy"
+        assert video["adapter"] == "NVIDIA GeForce 256"
+        assert resolution["custom_mode"] == "1280x720"
+        assert resolution["mode"] == "desktop"
+
+        assert game["difficulty"] == "easy"
+        assert multiplayer["userName"] == "dummy"
 
         # Check if vertical_sync is treated as a boolean presence
-        assert data["video"]["vertical_sync"]
+        assert video["vertical_sync"] is True
 
         # Check mods list parsing
-        assert "mod_2905667604:0" in data["mods"]
-        assert "mod_2867922286:0" in data["mods"]
-
-
+        assert "mod_2905667604:0" in mods
+        assert "mod_2867922286:0" in mods

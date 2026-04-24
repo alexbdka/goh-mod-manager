@@ -3,8 +3,8 @@ import os
 import tempfile
 
 import pytest
-
 from src.core.config import AppConfig
+from src.core.exceptions import ConfigLoadError, ConfigWriteError
 from src.services.config_service import ConfigService
 from src.utils import app_paths
 
@@ -51,6 +51,7 @@ class TestConfigService:
             loaded_config.profile_path
             == "C:/Users/test/Documents/My Games/GoH/profiles/options.set"
         )
+        assert loaded_config.onboarding_seen is False
 
     def test_update_paths(self):
         self.service.get_config()
@@ -65,7 +66,7 @@ class TestConfigService:
         assert config.workshop_path is None
 
         # Check if it was actually saved to disk
-        with open(self.config_path, "r", encoding="utf-8") as f:
+        with open(self.config_path, encoding="utf-8") as f:
             data = json.load(f)
         assert data["game_path"] == "D:/SteamLibrary/steamapps/common/Call to Arms"
 
@@ -78,6 +79,14 @@ class TestConfigService:
             config.workshop_path == "D:/SteamLibrary/steamapps/workshop/content/400750"
         )
 
+    def test_set_onboarding_seen_persists_flag(self):
+        self.service.set_onboarding_seen(True)
+
+        new_service = ConfigService(config_path=self.config_path)
+        loaded_config = new_service.get_config()
+
+        assert loaded_config.onboarding_seen is True
+
     def test_default_config_path_uses_app_paths(self, monkeypatch):
         expected_path = app_paths.Path("X:/workspace/config.json")
         monkeypatch.setattr(app_paths, "get_config_file_path", lambda: expected_path)
@@ -85,3 +94,19 @@ class TestConfigService:
         service = ConfigService()
 
         assert app_paths.Path(service.config_path) == expected_path
+
+    def test_invalid_json_raises_load_error(self):
+        with open(self.config_path, "w", encoding="utf-8") as f:
+            f.write("{invalid")
+
+        with pytest.raises(ConfigLoadError):
+            self.service.load()
+
+    def test_save_failure_raises_write_error(self, monkeypatch):
+        def fail_write(*_args, **_kwargs):
+            raise OSError("disk full")
+
+        monkeypatch.setattr("src.services.config_service.atomic_write_text", fail_write)
+
+        with pytest.raises(ConfigWriteError):
+            self.service.save(AppConfig(game_path="C:/Games/GoH"))

@@ -1,7 +1,8 @@
-from unittest.mock import MagicMock
+import base64
+import json
+import zlib
 
 import pytest
-
 from src.core.exceptions import InvalidShareCodeError
 from src.core.mod import ModInfo
 from src.services.share_code_service import ShareCodeService
@@ -34,6 +35,24 @@ class TestShareCodeService:
     def test_decode_invalid_code(self):
         with pytest.raises(InvalidShareCodeError):
             self.service.decode("This is definitely not a base64 zlib string!")
+
+    def test_decode_rejects_malformed_legacy_entries(self):
+        payload = ["2867922286"]
+        code = base64.b64encode(
+            zlib.compress(json.dumps(payload).encode("utf-8"))
+        ).decode("utf-8")
+
+        with pytest.raises(InvalidShareCodeError):
+            self.service.decode(code)
+
+    def test_decode_rejects_non_string_mod_fields(self):
+        payload = {"mods": [{"id": 2867922286, "name": "GOH ARm"}]}
+        code = base64.b64encode(
+            zlib.compress(json.dumps(payload).encode("utf-8"))
+        ).decode("utf-8")
+
+        with pytest.raises(InvalidShareCodeError):
+            self.service.decode(code)
 
     def test_resolve_mods_all_found(self):
         decoded_data = [

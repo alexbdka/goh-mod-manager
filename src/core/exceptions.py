@@ -17,7 +17,10 @@ class ModInfoNotFoundError(ModImportError):
 
 
 class InvalidModPathError(ModImportError):
-    """Raised when the path to import does not exist or is neither a file nor a directory."""
+    """
+    Raised when the path to import does not exist or is neither a file nor
+    a directory.
+    """
 
     pass
 
@@ -29,7 +32,10 @@ class ModAlreadyExistsError(ModImportError):
 
 
 class ArchiveExtractionError(ModImportError):
-    """Raised when an archive fails to extract (e.g., corrupted or unsupported format)."""
+    """
+    Raised when an archive fails to extract, for example because it is
+    corrupted or unsupported.
+    """
 
     pass
 
@@ -53,6 +59,30 @@ class ProfileWriteError(ModManagerError):
         self.path = path
         self.reason = reason
         super().__init__(f"Failed to update profile file '{path}': {reason}")
+
+
+class ConfigError(ModManagerError):
+    """Raised when application configuration cannot be loaded or saved."""
+
+    pass
+
+
+class ConfigLoadError(ConfigError):
+    """Raised when the configuration file exists but cannot be loaded."""
+
+    def __init__(self, path: str, reason: str):
+        self.path = path
+        self.reason = reason
+        super().__init__(f"Failed to load configuration file '{path}': {reason}")
+
+
+class ConfigWriteError(ConfigError):
+    """Raised when the configuration file cannot be saved."""
+
+    def __init__(self, path: str, reason: str):
+        self.path = path
+        self.reason = reason
+        super().__init__(f"Failed to save configuration file '{path}': {reason}")
 
 
 class PresetError(ModManagerError):

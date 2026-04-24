@@ -1,27 +1,38 @@
+from __future__ import annotations
+
 import re
+from typing import cast
+
+type GemNodeValue = (
+    str | bool | list[str] | list["GemNodeValue"] | dict[str, "GemNodeValue"]
+)
 
 
 class GemNode:
-    def __init__(self, name: str):
+    def __init__(self, name: str | None):
         self.name = name
-        self.values = []
-        self.children = []
+        self.values: list[str] = []
+        self.children: list[GemNode] = []
 
-    def to_dict(self):
-        result = {}
+    def to_dict(self) -> GemNodeValue:
+        result: dict[str, GemNodeValue] = {}
         if self.values:
             result["__values__"] = self.values
         for child in self.children:
+            if child.name is None:
+                continue
+
+            child_value: GemNodeValue = (
+                child.to_dict() if child.children or child.values else True
+            )
             if child.name not in result:
-                result[child.name] = (
-                    child.to_dict() if child.children or child.values else True
-                )
+                result[child.name] = child_value
             else:
                 if not isinstance(result[child.name], list):
-                    result[child.name] = [result[child.name]]
-                result[child.name].append(
-                    child.to_dict() if child.children or child.values else True
-                )
+                    result[child.name] = cast(list[GemNodeValue], [result[child.name]])
+                existing = result[child.name]
+                if isinstance(existing, list):
+                    cast(list[GemNodeValue], existing).append(child_value)
 
         # Simplify if it's just values
         if "__values__" in result and len(result) == 1:
@@ -78,6 +89,6 @@ def parse_gem_file(file_path: str) -> list[GemNode]:
     """
     Reads and parses a GEM engine format file.
     """
-    with open(file_path, "r", encoding="utf-8") as f:
+    with open(file_path, encoding="utf-8") as f:
         content = f.read()
     return parse_gem(content)

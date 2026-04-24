@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import pytest
-
 from src.core.exceptions import ProfileWriteError
 from src.core.mod import ModInfo
 from src.services.active_mods_service import ActiveModsService

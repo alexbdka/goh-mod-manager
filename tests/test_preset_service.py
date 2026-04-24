@@ -1,9 +1,6 @@
 import os
 import tempfile
 
-import pytest
-
-from src.core.config import AppConfig
 from src.core.mod import ModInfo
 from src.services.active_mods_service import ActiveModsService
 from src.services.config_service import ConfigService

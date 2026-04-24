@@ -33,10 +33,13 @@ class TestModManager:
         assert success is True
         manager.reload.assert_called_once()
 
-    def test_import_share_code_resolves_installed_dependencies(self):
+    def test_apply_share_code_resolves_installed_dependencies(self):
         manager = ModManager()
-        manager.apply_changes = MagicMock()
         manager.events.emit = MagicMock()
+        manager.config_service.get_config = MagicMock(
+            return_value=AppConfig(profile_path="C:/profile/options.set")
+        )
+        manager.active_mods.save_to_profile = MagicMock()
         manager.catalogue._local_mods = {
             "dep_mod": ModInfo(id="dep_mod", name="Dependency", desc="", isLocal=True),
             "main_mod": ModInfo(
@@ -47,21 +50,24 @@ class TestModManager:
                 isLocal=True,
             ),
         }
+        main_mod = manager.catalogue.get_mod("main_mod")
+        assert main_mod is not None
 
-        code = manager.share_code_service.encode(
-            [manager.catalogue.get_mod("main_mod")]
-        )
+        code = manager.share_code_service.encode([main_mod])
 
-        success, missing = manager.import_share_code(code)
+        result = manager.apply_share_code(code)
 
-        assert success is True
-        assert missing == []
+        assert result.success is True
+        assert result.missing_mods == []
         assert manager.active_mods.active_mods_ids == ["dep_mod", "main_mod"]
 
-    def test_import_share_code_reports_missing_dependencies(self):
+    def test_apply_share_code_reports_missing_dependencies(self):
         manager = ModManager()
-        manager.apply_changes = MagicMock()
         manager.events.emit = MagicMock()
+        manager.config_service.get_config = MagicMock(
+            return_value=AppConfig(profile_path="C:/profile/options.set")
+        )
+        manager.active_mods.save_to_profile = MagicMock()
         manager.catalogue._local_mods = {
             "main_mod": ModInfo(
                 id="main_mod",
@@ -71,16 +77,32 @@ class TestModManager:
                 isLocal=True,
             ),
         }
+        main_mod = manager.catalogue.get_mod("main_mod")
+        assert main_mod is not None
 
-        code = manager.share_code_service.encode(
-            [manager.catalogue.get_mod("main_mod")]
+        code = manager.share_code_service.encode([main_mod])
+
+        result = manager.apply_share_code(code)
+
+        assert result.success is True
+        assert result.missing_mods == [{"id": "missing_dep", "name": "missing_dep"}]
+        assert manager.active_mods.active_mods_ids == ["main_mod"]
+
+    def test_has_seen_onboarding_reads_config_flag(self):
+        manager = ModManager()
+        manager.config_service.get_config = MagicMock(
+            return_value=AppConfig(onboarding_seen=True)
         )
 
-        success, missing = manager.import_share_code(code)
+        assert manager.has_seen_onboarding() is True
 
-        assert success is True
-        assert missing == [{"id": "missing_dep", "name": "missing_dep"}]
-        assert manager.active_mods.active_mods_ids == ["main_mod"]
+    def test_mark_onboarding_seen_delegates_to_config_service(self):
+        manager = ModManager()
+        manager.config_service.set_onboarding_seen = MagicMock()
+
+        manager.mark_onboarding_seen()
+
+        manager.config_service.set_onboarding_seen.assert_called_once_with(True)
 
     def test_subscribe_and_unsubscribe_proxy_event_bus(self):
         manager = ModManager()

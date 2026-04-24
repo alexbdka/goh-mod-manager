@@ -4,7 +4,6 @@ import tempfile
 import zipfile
 
 import pytest
-
 from src.core.exceptions import (
     ArchiveExtractionError,
     InvalidModPathError,
@@ -52,6 +51,34 @@ class TestModImportService:
             self.service.import_mod(mod_source, self.game_mods_dir)
 
         assert not os.path.exists(os.path.join(self.game_mods_dir, "empty_mod"))
+
+    def test_overwrite_failure_preserves_existing_mod(self, monkeypatch):
+        mod_source = os.path.join(self.test_dir.name, "existing_mod")
+        os.makedirs(mod_source)
+        with open(os.path.join(mod_source, "mod.info"), "w", encoding="utf-8") as f:
+            f.write('{mod {name "New"}}')
+
+        existing_dest = os.path.join(self.game_mods_dir, "existing_mod")
+        os.makedirs(existing_dest)
+        existing_info = os.path.join(existing_dest, "mod.info")
+        with open(existing_info, "w", encoding="utf-8") as f:
+            f.write('{mod {name "Old"}}')
+
+        def fail_copy(*_args, **_kwargs):
+            raise OSError("copy failed")
+
+        monkeypatch.setattr("src.services.mod_import_service.shutil.copy2", fail_copy)
+
+        with pytest.raises(OSError):
+            self.service.import_mod(
+                mod_source,
+                self.game_mods_dir,
+                conflict_callback=lambda _name: "overwrite",
+            )
+
+        assert os.path.exists(existing_dest)
+        with open(existing_info, encoding="utf-8") as f:
+            assert f.read() == '{mod {name "Old"}}'
 
     def test_import_from_zip(self):
         # Create a dummy zip file containing a mod

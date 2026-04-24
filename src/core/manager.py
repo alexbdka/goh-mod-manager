@@ -1,11 +1,28 @@
 import logging
 import os
-from typing import Dict, List, Optional, Tuple
 
+from src.application.queries import ApplicationQueryService
+from src.application.state import (
+    ActiveModsState,
+    CatalogueState,
+    LoadOrderActivationResult,
+    LoadOrderMutationResult,
+    ModState,
+    PresetsState,
+    SettingsState,
+    SettingsUpdateResult,
+    ShareCodeExportResult,
+    ShareCodeImportResult,
+)
+from src.application.use_cases import (
+    ApplicationDebugReportUseCase,
+    ApplicationLoadOrderUseCase,
+    ApplicationSettingsUseCase,
+    ApplicationShareCodeUseCase,
+)
 from src.core import constants
 from src.core.config import AppConfig
 from src.core.events import EventBus, EventType
-from src.core.mod import ModInfo
 from src.services.active_mods_service import ActiveModsService
 from src.services.config_service import ConfigService
 from src.services.mod_import_service import ModImportService
@@ -19,21 +36,67 @@ logger = logging.getLogger(__name__)
 
 class ModManager:
     """
-    Facade class that acts as the central orchestrator for the Mod Manager.
-    The UI should only interact with this class to keep the view decoupled
-    from the underlying services and business logic.
+    High-level application facade used by the UI layer.
+
+    The window, dialogs, controllers, and CLI interact with this class instead of
+    reaching directly into services. Read-oriented calls return view-neutral state
+    objects from ``src.application.state``. Mutating calls delegate to application
+    use cases and emit coarse-grained events for the UI.
     """
 
     def __init__(self):
         self.events = EventBus()
-        self.config_service = ConfigService()
-        self.catalogue = ModsCatalogueService()
-        self.active_mods = ActiveModsService(self.catalogue)
-        self.preset_service = PresetService(
-            self.config_service, self.catalogue, self.active_mods
+        self._config_service = ConfigService()
+        self._catalogue = ModsCatalogueService()
+        self._active_mods = ActiveModsService(self._catalogue)
+        self._preset_service = PresetService(
+            self._config_service, self._catalogue, self._active_mods
         )
-        self.share_code_service = ShareCodeService()
-        self.mod_import_service = ModImportService()
+        self._share_code_service = ShareCodeService()
+        self._mod_import_service = ModImportService()
+        self.queries = ApplicationQueryService(
+            self._config_service,
+            self._catalogue,
+            self._active_mods,
+            self._preset_service,
+        )
+        self.settings = ApplicationSettingsUseCase(self._config_service)
+        self.debug_reports = ApplicationDebugReportUseCase(self.queries)
+        self.share_codes = ApplicationShareCodeUseCase(
+            self._share_code_service,
+            self._active_mods,
+            self._catalogue,
+            self._config_service,
+        )
+        self.load_order = ApplicationLoadOrderUseCase(
+            self._active_mods,
+            self._catalogue,
+            self._config_service,
+        )
+
+    @property
+    def config_service(self) -> ConfigService:
+        return self._config_service
+
+    @property
+    def catalogue(self) -> ModsCatalogueService:
+        return self._catalogue
+
+    @property
+    def active_mods(self) -> ActiveModsService:
+        return self._active_mods
+
+    @property
+    def preset_service(self) -> PresetService:
+        return self._preset_service
+
+    @property
+    def share_code_service(self) -> ShareCodeService:
+        return self._share_code_service
+
+    @property
+    def mod_import_service(self) -> ModImportService:
+        return self._mod_import_service
 
     def subscribe(self, event_type: str, callback) -> None:
         """Registers a callback on the internal event bus."""
@@ -45,18 +108,15 @@ class ModManager:
 
     def initialize(self) -> bool:
         """
-        Initializes the application state:
-        1. Loads the configuration.
-        2. Auto-detects missing paths via SteamUtils.
-        3. Loads the mod catalogue from disk.
-        4. Loads the active mods profile.
+        Load configuration-dependent state and attempt path auto-detection.
 
-        Returns True if initialization was successful and minimum paths are valid.
+        Returns ``True`` when the minimum required paths were resolved and the
+        catalogue/profile state could be loaded. Returns ``False`` when the UI
+        should prompt the user for missing configuration.
         """
         config = self.config_service.get_config()
         paths_updated = False
 
-        # 1. Auto-detect paths if missing
         if not config.game_path:
             game_path = steam_utils.get_goh_game_path()
             if game_path:
@@ -75,25 +135,21 @@ class ModManager:
                 config.profile_path = str(profile_path)
                 paths_updated = True
 
-        # Save auto-detected paths
         if paths_updated:
             self.config_service.save()
 
-        # 2. Validate paths
         if not config.game_path or not config.profile_path:
             logger.warning(
-                "Could not auto-detect game or profile paths. Manual configuration needed."
+                "Could not auto-detect game or profile paths. "
+                "Manual configuration needed."
             )
-            # We don't necessarily fail here, as the UI might prompt the user to locate them.
             return False
 
-        # 3. Load Catalogue
         local_mods_dir = os.path.join(config.game_path, constants.MODS_DIR)
         workshop_dir = config.workshop_path if config.workshop_path else ""
         self.catalogue.load_catalogue(local_mods_dir, workshop_dir)
         self.events.emit(EventType.CATALOGUE_CHANGED)
 
-        # 4. Load Active Mods Profile
         self.active_mods.load_from_profile(config.profile_path)
         self.events.emit(EventType.ACTIVE_MODS_CHANGED)
 
@@ -101,7 +157,8 @@ class ModManager:
 
     def reload(self) -> None:
         """
-        Reloads the mod catalogue and active mods profile from disk.
+        Reload the catalogue and active profile from the currently configured
+        paths.
         """
         config = self.config_service.get_config()
         if config.game_path:
@@ -120,42 +177,39 @@ class ModManager:
         """Returns the current application configuration."""
         return self.config_service.get_config()
 
-    def update_paths(
-        self,
-        game_path: Optional[str] = None,
-        workshop_path: Optional[str] = None,
-        profile_path: Optional[str] = None,
-        language: Optional[str] = None,
-        theme: Optional[str] = None,
-        font: Optional[str] = None,
-    ) -> None:
-        """Updates the configured paths and saves them."""
-        self.config_service.update_paths(
-            game_path=game_path,
-            workshop_path=workshop_path,
-            profile_path=profile_path,
-            language=language,
-            theme=theme,
-            font=font,
-        )
+    def get_settings_state(self) -> SettingsState:
+        """Returns a view-neutral snapshot of the current settings."""
+        return self.queries.get_settings_state()
+
+    def apply_settings(self, settings_state: SettingsState) -> SettingsUpdateResult:
+        """Applies settings and returns a neutral summary of what changed."""
+        return self.settings.apply(settings_state)
+
+    def has_seen_onboarding(self) -> bool:
+        """Returns whether the first-run interface tour has been completed."""
+        return self.config_service.get_config().onboarding_seen
+
+    def mark_onboarding_seen(self) -> None:
+        """Stores that the first-run interface tour has been completed."""
+        self.config_service.set_onboarding_seen(True)
+
+    def build_debug_report(self) -> str:
+        """Builds a text debug report independently of the UI."""
+        return self.debug_reports.build()
 
     # --- Data Access for UI ---
 
-    def get_all_mods(self) -> List[ModInfo]:
-        """Returns the full catalogue of local and workshop mods."""
-        return self.catalogue.all_mods
+    def get_catalogue_state(self) -> CatalogueState:
+        """Returns a view-neutral snapshot of the current catalogue."""
+        return self.queries.get_catalogue_state()
 
-    def get_local_mods(self) -> List[ModInfo]:
-        """Returns only locally installed mods."""
-        return self.catalogue.local_mods
+    def get_active_mods_state(self) -> ActiveModsState:
+        """Returns a view-neutral snapshot of the active load order."""
+        return self.queries.get_active_mods_state()
 
-    def get_workshop_mods(self) -> List[ModInfo]:
-        """Returns only Steam Workshop mods."""
-        return self.catalogue.workshop_mods
-
-    def get_active_mods(self) -> List[ModInfo]:
-        """Returns the list of currently active mods in their load order."""
-        return self.active_mods.get_active_mods()
+    def get_mod_state(self, mod_id: str) -> ModState | None:
+        """Returns a view-neutral snapshot for a specific mod."""
+        return self.queries.get_mod_state(mod_id)
 
     def is_mod_active(self, mod_id: str) -> bool:
         """Checks if a specific mod is active."""
@@ -163,46 +217,48 @@ class ModManager:
 
     # --- Mod Manipulation ---
 
-    def toggle_mod(self, mod_id: str) -> List[str]:
-        """Activates the mod if it's inactive, deactivates it if active and saves.
-        Returns a list of missing dependency IDs if any."""
-        missing_deps = []
-        if self.is_mod_active(mod_id):
-            self.active_mods.deactivate_mod(mod_id)
-        else:
-            missing_deps = self.active_mods.activate_mod(mod_id)
-        self.apply_changes()
-        self.events.emit(EventType.ACTIVE_MODS_CHANGED)
-        return missing_deps
+    def activate_mods(self, mod_ids: list[str]) -> LoadOrderActivationResult:
+        result = self.load_order.activate_mods(mod_ids)
+        if result.changed:
+            self.events.emit(EventType.ACTIVE_MODS_CHANGED)
+        return result
 
-    def move_mod_up(self, mod_id: str) -> None:
+    def deactivate_mod(self, mod_id: str) -> LoadOrderMutationResult:
+        result = self.load_order.deactivate_mod(mod_id)
+        if result.changed:
+            self.events.emit(EventType.ACTIVE_MODS_CHANGED)
+        return result
+
+    def move_mod_up(self, mod_id: str) -> LoadOrderMutationResult:
         """Increases the load priority of a mod and saves."""
-        self.active_mods.move_mod_up(mod_id)
-        self.apply_changes()
-        self.events.emit(EventType.ACTIVE_MODS_CHANGED)
+        result = self.load_order.move_up(mod_id)
+        if result.changed:
+            self.events.emit(EventType.ACTIVE_MODS_CHANGED)
+        return result
 
-    def move_mod_down(self, mod_id: str) -> None:
+    def move_mod_down(self, mod_id: str) -> LoadOrderMutationResult:
         """Decreases the load priority of a mod and saves."""
-        self.active_mods.move_mod_down(mod_id)
-        self.apply_changes()
-        self.events.emit(EventType.ACTIVE_MODS_CHANGED)
+        result = self.load_order.move_down(mod_id)
+        if result.changed:
+            self.events.emit(EventType.ACTIVE_MODS_CHANGED)
+        return result
 
-    def set_active_mods_order(self, mod_ids: List[str]) -> None:
+    def set_active_mods_order(self, mod_ids: list[str]) -> LoadOrderMutationResult:
         """Sets the active mods list directly to the specified order and saves."""
-        self.active_mods.active_mods_ids = mod_ids
-        self.apply_changes()
-        self.events.emit(EventType.ACTIVE_MODS_CHANGED)
+        result = self.load_order.reorder(mod_ids)
+        if result.changed:
+            self.events.emit(EventType.ACTIVE_MODS_CHANGED)
+        return result
 
-    def clear_active_mods(self) -> None:
+    def clear_active_mods(self) -> LoadOrderMutationResult:
         """Clears all currently active mods and saves."""
-        self.active_mods.active_mods_ids.clear()
-        self.apply_changes()
-        self.events.emit(EventType.ACTIVE_MODS_CHANGED)
+        result = self.load_order.clear()
+        if result.changed:
+            self.events.emit(EventType.ACTIVE_MODS_CHANGED)
+        return result
 
-    # --- State Persistence ---
-
-    def apply_changes(self) -> None:
-        """Saves the current active mods order to the options.set profile."""
+    def _persist_active_mods(self) -> None:
+        """Persist the in-memory active load order to the configured profile file."""
         config = self.config_service.get_config()
         if config.profile_path:
             self.active_mods.save_to_profile(
@@ -213,12 +269,17 @@ class ModManager:
 
     # --- Preset Management ---
 
-    def get_all_presets(self) -> Dict[str, List[str]]:
+    def get_all_presets(self) -> dict[str, list[str]]:
         return self.preset_service.get_all_presets()
+
+    def get_presets_state(
+        self, selected_preset_name: str | None = None
+    ) -> PresetsState:
+        """Returns a view-neutral snapshot of presets and current preset match."""
+        return self.queries.get_presets_state(selected_preset_name)
 
     def save_preset(self, name: str) -> None:
         self.preset_service.save_preset(name)
-        self.apply_changes()
         self.events.emit(EventType.PRESETS_CHANGED)
 
     def delete_preset(self, name: str) -> bool:
@@ -227,49 +288,25 @@ class ModManager:
             self.events.emit(EventType.PRESETS_CHANGED)
         return result
 
-    def apply_preset(self, name: str) -> Tuple[bool, List[str]]:
+    def apply_preset(self, name: str) -> tuple[bool, list[str]]:
         success, missing = self.preset_service.apply_preset(name)
         if success:
-            self.apply_changes()
+            self._persist_active_mods()
             self.events.emit(EventType.ACTIVE_MODS_CHANGED)
         return success, missing
 
     # --- Share Codes ---
 
-    def export_share_code(self) -> str:
-        """Encodes the currently active mods into a share code."""
-        active_mods = self.get_active_mods()
-        return self.share_code_service.encode(active_mods)
+    def build_share_code_export(self) -> ShareCodeExportResult:
+        """Builds a share code export result for the current load order."""
+        return self.share_codes.export_active_mods()
 
-    def import_share_code(self, code: str) -> Tuple[bool, List[Dict[str, str]]]:
-        """
-        Decodes a share code and applies it.
-        Returns a tuple: (Success bool, List of missing mods data: {'id': ..., 'name': ...}).
-        Raises InvalidShareCodeError if the code is invalid.
-        """
-        decoded_data = self.share_code_service.decode(code)
-        if not decoded_data:
-            return False, []
-
-        found_mods, missing_mods = self.share_code_service.resolve_mods(
-            decoded_data, self.get_all_mods()
-        )
-
-        # Apply the found mods using the same dependency resolution as manual activation.
-        dependency_missing_ids = self.active_mods.replace_active_mods(
-            [mod.id for mod in found_mods]
-        )
-
-        known_missing_ids = {str(item.get("id", "")) for item in missing_mods}
-        for mod_id in dependency_missing_ids:
-            if mod_id not in known_missing_ids:
-                missing_mods.append({"id": mod_id, "name": mod_id})
-                known_missing_ids.add(mod_id)
-
-        self.apply_changes()
-        self.events.emit(EventType.ACTIVE_MODS_CHANGED)
-
-        return True, missing_mods
+    def apply_share_code(self, code: str) -> ShareCodeImportResult:
+        """Applies a share code and returns a neutral result."""
+        result = self.share_codes.import_share_code(code)
+        if result.success:
+            self.events.emit(EventType.ACTIVE_MODS_CHANGED)
+        return result
 
     # --- Mod Importing ---
 
@@ -281,8 +318,7 @@ class ModManager:
         reload_on_success: bool = True,
     ) -> bool:
         """
-        Imports a mod from a directory or archive.
-        Raises ModImportError (or a subclass) if the import fails.
+        Import a mod from a directory or archive into the local mods folder.
         """
         config = self.config_service.get_config()
         if not config.game_path:
@@ -291,7 +327,6 @@ class ModManager:
 
         local_mods_dir = os.path.join(config.game_path, constants.MODS_DIR)
 
-        # The service returns True or raises an exception
         success = self.mod_import_service.import_mod(
             path, local_mods_dir, progress_callback, conflict_callback
         )
@@ -302,9 +337,7 @@ class ModManager:
     # --- Game Launching ---
 
     def launch_game(self) -> bool:
-        """
-        Launches the game via Steam protocol.
-        """
+        """Launch the game through the Steam protocol handler."""
         launch_url = f"steam://rungameid/{constants.STEAM_APP_ID}"
         success = system_actions.open_url(launch_url)
         if success:

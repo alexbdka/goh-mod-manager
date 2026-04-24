@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
 
 
 @dataclass
@@ -9,10 +8,11 @@ class AppConfig:
     Stores the necessary paths to interact with the game and workshop.
     """
 
-    game_path: Optional[str] = None
-    workshop_path: Optional[str] = None
-    profile_path: Optional[str] = None
-    presets: Dict[str, List[str]] = field(default_factory=dict)
+    game_path: str | None = None
+    workshop_path: str | None = None
+    profile_path: str | None = None
+    presets: dict[str, list[str]] = field(default_factory=dict)
     language: str = "en_US"
     theme: str = "auto"
     font: str = "Inter"
+    onboarding_seen: bool = False

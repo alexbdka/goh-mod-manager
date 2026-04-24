@@ -1,8 +1,6 @@
 import os
 import tempfile
 
-import pytest
-
 from src.core.mod import ModInfo
 from src.services.active_mods_service import ActiveModsService
 from src.services.mods_catalogue_service import ModsCatalogueService
@@ -63,7 +61,9 @@ class TestActiveModsService:
             mode="w", delete=False, suffix=".set", encoding="utf-8"
         ) as tf:
             tf.write(
-                '{options\n\t{video {adapter "NVIDIA"}}\n\t{mods\n\t\t"mod_12345:0"\n\t}\n}'
+                "{options\n"
+                '\t{video {adapter "NVIDIA"}}\n'
+                '\t{mods\n\t\t"mod_12345:0"\n\t}\n}'
             )
             temp_path = tf.name
 
@@ -78,8 +78,8 @@ class TestActiveModsService:
             # Test Saving
             self.service.save_to_profile(temp_path)
 
-            # Read the file to ensure it was saved correctly and preserved other settings
-            with open(temp_path, "r", encoding="utf-8") as f:
+            # Ensure saving preserved non-mod settings as well.
+            with open(temp_path, encoding="utf-8") as f:
                 content = f.read()
 
             assert '"mod_12345:0"' in content
@@ -130,7 +130,7 @@ class TestActiveModsService:
             self.service.active_mods_ids = ["12345", "67890"]
             self.service.save_to_profile(temp_path)
 
-            with open(temp_path, "r", encoding="utf-8") as f:
+            with open(temp_path, encoding="utf-8") as f:
                 content = f.read()
 
             assert '"mod_12345:0"' in content
@@ -153,7 +153,7 @@ class TestActiveModsService:
             self.service.active_mods_ids = ["12345"]
             self.service.save_to_profile(temp_path)
 
-            with open(temp_path, "r", encoding="utf-8") as f:
+            with open(temp_path, encoding="utf-8") as f:
                 content = f.read()
 
             assert "{mods" in content

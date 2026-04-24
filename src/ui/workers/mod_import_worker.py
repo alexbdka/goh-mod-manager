@@ -24,9 +24,9 @@ class ModImportWorker(QRunnable):
     and copying mods into the game directory without freezing the main UI.
     """
 
-    def __init__(self, manager, file_path: str):
+    def __init__(self, import_target, file_path: str):
         super().__init__()
-        self.manager = manager
+        self.import_target = import_target
         self.file_path = file_path
         self.signals = ModImportSignals()
         self._conflict_event = threading.Event()
@@ -47,8 +47,12 @@ class ModImportWorker(QRunnable):
         Executes the import process in a background thread.
         """
         try:
-            # ModManager.import_mod raises exceptions from the domain model on failure
-            success = self.manager.import_mod(
+            import_func = (
+                self.import_target.import_mod
+                if hasattr(self.import_target, "import_mod")
+                else self.import_target
+            )
+            success = import_func(
                 self.file_path,
                 progress_callback=self._emit_progress,
                 conflict_callback=self._on_conflict,

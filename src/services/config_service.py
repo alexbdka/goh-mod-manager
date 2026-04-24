@@ -1,9 +1,9 @@
 import json
 import logging
 import os
-from typing import Optional
 
 from src.core.config import AppConfig
+from src.core.exceptions import ConfigLoadError, ConfigWriteError
 from src.utils import app_paths
 from src.utils.file_utils import atomic_write_text
 
@@ -12,30 +12,30 @@ logger = logging.getLogger(__name__)
 
 class ConfigService:
     """
-    Manages the application's configuration independently of any UI framework.
-    Stores user preferences and game paths in a portable JSON format.
+    Load and persist application configuration independently from the UI layer.
+
+    Configuration is stored as JSON and contains machine-local paths plus user
+    preferences such as language, theme, font, presets, and onboarding state.
     """
 
-    def __init__(self, config_path: Optional[str] = None):
+    def __init__(self, config_path: str | None = None):
         if config_path is None:
             self.config_path = str(app_paths.get_config_file_path())
         else:
             self.config_path = config_path
-        self._config: Optional[AppConfig] = None
+        self._config: AppConfig | None = None
 
     def get_config(self) -> AppConfig:
-        """
-        Returns the current configuration. Loads it from disk if not already loaded.
-        """
+        """Return the cached config, loading it from disk on first access."""
         if self._config is None:
             self.load()
-        return self._config
+        config = self._config
+        if config is None:
+            raise ConfigLoadError(self.config_path, "Configuration failed to load.")
+        return config
 
     def load(self) -> AppConfig:
-        """
-        Loads the configuration from the JSON file.
-        If the file doesn't exist, returns an empty default config.
-        """
+        """Load configuration from disk, or return a default config if missing."""
         self._config = AppConfig()
 
         if not os.path.exists(self.config_path):
@@ -49,8 +49,12 @@ class ConfigService:
                 )
                 return self._config
 
-            with open(self.config_path, "r", encoding="utf-8") as f:
+            with open(self.config_path, encoding="utf-8") as f:
                 data = json.load(f)
+            if not isinstance(data, dict):
+                raise ConfigLoadError(
+                    self.config_path, "Configuration root must be a JSON object."
+                )
 
             self._config.game_path = data.get("game_path")
             self._config.workshop_path = data.get("workshop_path")
@@ -59,19 +63,22 @@ class ConfigService:
             self._config.language = data.get("language", "en_US")
             self._config.theme = data.get("theme", "auto")
             self._config.font = data.get("font", "Inter")
+            self._config.onboarding_seen = bool(data.get("onboarding_seen", False))
 
             logger.info(f"Configuration loaded from {self.config_path}")
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse config file {self.config_path}: {e}")
+            raise ConfigLoadError(self.config_path, str(e)) from e
+        except ConfigLoadError:
+            raise
         except Exception as e:
             logger.error(f"Error loading config file {self.config_path}: {e}")
+            raise ConfigLoadError(self.config_path, str(e)) from e
 
         return self._config
 
-    def save(self, config: Optional[AppConfig] = None) -> None:
-        """
-        Saves the provided configuration (or the currently cached one) to the JSON file.
-        """
+    def save(self, config: AppConfig | None = None) -> None:
+        """Persist the provided config, or the cached config when omitted."""
         if config is not None:
             self._config = config
 
@@ -87,6 +94,7 @@ class ConfigService:
             "language": self._config.language,
             "theme": self._config.theme,
             "font": self._config.font,
+            "onboarding_seen": self._config.onboarding_seen,
         }
 
         try:
@@ -95,19 +103,19 @@ class ConfigService:
             logger.info(f"Configuration saved to {self.config_path}")
         except Exception as e:
             logger.error(f"Failed to save configuration to {self.config_path}: {e}")
+            raise ConfigWriteError(self.config_path, str(e)) from e
 
     def update_paths(
         self,
-        game_path: Optional[str] = None,
-        workshop_path: Optional[str] = None,
-        profile_path: Optional[str] = None,
-        language: Optional[str] = None,
-        theme: Optional[str] = None,
-        font: Optional[str] = None,
+        game_path: str | None = None,
+        workshop_path: str | None = None,
+        profile_path: str | None = None,
+        language: str | None = None,
+        theme: str | None = None,
+        font: str | None = None,
+        onboarding_seen: bool | None = None,
     ) -> None:
-        """
-        Utility method to update specific paths and auto-save.
-        """
+        """Update selected config fields and save only when something changed."""
         config = self.get_config()
         modified = False
 
@@ -135,5 +143,18 @@ class ConfigService:
             config.font = font
             modified = True
 
+        if onboarding_seen is not None and config.onboarding_seen != onboarding_seen:
+            config.onboarding_seen = onboarding_seen
+            modified = True
+
         if modified:
             self.save()
+
+    def set_onboarding_seen(self, seen: bool) -> None:
+        """Store whether the first-run interface tour has already been completed."""
+        config = self.get_config()
+        if config.onboarding_seen == seen:
+            return
+
+        config.onboarding_seen = seen
+        self.save()

@@ -1,6 +1,5 @@
 import os
 import tempfile
-import pytest
 
 from src.services.mods_catalogue_service import ModsCatalogueService
 
@@ -57,5 +56,3 @@ class TestModsCatalogueService:
         self.service.load_catalogue(self.local_path, self.workshop_path)
         mod = self.service.get_mod("non_existent_mod")
         assert mod is None
-
-
