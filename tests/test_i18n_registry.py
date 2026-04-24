@@ -33,26 +33,28 @@ def test_discover_runtime_languages_uses_qm_files_and_default_source(
     tmp_path: Path,
 ) -> None:
     _write_ts(tmp_path / f"{DEFAULT_LANGUAGE_CODE}.ts", language=DEFAULT_LANGUAGE_CODE)
-    _write_ts(tmp_path / "fr_FR.ts", language="fr_FR")
-    (tmp_path / "fr_FR.qm").write_bytes(b"compiled")
+    _write_ts(tmp_path / "fr.ts", language="fr")
+    (tmp_path / "fr.qm").write_bytes(b"compiled")
 
     locales = discover_runtime_languages(tmp_path)
 
-    assert [locale.code for locale in locales] == [DEFAULT_LANGUAGE_CODE, "fr_FR"]
+    assert [locale.code for locale in locales] == [DEFAULT_LANGUAGE_CODE, "fr"]
     assert locales[0].qm_path is None
-    assert locales[1].qm_path == tmp_path / "fr_FR.qm"
+    assert locales[1].qm_path == tmp_path / "fr.qm"
 
 
-def test_validate_translation_tree_reports_invalid_locale_metadata(
+def test_validate_translation_tree_reports_invalid_locale_metadata_and_accepts_qt_codes(
     tmp_path: Path,
 ) -> None:
     _write_ts(tmp_path / f"{DEFAULT_LANGUAGE_CODE}.ts", language=DEFAULT_LANGUAGE_CODE)
-    _write_ts(tmp_path / "fr_FR.ts", language=None)
+    _write_ts(tmp_path / "fr.ts", language=None)
+    _write_ts(tmp_path / "zh_Hans.ts", language="zh_Hans")
     _write_ts(tmp_path / "english.ts", language="english")
 
     errors = validate_translation_tree(tmp_path)
 
-    assert any('expected <TS language="fr_FR">' in error for error in errors)
+    assert not any(error.startswith("zh_Hans.ts:") for error in errors)
+    assert any('expected <TS language="fr">' in error for error in errors)
     assert any(
         "Invalid translation file name 'english.ts'" in error for error in errors
     )

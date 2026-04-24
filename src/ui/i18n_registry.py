@@ -10,7 +10,9 @@ from PySide6.QtCore import QLocale
 from src.utils import app_paths
 
 DEFAULT_LANGUAGE_CODE = "en_US"
-LOCALE_CODE_RE = re.compile(r"^[a-z]{2}(?:_[A-Z]{2})?$")
+LOCALE_CODE_RE = re.compile(
+    r"^[a-z]{2,3}(?:[_-](?:[A-Z]{2}|\d{3}|[A-Z][a-z]{3}|[A-Za-z0-9]{4,8}))*$"
+)
 
 
 @dataclass(frozen=True)
@@ -29,8 +31,13 @@ def get_i18n_dir() -> Path:
 
 
 def is_valid_locale_code(locale_code: str) -> bool:
-    """Return ``True`` when ``locale_code`` matches the repository convention."""
+    """Return ``True`` when ``locale_code`` matches supported Qt/Weblate forms."""
     return bool(LOCALE_CODE_RE.fullmatch(locale_code))
+
+
+def normalize_locale_code(locale_code: str) -> str:
+    """Return a comparison-safe locale code for filenames and TS metadata."""
+    return locale_code.replace("-", "_")
 
 
 def read_ts_language(path: Path) -> str | None:
@@ -87,7 +94,7 @@ def validate_translation_tree(i18n_dir: Path | None = None) -> list[str]:
     seen_codes: set[str] = set()
     for path in ts_files:
         locale_code = path.stem
-        lowered = locale_code.lower()
+        lowered = normalize_locale_code(locale_code).lower()
         if lowered in seen_codes:
             errors.append(f"Duplicate translation locale code: {locale_code}")
             continue
@@ -96,7 +103,7 @@ def validate_translation_tree(i18n_dir: Path | None = None) -> list[str]:
         if not is_valid_locale_code(locale_code):
             errors.append(
                 f"Invalid translation file name '{path.name}'. "
-                "Expected names like en_US.ts or zh_CN.ts."
+                "Expected Qt/Weblate locale names like en_US.ts, fr.ts, or zh_Hans.ts."
             )
             continue
 
@@ -112,7 +119,9 @@ def validate_translation_tree(i18n_dir: Path | None = None) -> list[str]:
                     f"{path.name}: source file language attribute must be empty "
                     f"or '{DEFAULT_LANGUAGE_CODE}', got '{language_attr}'."
                 )
-        elif language_attr != locale_code:
+        elif normalize_locale_code(language_attr or "") != normalize_locale_code(
+            locale_code
+        ):
             errors.append(
                 f'{path.name}: expected <TS language="{locale_code}">, '
                 f"got '{language_attr or '<missing>'}'."
@@ -123,7 +132,7 @@ def validate_translation_tree(i18n_dir: Path | None = None) -> list[str]:
         if not is_valid_locale_code(locale_code):
             errors.append(
                 f"Invalid compiled translation file name '{path.name}'. "
-                "Expected names like en_US.qm or zh_CN.qm."
+                "Expected Qt/Weblate locale names like en_US.qm, fr.qm, or zh_Hans.qm."
             )
             continue
 
@@ -201,7 +210,7 @@ def _locale_sort_key(locale: TranslationLocale) -> tuple[int, str]:
 
 def language_label(locale_code: str) -> str:
     """Return a stable display label for a locale code."""
-    qt_locale = QLocale(locale_code)
+    qt_locale = QLocale(locale_code.replace("_", "-"))
     language_name = (
         qt_locale.nativeLanguageName()
         or QLocale.languageToString(qt_locale.language())
