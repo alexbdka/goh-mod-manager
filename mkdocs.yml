@@ -28,6 +28,10 @@ plugins:
             members_order: source
             separate_signature: true
             docstring_style: google
+            show_if_no_docstring: false
+            filters:
+              - "!^_"
+              - "^__init__$"
 nav:
   - Home: index.md
   - Architecture: architecture.md
