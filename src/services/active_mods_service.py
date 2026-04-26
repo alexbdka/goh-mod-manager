@@ -167,8 +167,9 @@ class ActiveModsService:
         remains untouched.
         """
         if not os.path.exists(options_set_path):
-            logger.error(f"Cannot save profile, file not found: {options_set_path}")
-            return
+            reason = "Profile file not found."
+            logger.error(f"Cannot save profile {options_set_path}: {reason}")
+            raise ProfileWriteError(options_set_path, reason)
 
         try:
             with open(options_set_path, encoding="utf-8") as f:

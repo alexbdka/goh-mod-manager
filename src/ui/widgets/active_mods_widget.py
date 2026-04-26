@@ -1,3 +1,4 @@
+import qtawesome as qta
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -11,7 +12,15 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 from src.application.state import ActiveModsState, ModState
+from src.ui.appearance_manager import AppearanceManager
 from src.ui.language_change_mixin import LanguageChangeMixin
+from src.ui.widgets.active_mods_item_delegate import (
+    ROLE_MOD_ID,
+    ROLE_ORDER,
+    ROLE_SOURCE,
+    ROLE_TITLE,
+    ActiveModsItemDelegate,
+)
 from src.ui.widgets.preset_selector_widget import PresetSelectorWidget
 from src.utils import markup_parser
 
@@ -49,20 +58,24 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
 
+        header_layout = QHBoxLayout()
         self.title_label = QLabel()
-        layout.addWidget(self.title_label)
+        self.title_label.setProperty("uiRole", "sectionTitle")
+        header_layout.addWidget(self.title_label)
+        header_layout.addStretch(1)
+        self.count_label = QLabel()
+        self.count_label.setProperty("uiRole", "sectionMeta")
+        header_layout.addWidget(self.count_label)
+        layout.addLayout(header_layout)
 
         self.preset_selector = PresetSelectorWidget()
         layout.addWidget(self.preset_selector)
 
         self.list_widget = InternalTree(self)
-        self.list_widget.setColumnCount(2)
-        self.list_widget.setHeaderLabels(["", ""])
+        self.list_widget.setColumnCount(1)
+        self.list_widget.setHeaderHidden(True)
         self.list_widget.header().setSectionResizeMode(
-            0, QHeaderView.ResizeMode.ResizeToContents
-        )
-        self.list_widget.header().setSectionResizeMode(
-            1, QHeaderView.ResizeMode.Stretch
+            0, QHeaderView.ResizeMode.Stretch
         )
         self.list_widget.setRootIsDecorated(False)
         self.list_widget.setAlternatingRowColors(True)
@@ -72,16 +85,27 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
             QAbstractItemView.SelectionMode.SingleSelection
         )
         self.list_widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.list_widget.setItemDelegate(ActiveModsItemDelegate(self.list_widget))
         layout.addWidget(self.list_widget)
+
+        self.empty_label = QLabel(self.list_widget.viewport())
+        self.empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.empty_label.setWordWrap(True)
+        self.empty_label.setProperty("uiRole", "emptyState")
+        self.empty_label.hide()
 
         buttons_layout = QHBoxLayout()
         self.btn_up = QPushButton()
         self.btn_down = QPushButton()
         self.btn_clear = QPushButton()
+        self.btn_up.setProperty("uiRole", "compactAction")
+        self.btn_down.setProperty("uiRole", "compactAction")
+        self.btn_clear.setProperty("uiRole", "compactAction")
         buttons_layout.addWidget(self.btn_up)
         buttons_layout.addWidget(self.btn_down)
         buttons_layout.addWidget(self.btn_clear)
         layout.addLayout(buttons_layout)
+        self.refresh_icons()
 
     def _connect_signals(self):
         self.btn_up.clicked.connect(self._on_move_up)
@@ -105,27 +129,33 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
         for i, mod in enumerate(self._current_mods):
             clean_name = markup_parser.strip_markup(mod.name)
             order_text = str(mod.load_order if mod.load_order is not None else i + 1)
-            item = QTreeWidgetItem([order_text, clean_name])
+            item = QTreeWidgetItem([clean_name])
             item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsDropEnabled)
-            item.setData(0, Qt.ItemDataRole.UserRole, mod.id)
-            if mod.is_local:
-                item.setToolTip(1, self.tr("Local Mod"))
-            else:
-                item.setToolTip(1, self.tr("Workshop Mod"))
+            source_text = (
+                self.tr("Local Mod") if mod.is_local else self.tr("Workshop Mod")
+            )
+            item.setData(0, ROLE_MOD_ID, mod.id)
+            item.setData(0, ROLE_ORDER, order_text)
+            item.setData(0, ROLE_TITLE, clean_name)
+            item.setData(0, ROLE_SOURCE, source_text)
+            item.setToolTip(0, source_text)
 
             self.list_widget.addTopLevelItem(item)
+
+        self._update_header()
+        self._update_empty_state()
 
     def get_selected_mod_id(self) -> str | None:
         selected_items = self.list_widget.selectedItems()
         if not selected_items:
             return None
-        return selected_items[0].data(0, Qt.ItemDataRole.UserRole)
+        return selected_items[0].data(0, ROLE_MOD_ID)
 
     def get_mod_id_at(self, pos) -> str | None:
         item = self.list_widget.itemAt(pos)
         if item is None:
             return None
-        return item.data(0, Qt.ItemDataRole.UserRole)
+        return item.data(0, ROLE_MOD_ID)
 
     def clear_selection(self):
         self.list_widget.clearSelection()
@@ -150,7 +180,7 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
         self.clear_requested.emit()
 
     def _on_item_double_clicked(self, item, _column):
-        mod_id = item.data(0, Qt.ItemDataRole.UserRole)
+        mod_id = item.data(0, ROLE_MOD_ID)
         if mod_id:
             self.mod_double_clicked.emit(mod_id)
 
@@ -160,17 +190,47 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
             item = self.list_widget.topLevelItem(i)
             if item is None:
                 continue
-            item.setText(0, str(i + 1))
-            mod_id = item.data(0, Qt.ItemDataRole.UserRole)
+            item.setData(0, ROLE_ORDER, str(i + 1))
+            mod_id = item.data(0, ROLE_MOD_ID)
             if mod_id:
                 new_order.append(mod_id)
         self.order_changed.emit(new_order)
 
     def retranslate_ui(self):
         self.title_label.setText(self.tr("Load Order (Active Mods)"))
-        self.list_widget.setHeaderLabels([self.tr("Order"), self.tr("Mod Name")])
-        self.btn_up.setText(self.tr("Move Up"))
-        self.btn_down.setText(self.tr("Move Down"))
-        self.btn_clear.setText(self.tr("Clear"))
+        self.btn_up.setToolTip(self.tr("Move selected mod up"))
+        self.btn_down.setToolTip(self.tr("Move selected mod down"))
+        self.btn_clear.setToolTip(self.tr("Clear active load order"))
+        self._update_header()
+        self._update_empty_state()
         if self._current_mods:
             self.populate(ActiveModsState(items=self._current_mods))
+
+    def _update_header(self):
+        self.count_label.setText(self.tr("{0} active").format(len(self._current_mods)))
+
+    def _update_empty_state(self):
+        is_empty = len(self._current_mods) == 0
+        self.empty_label.setVisible(is_empty)
+        self.empty_label.setText(
+            self.tr(
+                "No active mods yet. Add mods from the catalogue to build a load order."
+            )
+        )
+        self._position_empty_label()
+        self.btn_up.setEnabled(not is_empty)
+        self.btn_down.setEnabled(not is_empty)
+        self.btn_clear.setEnabled(not is_empty)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._position_empty_label()
+
+    def _position_empty_label(self):
+        self.empty_label.setGeometry(self.list_widget.viewport().rect())
+
+    def refresh_icons(self):
+        icon_colors = AppearanceManager.get_icon_colors(self)
+        self.btn_up.setIcon(qta.icon("fa5s.arrow-up", **icon_colors))
+        self.btn_down.setIcon(qta.icon("fa5s.arrow-down", **icon_colors))
+        self.btn_clear.setIcon(qta.icon("fa5s.trash", **icon_colors))

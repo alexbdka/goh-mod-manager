@@ -15,6 +15,7 @@ from src.core.exceptions import (
     ArchiveExtractionError,
     InvalidModPathError,
     ModAlreadyExistsError,
+    ModImportError,
     ModInfoNotFoundError,
 )
 
@@ -158,7 +159,9 @@ class ModImportService:
             logger.error(f"Error copying mod directory: {e}")
             if backup_dest and os.path.exists(backup_dest) and not os.path.exists(dest):
                 os.replace(backup_dest, dest)
-            raise
+            if isinstance(e, ModImportError):
+                raise
+            raise ModImportError(f"Failed to copy mod files: {e}") from e
         finally:
             shutil.rmtree(temp_root, ignore_errors=True)
             if backup_dest and os.path.exists(backup_dest):
@@ -221,6 +224,8 @@ class ModImportService:
                     tar.extractall(path=extract_to)
             else:
                 raise ValueError(f"Unsupported archive format: {ext}")
+        except ArchiveExtractionError:
+            raise
         except Exception as e:
             raise ArchiveExtractionError(f"Failed to extract archive: {e}") from e
 

@@ -147,8 +147,10 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         middle_layout = QVBoxLayout(middle_widget)
         middle_layout.setContentsMargins(5, 0, 5, 0)
         self.btn_add = QPushButton()
+        self.btn_add.setProperty("uiRole", "iconButton")
         self.btn_add.setIcon(qta.icon("fa5s.angle-double-right"))
         self.btn_remove = QPushButton()
+        self.btn_remove.setProperty("uiRole", "iconButton")
         self.btn_remove.setIcon(qta.icon("fa5s.angle-double-left"))
         middle_layout.addStretch()
         middle_layout.addWidget(self.btn_add)
@@ -275,6 +277,8 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         self._connect_catalogue_signals()
         self._connect_active_mods_signals()
         self._connect_preset_signals()
+        self.toolbar.import_share_code_requested.connect(self._on_import_share_code)
+        self.toolbar.export_share_code_requested.connect(self._on_export_share_code)
         self.toolbar.play_requested.connect(self._on_launch_game)
 
     def _connect_catalogue_signals(self):
@@ -331,7 +335,9 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         icon_colors = AppearanceManager.get_icon_colors(self)
         self.btn_add.setIcon(qta.icon("fa5s.angle-double-right", **icon_colors))
         self.btn_remove.setIcon(qta.icon("fa5s.angle-double-left", **icon_colors))
+        self.main_menu_bar.refresh_icons()
         self.toolbar.refresh_icons()
+        self.active_mods_widget.refresh_icons()
         self.active_mods_widget.preset_selector.refresh_icons()
         self.catalogue_widget.refresh_icons()
 

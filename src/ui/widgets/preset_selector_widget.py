@@ -44,14 +44,17 @@ class PresetSelectorWidget(LanguageChangeMixin, QWidget):
 
         # Action Buttons
         self.btn_save = QPushButton()
+        self.btn_save.setProperty("uiRole", "iconButton")
         self.btn_save.setFixedWidth(30)
         layout.addWidget(self.btn_save)
 
         self.btn_save_as = QPushButton()
+        self.btn_save_as.setProperty("uiRole", "iconButton")
         self.btn_save_as.setFixedWidth(30)
         layout.addWidget(self.btn_save_as)
 
         self.btn_delete = QPushButton()
+        self.btn_delete.setProperty("uiRole", "iconButton")
         self.btn_delete.setFixedWidth(30)
         layout.addWidget(self.btn_delete)
         self.refresh_icons()

@@ -43,8 +43,15 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
 
+        header_layout = QHBoxLayout()
         self.title_label = QLabel()
-        layout.addWidget(self.title_label)
+        self.title_label.setProperty("uiRole", "sectionTitle")
+        header_layout.addWidget(self.title_label)
+        header_layout.addStretch(1)
+        self.count_label = QLabel()
+        self.count_label.setProperty("uiRole", "sectionMeta")
+        header_layout.addWidget(self.count_label)
+        layout.addLayout(header_layout)
 
         search_layout = QHBoxLayout()
 
@@ -54,6 +61,7 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
         search_layout.addWidget(self.search_bar)
 
         self.btn_toggle_view = QPushButton()
+        self.btn_toggle_view.setProperty("uiRole", "compactAction")
         self.btn_toggle_view.setCheckable(True)
         self.btn_toggle_view.setChecked(True)
         self.btn_toggle_view.toggled.connect(self._on_toggle_view)
@@ -82,6 +90,12 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
         self.list_widget.setItemDelegate(self._delegate)
         layout.addWidget(self.list_widget)
 
+        self.empty_label = QLabel(self.list_widget.viewport())
+        self.empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.empty_label.setWordWrap(True)
+        self.empty_label.setProperty("uiRole", "emptyState")
+        self.empty_label.hide()
+
     def _on_toggle_view(self, checked: bool):
         self._delegate.set_thumbnail_enabled(checked)
         self.list_widget.doItemsLayout()
@@ -108,14 +122,14 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
         self.tab_bar.setTabText(0, self.tr("All"))
         self.tab_bar.setTabText(1, self.tr("Workshop"))
         self.tab_bar.setTabText(2, self.tr("Local"))
-        if self._catalogue_items:
-            self._apply_filters()
+        self._apply_filters()
 
     def _apply_filters(self):
         selected_mod_ids = set(self.get_selected_mod_ids())
         self.list_widget.clear()
         search_text = self.search_bar.text().lower()
         current_tab = self.tab_bar.currentIndex()
+        visible_count = 0
 
         for mod in self._catalogue_items:
             if current_tab == 1 and mod.is_local:
@@ -141,9 +155,50 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
             item.setData(ROLE_STATUS_ENTRIES, self._build_status_entries(mod))
             item.setData(ROLE_IS_ACTIVE, mod.is_active)
             self.list_widget.addItem(item)
+            visible_count += 1
 
             if mod.id in selected_mod_ids:
                 item.setSelected(True)
+
+        self._update_header(visible_count)
+        self._update_empty_state(visible_count, search_text, current_tab)
+
+    def _update_header(self, visible_count: int):
+        total_count = len(self._catalogue_items)
+        if visible_count == total_count:
+            self.count_label.setText(self.tr("{0} mods").format(total_count))
+            return
+        self.count_label.setText(
+            self.tr("{visible} of {total} mods").format(
+                visible=visible_count,
+                total=total_count,
+            )
+        )
+
+    def _update_empty_state(self, visible_count: int, search_text: str, tab_index: int):
+        has_filters = bool(search_text) or tab_index != 0
+        is_empty = visible_count == 0
+        self.empty_label.setVisible(is_empty)
+        self._position_empty_label()
+
+        if not is_empty:
+            return
+
+        if self._catalogue_items and has_filters:
+            self.empty_label.setText(self.tr("No mods match the current filters."))
+            return
+
+        self.empty_label.setText(
+            self.tr("No mods found. Configure your paths, then refresh the catalogue.")
+        )
+        self._position_empty_label()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._position_empty_label()
+
+    def _position_empty_label(self):
+        self.empty_label.setGeometry(self.list_widget.viewport().rect())
 
     def _build_thumbnail_pixmap(self, mod: ModState) -> QPixmap | None:
         if not mod.image_path:

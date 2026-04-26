@@ -7,6 +7,7 @@ import pytest
 from src.core.exceptions import (
     ArchiveExtractionError,
     InvalidModPathError,
+    ModImportError,
     ModInfoNotFoundError,
 )
 from src.services.mod_import_service import ModImportService
@@ -69,7 +70,7 @@ class TestModImportService:
 
         monkeypatch.setattr("src.services.mod_import_service.shutil.copy2", fail_copy)
 
-        with pytest.raises(OSError):
+        with pytest.raises(ModImportError, match="Failed to copy mod files"):
             self.service.import_mod(
                 mod_source,
                 self.game_mods_dir,

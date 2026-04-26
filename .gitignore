@@ -24,6 +24,7 @@ legacy/
 site/
 
 # Temporary local packaging/debug specs
+GoH Mod Manager.spec
 goh_mod_manager_*_check.spec
 
 # Local runtime config generated in dev

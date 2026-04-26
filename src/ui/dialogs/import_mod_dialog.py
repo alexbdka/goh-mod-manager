@@ -1,5 +1,6 @@
 import os
 
+import qtawesome as qta
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QDialog,
@@ -10,6 +11,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from src.ui.appearance_manager import AppearanceManager
 from src.ui.language_change_mixin import LanguageChangeMixin
 
 
@@ -23,36 +25,58 @@ class DropZoneWidget(LanguageChangeMixin, QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setAcceptDrops(True)
+        self.setObjectName("ImportDropZone")
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.setMinimumHeight(180)
+        self.setProperty("dragHover", False)
         self._setup_ui()
         self.retranslate_ui()
 
     def _setup_ui(self):
         layout = QVBoxLayout(self)
-        self.label = QLabel()
-        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(self.label)
+        layout.setContentsMargins(24, 24, 24, 24)
+        layout.setSpacing(8)
+
+        self.icon_label = QLabel()
+        self.icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addStretch()
+        layout.addWidget(self.icon_label)
+
+        self.title_label = QLabel()
+        self.title_label.setProperty("uiRole", "dropZoneTitle")
+        self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.title_label.setWordWrap(True)
+        layout.addWidget(self.title_label)
+
+        self.subtitle_label = QLabel()
+        self.subtitle_label.setProperty("uiRole", "dropZoneSubtitle")
+        self.subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.subtitle_label.setWordWrap(True)
+        layout.addWidget(self.subtitle_label)
+        layout.addStretch()
+        self.refresh_icons()
 
     def retranslate_ui(self):
-        self.label.setText(self.tr("Drag & Drop a Mod Archive or Folder here"))
+        self.title_label.setText(self.tr("Drop a mod archive or folder here"))
+        self.subtitle_label.setText(
+            self.tr("Supported archives: .zip, .rar, .7z, .tar, .gz")
+        )
+
+    def refresh_icons(self):
+        icon_colors = AppearanceManager.get_icon_colors(self)
+        icon = qta.icon("fa5s.upload", **icon_colors)
+        self.icon_label.setPixmap(icon.pixmap(32, 32))
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
-            # Highlight border
-            self.label.setProperty("dragHover", True)
-            self.label.style().unpolish(self.label)
-            self.label.style().polish(self.label)
+            self._set_drag_hover(True)
             event.acceptProposedAction()
 
     def dragLeaveEvent(self, event):
-        # Restore normal border
-        self.label.setProperty("dragHover", False)
-        self.label.style().unpolish(self.label)
-        self.label.style().polish(self.label)
+        self._set_drag_hover(False)
 
     def dropEvent(self, event):
-        self.label.setProperty("dragHover", False)
-        self.label.style().unpolish(self.label)
-        self.label.style().polish(self.label)
+        self._set_drag_hover(False)
         for url in event.mimeData().urls():
             path = url.toLocalFile()
             if os.path.exists(path):
@@ -60,6 +84,11 @@ class DropZoneWidget(LanguageChangeMixin, QWidget):
                 # Only handle the first dropped item for simplicity
                 break
         event.acceptProposedAction()
+
+    def _set_drag_hover(self, active: bool):
+        self.setProperty("dragHover", active)
+        self.style().unpolish(self)
+        self.style().polish(self)
 
 
 class ImportModDialog(LanguageChangeMixin, QDialog):
@@ -86,9 +115,11 @@ class ImportModDialog(LanguageChangeMixin, QDialog):
         buttons_layout = QHBoxLayout()
 
         self.btn_archive = QPushButton()
+        self.btn_archive.setProperty("uiRole", "compactAction")
         self.btn_archive.clicked.connect(self._on_select_archive)
 
         self.btn_folder = QPushButton()
+        self.btn_folder.setProperty("uiRole", "compactAction")
         self.btn_folder.clicked.connect(self._on_select_folder)
 
         buttons_layout.addWidget(self.btn_archive)
@@ -128,3 +159,10 @@ class ImportModDialog(LanguageChangeMixin, QDialog):
         self.btn_archive.setToolTip(self.tr("Import from .zip, .rar, .7z, etc."))
         self.btn_folder.setText(self.tr("Select Folder..."))
         self.btn_folder.setToolTip(self.tr("Import an uncompressed mod folder"))
+        self.refresh_icons()
+
+    def refresh_icons(self):
+        icon_colors = AppearanceManager.get_icon_colors(self)
+        self.drop_zone.refresh_icons()
+        self.btn_archive.setIcon(qta.icon("fa5s.file-archive", **icon_colors))
+        self.btn_folder.setIcon(qta.icon("fa5s.folder-open", **icon_colors))
