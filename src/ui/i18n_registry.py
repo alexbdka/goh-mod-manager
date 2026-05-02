@@ -9,7 +9,7 @@ from PySide6.QtCore import QLocale
 
 from src.utils import app_paths
 
-DEFAULT_LANGUAGE_CODE = "en_US"
+DEFAULT_LANGUAGE_CODE = "en"
 LOCALE_CODE_RE = re.compile(
     r"^[a-z]{2,3}(?:[_-](?:[A-Z]{2}|\d{3}|[A-Z][a-z]{3}|[A-Za-z0-9]{4,8}))*$"
 )
