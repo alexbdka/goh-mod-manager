@@ -6,32 +6,32 @@
     <message>
         <location filename="../dialogs/about_dialog.py" line="36"/>
         <source>About GoH Mod Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>À propos de GoH Mod Manager</translation>
     </message>
     <message>
         <location filename="../dialogs/about_dialog.py" line="38"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Inconnu</translation>
     </message>
     <message>
         <location filename="../dialogs/about_dialog.py" line="40"/>
         <source>A modern, lightweight mod manager for Call to Arms - Gates of Hell.</source>
-        <translation type="unfinished"></translation>
+        <translation>Un gestionnaire de mods moderne et léger pour Call to Arms - Gates of Hell.</translation>
     </message>
     <message>
         <location filename="../dialogs/about_dialog.py" line="42"/>
         <source>Developed with PySide6.</source>
-        <translation type="unfinished"></translation>
+        <translation>Développé avec PySide6.</translation>
     </message>
     <message>
         <location filename="../dialogs/about_dialog.py" line="44"/>
         <source>Icons by QtAwesome and &lt;a href=&quot;https://github.com/philippedward&quot;&gt;awsde&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Icônes de QtAwesome et &lt;a href=&quot;https://github.com/philippedward&quot;&gt;awsde&lt;/a&gt;.</translation>
     </message>
     <message>
         <location filename="../dialogs/about_dialog.py" line="47"/>
         <source>Made with ♥ by &lt;a href=&quot;https://github.com/alexbdka&quot;&gt;alexbdka&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Réalisé avec ♥ par &lt;a href=&quot;https://github.com/alexbdka&quot;&gt;alexbdka&lt;/a&gt;.</translation>
     </message>
 </context>
 <context>
@@ -39,42 +39,42 @@
     <message>
         <location filename="../widgets/active_mods_widget.py" line="112"/>
         <source>Local Mod</source>
-        <translation type="unfinished"></translation>
+        <translation>Mod Local</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="114"/>
         <source>Workshop Mod</source>
-        <translation type="unfinished"></translation>
+        <translation>Mod Workshop</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="170"/>
         <source>Load Order (Active Mods)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordre de chargement (Mods Actifs)</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="171"/>
         <source>Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordre</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="171"/>
         <source>Mod Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom du mod</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="172"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Monter</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="173"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Descendre</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="174"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Effacer</translation>
     </message>
 </context>
 <context>
@@ -82,60 +82,61 @@
     <message>
         <location filename="../widgets/catalogue_widget.py" line="105"/>
         <source>Catalogue (Available Mods)</source>
-        <translation type="unfinished"></translation>
+        <translation>Catalogue (Mods Disponibles)</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="106"/>
         <source>Search mods...</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechercher des mods...</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="107"/>
         <source>Thumbnails</source>
-        <translation type="unfinished"></translation>
+        <translation>Miniatures</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="108"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Tout</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="109"/>
         <source>Workshop</source>
-        <translation type="unfinished"></translation>
+        <translation>Workshop</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="110"/>
         <source>Local</source>
-        <translation type="unfinished"></translation>
+        <translation>Local</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="132"/>
         <source>{0}
 Already active in the load order.</source>
-        <translation type="unfinished"></translation>
+        <translation>{0}
+Déjà actif dans l&apos;ordre de chargement.</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="165"/>
         <source>Local Mod</source>
-        <translation type="unfinished"></translation>
+        <translation>Mod Local</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="165"/>
         <source>Workshop Mod</source>
-        <translation type="unfinished"></translation>
+        <translation>Mod Workshop</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="171"/>
         <location filename="../widgets/catalogue_widget.py" line="191"/>
         <source>Missing dependencies: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Dépendances manquantes&#xa0;: {0}</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="177"/>
         <location filename="../widgets/catalogue_widget.py" line="200"/>
         <source>Dependencies: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Dépendances&#xa0;: {0}</translation>
     </message>
 </context>
 <context>
@@ -143,7 +144,7 @@ Already active in the load order.</source>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="36"/>
         <source>Drag &amp; Drop a Mod Archive or Folder here</source>
-        <translation type="unfinished"></translation>
+        <translation>Faites glisser et déposez ici une archive ou un dossier de mods</translation>
     </message>
 </context>
 <context>
@@ -151,42 +152,42 @@ Already active in the load order.</source>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="106"/>
         <source>Select Mod Archive</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner une archive de mod</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="108"/>
         <source>Archives (*.zip *.rar *.7z *.tar *.gz);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Archives (*.zip *.rar *.7z *.tar *.gz);;All Files (*)</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="116"/>
         <source>Select Mod Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner le répertoire des mods</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="126"/>
         <source>Import Mod</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer Mod</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="127"/>
         <source>Select Archive...</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner une archive...</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="128"/>
         <source>Import from .zip, .rar, .7z, etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer depuis des fichiers .zip, .rar, .7z, etc.</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="129"/>
         <source>Select Folder...</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner un dossier...</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="130"/>
         <source>Import an uncompressed mod folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer un dossier de mod non compressé</translation>
     </message>
 </context>
 <context>
@@ -195,17 +196,17 @@ Already active in the load order.</source>
         <location filename="../dialogs/share_code_dialog.py" line="29"/>
         <location filename="../dialogs/share_code_dialog.py" line="48"/>
         <source>e.g. eJzT0y...</source>
-        <translation type="unfinished"></translation>
+        <translation>par exemple&#xa0;: eJzT0y...</translation>
     </message>
     <message>
         <location filename="../dialogs/share_code_dialog.py" line="46"/>
         <source>Import Share Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer le code de partage</translation>
     </message>
     <message>
         <location filename="../dialogs/share_code_dialog.py" line="47"/>
         <source>Paste the Share Code below:</source>
-        <translation type="unfinished"></translation>
+        <translation>Collez le code de partage ci-dessous&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -213,87 +214,87 @@ Already active in the load order.</source>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="73"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fichier</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="74"/>
         <source>Import Share Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer le code de partage...</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="75"/>
         <source>Export Share Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter le code...</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="76"/>
         <source>Import Mod...</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer Mod...</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="77"/>
         <source>Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir...</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="78"/>
         <source>Game Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Répertoire du jeu</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="79"/>
         <source>Profile (options.set)</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil (options.set)</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="80"/>
         <source>Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier journal</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="81"/>
         <source>E&amp;xit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Quitter</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="82"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Modifier</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="83"/>
         <source>Preferences...</source>
-        <translation type="unfinished"></translation>
+        <translation>Préférences...</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="84"/>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Afficher</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="85"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualiser</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="86"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aide</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="87"/>
         <source>Generate Debug Report...</source>
-        <translation type="unfinished"></translation>
+        <translation>Générer un rapport de débogage...</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="88"/>
         <source>Interface Tour...</source>
-        <translation type="unfinished"></translation>
+        <translation>Présentation de l&apos;interface...</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="89"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>À propos</translation>
     </message>
 </context>
 <context>
@@ -301,12 +302,12 @@ Already active in the load order.</source>
     <message>
         <location filename="../widgets/main_tool_bar.py" line="39"/>
         <source>Main Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barre d&apos;outils principale</translation>
     </message>
     <message>
         <location filename="../widgets/main_tool_bar.py" line="40"/>
         <source>Launch Game</source>
-        <translation type="unfinished"></translation>
+        <translation>Lancer le jeu</translation>
     </message>
 </context>
 <context>
@@ -314,27 +315,27 @@ Already active in the load order.</source>
     <message>
         <location filename="../main_window.py" line="235"/>
         <source>GoH Mod Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>GoH Mod Manager</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="236"/>
         <source>Add selected mod</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter le mod sélectionné</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="237"/>
         <source>Remove selected mod</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer le mod sélectionné</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="239"/>
         <source>Ready</source>
-        <translation type="unfinished"></translation>
+        <translation>Prêt</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="265"/>
         <source>Profile Update Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de la mise à jour du profil</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="267"/>
@@ -345,91 +346,100 @@ Close the game or any tool using options.set, then try again.
 
 Technical details:
 {1}</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de mettre à jour le fichier de profil du jeu&#xa0;:
+{0}
+
+Fermez le jeu ou tout outil utilisant options.set, puis réessayez.
+
+Détails techniques&#xa0;:
+{1}</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="272"/>
         <source>Profile update failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>La mise à jour du profil a échoué.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="392"/>
         <source>Export Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de l&apos;exportation</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="393"/>
         <source>There are no active mods to export.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il n&apos;y a aucun mod actif à exporter.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="401"/>
         <source>Export Success</source>
-        <translation type="unfinished"></translation>
+        <translation>Succès de l&apos;exportation</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="403"/>
         <source>Share Code has been copied to your clipboard!
 
 You can now paste it to your friends.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le code de partage a été copié dans votre presse-papiers&#x202f;!
+
+Vous pouvez désormais le coller pour le partager avec vos amis.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="409"/>
         <source>Export Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur d&apos;exportation</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="409"/>
         <source>Failed to generate Share Code.</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de la génération du code de partage.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="427"/>
         <location filename="../main_window.py" line="434"/>
         <source>Import Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur d&apos;importation</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="428"/>
         <source>Invalid or corrupted Share Code.</source>
-        <translation type="unfinished"></translation>
+        <translation>Code de partage non valide ou corrompu.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="435"/>
         <source>An unexpected error occurred:
 {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Une erreur inattendue s&apos;est produite&#xa0;:
+{0}</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="449"/>
         <source>Imported with Missing Mods</source>
-        <translation type="unfinished"></translation>
+        <translation>Importé avec des mods manquants</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="451"/>
         <source>The load order was imported, but you are missing the following mods. You must subscribe to them on the Workshop for the preset to work perfectly:</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;ordre de chargement a été importé, mais il vous manque les mods suivants. Vous devez vous y abonner sur le Workshop pour que le préréglage fonctionne correctement&#xa0;:</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="460"/>
         <source>Import Success</source>
-        <translation type="unfinished"></translation>
+        <translation>Importation réussie</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="461"/>
         <source>Share Code successfully applied!</source>
-        <translation type="unfinished"></translation>
+        <translation>Le code de partage a été correctement appliqué&#x202f;!</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="482"/>
         <source>All data refreshed from disk.</source>
-        <translation type="unfinished"></translation>
+        <translation>Toutes les données ont été actualisées à partir du disque.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="504"/>
         <source>Settings Save Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de l&apos;enregistrement des paramètres</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="505"/>
@@ -437,42 +447,45 @@ You can now paste it to your friends.</source>
 {0}
 
 {1}</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;enregistrer les paramètres&#xa0;:
+{0}
+
+{1}</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="509"/>
         <source>Settings save failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;enregistrement des paramètres a échoué.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="521"/>
         <source>Settings saved and data reloaded.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les paramètres ont été enregistrés et les données ont été rechargées.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="525"/>
         <source>Language and appearance settings applied.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les paramètres de langue et d&apos;affichage ont été appliqués.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="528"/>
         <source>Language settings applied.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les paramètres de langue ont été appliqués.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="530"/>
         <source>Appearance settings applied.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les paramètres d&apos;apparence ont été appliqués.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="532"/>
         <source>Settings saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les paramètres ont été enregistrés.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="593"/>
         <source>Onboarding Save Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de l&apos;enregistrement de l&apos;écran d’introduction</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="594"/>
@@ -480,72 +493,75 @@ You can now paste it to your friends.</source>
 {0}
 
 {1}</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;enregistrer la progression de l&apos;écran d’introduction&#xa0;:
+{0}
+
+{1}</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="599"/>
         <source>Onboarding progress was not saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>La progression de l&apos;écran d’introduction n&apos;a pas été enregistrée.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="608"/>
         <source>Available Mods</source>
-        <translation type="unfinished"></translation>
+        <translation>Mods Disponibles</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="610"/>
         <source>This catalogue lists the mods detected in your local mods folder and subscribed Workshop content.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce catalogue répertorie les mods détectés dans votre dossier de mods local ainsi que le contenu du Workshop auquel vous êtes abonné.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="619"/>
         <source>Find What You Need</source>
-        <translation type="unfinished"></translation>
+        <translation>Trouvez ce qu&apos;il vous faut</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="621"/>
         <source>Use search and filters to narrow the catalogue by name and by source.</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilisez la fonction de recherche et les filtres pour affiner votre sélection dans le catalogue par titre et par source.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="627"/>
         <source>Manage the Load Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Gérer l&apos;ordre de chargement</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="629"/>
         <source>Use these controls, double-click, or drag and drop to move mods between the catalogue and the active load order.</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilisez ces commandes, double-cliquez ou glissez-déposez pour déplacer les mods entre le catalogue et l&apos;ordre de chargement actif.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="636"/>
         <source>Active Mods</source>
-        <translation type="unfinished"></translation>
+        <translation>Mods Actifs</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="638"/>
         <source>This list is the load order that will be written to the game&apos;s profile. Lower entries load later and can override earlier ones.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cette liste correspond à l&apos;ordre de chargement qui sera enregistré dans le profil du jeu. Les entrées situées plus bas dans la liste sont chargées en dernier et peuvent remplacer celles qui les précèdent.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="645"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Préréglages</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="647"/>
         <source>Save the current load order as a preset, reapply it later, or compare the current state against a saved setup.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrez l&apos;ordre de chargement actuel sous forme de préréglage, réappliquez-le ultérieurement ou comparez l&apos;état actuel à une configuration enregistrée.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="654"/>
         <source>Mod Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Détails du mod</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="656"/>
         <source>The details panel shows the selected mod&apos;s description, metadata, and dependency status.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le panneau de détails affiche la description du mod sélectionné, ses métadonnées et l&apos;état de ses dépendances.</translation>
     </message>
 </context>
 <context>
@@ -553,22 +569,22 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../dialogs/missing_mods_dialog.py" line="52"/>
         <source>Open in Steam</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir dans Steam</translation>
     </message>
     <message>
         <location filename="../dialogs/missing_mods_dialog.py" line="53"/>
         <source>Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Navigateur</translation>
     </message>
     <message>
         <location filename="../dialogs/missing_mods_dialog.py" line="63"/>
         <source>(Local/Unknown ID)</source>
-        <translation type="unfinished"></translation>
+        <translation>(Local/Identifiant inconnu)</translation>
     </message>
     <message>
         <location filename="../dialogs/missing_mods_dialog.py" line="81"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -576,27 +592,27 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../widgets/mod_details_widget.py" line="87"/>
         <source>Select a mod to view details</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionnez un mod pour afficher les détails</translation>
     </message>
     <message>
         <location filename="../widgets/mod_details_widget.py" line="109"/>
         <source>&lt;b&gt;Game Version:&lt;/b&gt; {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Version du jeu&#xa0;:&lt;/b&gt; {0}</translation>
     </message>
     <message>
         <location filename="../widgets/mod_details_widget.py" line="117"/>
         <source>&lt;b&gt;Tags:&lt;/b&gt; {0}&lt;br&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Tags:&lt;/b&gt; {0}&lt;br&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/mod_details_widget.py" line="120"/>
         <source>&lt;b&gt;Requires:&lt;/b&gt; {0}&lt;br&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Requis&#xa0;:&lt;/b&gt; {0}&lt;br&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/mod_details_widget.py" line="129"/>
         <source>&lt;i&gt;No description available.&lt;/i&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;i&gt;Aucune description disponible.&lt;/i&gt;</translation>
     </message>
 </context>
 <context>
@@ -604,27 +620,27 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../onboarding_overlay.py" line="111"/>
         <source>Skip</source>
-        <translation type="unfinished"></translation>
+        <translation>Passer</translation>
     </message>
     <message>
         <location filename="../onboarding_overlay.py" line="112"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Retour</translation>
     </message>
     <message>
         <location filename="../onboarding_overlay.py" line="114"/>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Terminé</translation>
     </message>
     <message>
         <location filename="../onboarding_overlay.py" line="114"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Suivant</translation>
     </message>
     <message>
         <location filename="../onboarding_overlay.py" line="116"/>
         <source>Step {current} of {total}</source>
-        <translation type="unfinished"></translation>
+        <translation>Étape {actuelle} sur {total}</translation>
     </message>
 </context>
 <context>
@@ -632,32 +648,32 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../widgets/preset_selector_widget.py" line="159"/>
         <source>Preset:</source>
-        <translation type="unfinished"></translation>
+        <translation>Préréglage&#xa0;:</translation>
     </message>
     <message>
         <location filename="../widgets/preset_selector_widget.py" line="161"/>
         <source>-- Custom Load Order --</source>
-        <translation type="unfinished"></translation>
+        <translation>-- Ordre de chargement personnalisé --</translation>
     </message>
     <message>
         <location filename="../widgets/preset_selector_widget.py" line="164"/>
         <source>Save current load order to this preset (Unsaved changes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer l&apos;ordre de chargement actuel dans ce préréglage (Modifications non enregistrées)</translation>
     </message>
     <message>
         <location filename="../widgets/preset_selector_widget.py" line="167"/>
         <source>Save current load order to this preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer l&apos;ordre de chargement actuel dans ce préréglage</translation>
     </message>
     <message>
         <location filename="../widgets/preset_selector_widget.py" line="168"/>
         <source>Save as new preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer comme nouveau préréglage</translation>
     </message>
     <message>
         <location filename="../widgets/preset_selector_widget.py" line="169"/>
         <source>Delete this preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer ce préréglage</translation>
     </message>
 </context>
 <context>
@@ -665,125 +681,125 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="178"/>
         <source>Select Game Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner le répertoire du jeu</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="186"/>
         <source>Select Workshop Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner le répertoire du Workshop</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="200"/>
         <source>Select Preset File</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner un fichier de préréglage</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="202"/>
         <source>Options Set (options.set);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Options Set (options.set);;All Files (*)</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="230"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Paramètres</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="231"/>
         <source>Paths</source>
-        <translation type="unfinished"></translation>
+        <translation>Chemins</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="232"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Apparence</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="233"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Langue</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="237"/>
         <source>Configure the paths used by the Mod Manager to interact with the game.</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurez les chemins d&apos;accès utilisés par le Mod Manager pour interagir avec le jeu.</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="240"/>
         <location filename="../dialogs/settings_dialog.py" line="242"/>
         <location filename="../dialogs/settings_dialog.py" line="244"/>
         <source>Browse...</source>
-        <translation type="unfinished"></translation>
+        <translation>Parcourir...</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="241"/>
         <source>Game Directory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Répertoire du jeu&#xa0;:</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="243"/>
         <source>Workshop Directory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Répertoire du Workshop&#xa0;:</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="245"/>
         <source>Profile (options.set):</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil (options.set)&#xa0;:</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="248"/>
         <source>Configure the visual appearance of the application.</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurez l&apos;apparence visuelle de l&apos;application.</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="250"/>
         <location filename="../dialogs/settings_dialog.py" line="254"/>
         <source>System Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Paramètres par défaut du système</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="251"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Sombre</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="252"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Clair</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="253"/>
         <source>Theme:</source>
-        <translation type="unfinished"></translation>
+        <translation>Thème&#xa0;:</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="255"/>
         <source>Font:</source>
-        <translation type="unfinished"></translation>
+        <translation>Police&#xa0;:</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="258"/>
         <source>Select the application language. A restart may be required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionnez la langue de l&apos;application. Un redémarrage peut être nécessaire.</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="260"/>
         <source>English</source>
-        <translation type="unfinished"></translation>
+        <translation>Anglais</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="261"/>
         <source>Français</source>
-        <translation type="unfinished"></translation>
+        <translation>Français</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="262"/>
         <source>Русский</source>
-        <translation type="unfinished"></translation>
+        <translation>Русский</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="263"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>Langue&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -791,186 +807,190 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="41"/>
         <source>Success</source>
-        <translation type="unfinished"></translation>
+        <translation>Succès</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="42"/>
         <source>Debug report saved successfully to:
 {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Le rapport de débogage a été enregistré avec succès à l&apos;emplacement suivant&#xa0;:
+{0}</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="48"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="49"/>
         <source>Failed to save debug report:
 {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de l&apos;enregistrement du rapport de débogage&#xa0;:
+{0}</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="60"/>
         <source>Launching Call to Arms - Gates of Hell...</source>
-        <translation type="unfinished"></translation>
+        <translation>Lancement de Call to Arms - Gates of Hell...</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="64"/>
         <source>Launch Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec du lancement</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="66"/>
         <source>Failed to launch the game. Make sure Steam is installed and running.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de lancer le jeu. Assurez-vous que Steam est bien installé et en cours d&apos;exécution.</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="79"/>
         <source>Save Debug Report</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer le rapport de débogage</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="81"/>
         <source>Text Files (*.txt);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Text Files (*.txt);;All Files (*)</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="48"/>
         <source>Importing mod from {0}... Please wait.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importation du mod depuis {0}... Veuillez patienter.</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="76"/>
         <source>Importing mod...</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer un mod...</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="77"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="82"/>
         <source>Import Mod</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer Mod</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="102"/>
         <source>Import Success</source>
-        <translation type="unfinished"></translation>
+        <translation>Importation réussie</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="103"/>
         <source>Mod successfully imported!</source>
-        <translation type="unfinished"></translation>
+        <translation>Le mod a été importé avec succès&#x202f;!</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="105"/>
         <source>Mod import complete.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;importation du mod est terminée.</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="112"/>
         <source>Import Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de l&apos;importation</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="113"/>
         <source>Failed to import mod:
 
 {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de l&apos;importation du mod&#xa0;:
+
+{0}</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="120"/>
         <source>Mod Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>Conflit entre mods</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="122"/>
         <source>The mod &apos;{0}&apos; already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le mod « {0} » existe déjà.</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="124"/>
         <source>What would you like to do?</source>
-        <translation type="unfinished"></translation>
+        <translation>Que voudriez-vous faire&#x202f;?</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="127"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplacer</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="130"/>
         <source>Skip</source>
-        <translation type="unfinished"></translation>
+        <translation>Passer</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="51"/>
         <source>Applied preset: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Préréglage appliqué&#xa0;: {0}</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="56"/>
         <source>Preset Applied with Warnings</source>
-        <translation type="unfinished"></translation>
+        <translation>Préréglage appliqué avec des avertissements</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="58"/>
         <source>The preset was applied, but the following mods are missing from your catalogue. You must subscribe to them on the Workshop:</source>
-        <translation type="unfinished"></translation>
+        <translation>Le préréglage a été appliqué, mais les mods suivants ne figurent pas dans votre catalogue. Vous devez vous y abonner sur le Workshop&#xa0;:</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="78"/>
         <source>Saved preset: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Préréglage enregistré&#xa0;: {0}</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="84"/>
         <source>Save Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer le préréglage</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="85"/>
         <source>Enter a name for the new preset:</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrez un nom pour le nouveau préréglage&#xa0;:</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="93"/>
         <source>Overwrite Preset?</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplacer le préréglage&#x202f;?</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="95"/>
         <source>A preset named &apos;{0}&apos; already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Un préréglage nommé « {0} » existe déjà. Voulez-vous le remplacer&#x202f;?</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="114"/>
         <source>Saved new preset: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouveau préréglage enregistré&#xa0;: {0}</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="120"/>
         <source>Delete Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer le préréglage</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="121"/>
         <source>Are you sure you want to delete the preset &apos;{0}&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Êtes-vous sûr de vouloir supprimer le préréglage « {0} »&#x202f;?</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="135"/>
         <source>Deleted preset: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Préréglage supprimé&#xa0;: {0}</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="141"/>
         <source>Preset Update Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de la mise à jour du préréglage</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="142"/>
@@ -978,33 +998,37 @@ You can now paste it to your friends.</source>
 {0}
 
 {1}</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;enregistrer les préréglages&#xa0;:
+{0}
+
+{1}</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="146"/>
         <source>Preset update failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>La mise à jour du préréglage a échoué.</translation>
     </message>
     <message>
         <location filename="../controllers/selection_controller.py" line="76"/>
         <source>Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>Introuvable</translation>
     </message>
     <message>
         <location filename="../controllers/selection_controller.py" line="77"/>
         <source>Cannot find path:
 {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de trouver le chemin d&apos;accès&#xa0;:
+{0}</translation>
     </message>
     <message>
         <location filename="../controllers/selection_controller.py" line="87"/>
         <source>Open Mod Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir le dossier Mod</translation>
     </message>
     <message>
         <location filename="../controllers/selection_controller.py" line="91"/>
         <source>Open in Steam Workshop</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir dans Steam Workshop</translation>
     </message>
 </context>
 <context>
@@ -1012,13 +1036,14 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../../main.py" line="46"/>
         <source>Initialization Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Avertissement d&apos;initialisation</translation>
     </message>
     <message>
         <location filename="../../main.py" line="48"/>
         <source>Could not automatically detect the game installation or profile path.
 Please configure them in the settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;installation du jeu ou le chemin d&apos;accès au profil n&apos;ont pas pu être détectés automatiquement.
+Veuillez les configurer dans les paramètres.</translation>
     </message>
 </context>
 </TS>
