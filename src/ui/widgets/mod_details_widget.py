@@ -69,7 +69,7 @@ class ModDetailsWidget(LanguageChangeMixin, QFrame):
         self.meta_label = QLabel("")
         self.meta_label.setProperty("uiRole", "detailsMeta")
         self.meta_label.setWordWrap(True)
-        self.meta_label.setTextFormat(Qt.TextFormat.RichText)
+        self.meta_label.setTextFormat(Qt.TextFormat.PlainText)
         self.meta_label.setAlignment(
             Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft
         )
@@ -127,30 +127,28 @@ class ModDetailsWidget(LanguageChangeMixin, QFrame):
         self.title_label.setText(html_title)
 
         # Meta Info
-        meta_lines = [self.tr("<b>ID:</b> {0}").format(mod.id)]
+        meta_lines = [self.tr("ID: {0}").format(mod.id)]
 
         if mod.min_game_version:
-            version_text = self.tr("<b>Game Version:</b> {0}").format(
-                mod.min_game_version
-            )
+            version_text = self.tr("Game Version: {0}").format(mod.min_game_version)
             if mod.max_game_version and mod.max_game_version != mod.min_game_version:
                 version_text += f" - {mod.max_game_version}"
             meta_lines.append(version_text)
 
         if mod.tags:
-            meta_lines.append(self.tr("<b>Tags:</b> {0}").format(", ".join(mod.tags)))
+            meta_lines.append(self.tr("Tags: {0}").format(", ".join(mod.tags)))
 
         if mod.dependencies:
             meta_lines.append(
-                self.tr("<b>Requires:</b> {0}").format(", ".join(mod.dependencies))
+                self.tr("Requires: {0}").format(", ".join(mod.dependencies))
             )
 
-        self.meta_label.setText("<br>".join(meta_lines))
+        self.meta_label.setText("\n".join(meta_lines))
 
         # Description (HTML)
         html_desc = markup_parser.to_html(mod.description)
         if not html_desc:
-            html_desc = self.tr("<i>No description available.</i>")
+            html_desc = self.tr("No description available.")
 
         self.desc_browser.setHtml(html_desc)
 

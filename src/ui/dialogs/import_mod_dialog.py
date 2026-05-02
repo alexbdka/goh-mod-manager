@@ -61,6 +61,9 @@ class DropZoneWidget(LanguageChangeMixin, QWidget):
         self.subtitle_label.setText(
             self.tr("Supported archives: .zip, .rar, .7z, .tar, .gz")
         )
+        self.setAccessibleDescription(
+            self.tr("Drop zone used to import a mod archive or folder.")
+        )
 
     def refresh_icons(self):
         icon_colors = AppearanceManager.get_icon_colors(self)
@@ -108,6 +111,7 @@ class ImportModDialog(LanguageChangeMixin, QDialog):
 
         # Drop Zone
         self.drop_zone = DropZoneWidget()
+        self.drop_zone.setAccessibleName("importDropZone")
         self.drop_zone.file_dropped.connect(self._on_item_dropped)
         layout.addWidget(self.drop_zone, stretch=1)
 
@@ -116,10 +120,12 @@ class ImportModDialog(LanguageChangeMixin, QDialog):
 
         self.btn_archive = QPushButton()
         self.btn_archive.setProperty("uiRole", "compactAction")
+        self.btn_archive.setAccessibleName("importArchiveButton")
         self.btn_archive.clicked.connect(self._on_select_archive)
 
         self.btn_folder = QPushButton()
         self.btn_folder.setProperty("uiRole", "compactAction")
+        self.btn_folder.setAccessibleName("importFolderButton")
         self.btn_folder.clicked.connect(self._on_select_folder)
 
         buttons_layout.addWidget(self.btn_archive)
@@ -159,6 +165,12 @@ class ImportModDialog(LanguageChangeMixin, QDialog):
         self.btn_archive.setToolTip(self.tr("Import from .zip, .rar, .7z, etc."))
         self.btn_folder.setText(self.tr("Select Folder..."))
         self.btn_folder.setToolTip(self.tr("Import an uncompressed mod folder"))
+        self.btn_archive.setAccessibleDescription(
+            self.tr("Open a file picker to import a mod archive.")
+        )
+        self.btn_folder.setAccessibleDescription(
+            self.tr("Open a folder picker to import an uncompressed mod.")
+        )
         self.refresh_icons()
 
     def refresh_icons(self):

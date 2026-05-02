@@ -12,6 +12,11 @@ class ThemeTokens:
     drop_background: str
     drop_hover_background: str
     subtle_text: str
+    toast_background: str
+    toast_border: str
+    toast_success: str
+    toast_warning: str
+    toast_error: str
 
 
 def build_app_stylesheet(theme_mode: str) -> str:
@@ -19,7 +24,6 @@ def build_app_stylesheet(theme_mode: str) -> str:
     tokens = _tokens_for_theme(theme_mode)
     return f"""
 QLabel[uiRole="sectionTitle"] {{
-    font-weight: 600;
     padding: 0 0 4px 0;
 }}
 
@@ -35,16 +39,13 @@ QLabel[uiRole="emptyState"] {{
 
 QLabel[uiRole="onboardingTitle"] {{
     font-weight: 600;
-    font-size: 15px;
 }}
 
 QLabel[uiRole="onboardingStep"] {{
-    font-size: 11px;
     color: {tokens.subtle_text};
 }}
 
 QLabel[uiRole="detailsTitle"] {{
-    font-size: 15px;
     font-weight: 600;
 }}
 
@@ -59,7 +60,7 @@ QLabel#ModDetailsImage {{
 }}
 
 QTextBrowser#ModDetailsDescription {{
-    padding: 6px 0 0 0;
+    margin: 0;
 }}
 
 QPushButton[uiRole="iconButton"] {{
@@ -88,7 +89,7 @@ QPushButton[uiRole="toolbarPrimaryButton"] {{
 }}
 
 QPushButton[uiRole="toolbarPrimaryButton"] {{
-    border: 1px solid {tokens.panel_hover_border};
+    font-weight: 600;
 }}
 
 QWidget#ImportDropZone {{
@@ -102,16 +103,47 @@ QWidget#ImportDropZone[dragHover="true"] {{
     background: {tokens.drop_hover_background};
 }}
 
+QFrame[uiRole="toast"] {{
+    background: {tokens.toast_background};
+    border: 1px solid {tokens.toast_border};
+    border-radius: 8px;
+}}
+
+QFrame[uiRole="toast"][toastLevel="success"] {{
+    border-left: 4px solid {tokens.toast_success};
+}}
+
+QFrame[uiRole="toast"][toastLevel="warning"] {{
+    border-left: 4px solid {tokens.toast_warning};
+}}
+
+QFrame[uiRole="toast"][toastLevel="error"] {{
+    border-left: 4px solid {tokens.toast_error};
+}}
+
+QLabel[uiRole="toastTitle"] {{
+    font-weight: 600;
+}}
+
+QLabel[uiRole="toastMessage"] {{
+    color: {tokens.subtle_text};
+}}
+
+QPushButton[uiRole="toastClose"] {{
+    min-width: 22px;
+    max-width: 22px;
+    min-height: 22px;
+    max-height: 22px;
+    padding: 0;
+    border: none;
+}}
+
 QLabel[uiRole="dropZoneTitle"] {{
     font-weight: 600;
 }}
 
 QLabel[uiRole="dropZoneSubtitle"] {{
     color: {tokens.subtle_text};
-}}
-
-QSplitter::handle {{
-    background: transparent;
 }}
 """.strip()
 
@@ -124,6 +156,11 @@ def _tokens_for_theme(theme_mode: str) -> ThemeTokens:
             drop_background="rgba(255, 255, 255, 0.025)",
             drop_hover_background="rgba(88, 166, 255, 0.10)",
             subtle_text="#c7cdd4",
+            toast_background="#22272e",
+            toast_border="#3d444d",
+            toast_success="#2ea043",
+            toast_warning="#d29922",
+            toast_error="#f85149",
         )
 
     return ThemeTokens(
@@ -132,4 +169,9 @@ def _tokens_for_theme(theme_mode: str) -> ThemeTokens:
         drop_background="rgba(0, 0, 0, 0.025)",
         drop_hover_background="rgba(31, 111, 235, 0.08)",
         subtle_text="#4b5563",
+        toast_background="#ffffff",
+        toast_border="#d0d7de",
+        toast_success="#1a7f37",
+        toast_warning="#9a6700",
+        toast_error="#cf222e",
     )

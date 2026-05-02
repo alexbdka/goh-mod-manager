@@ -1,6 +1,6 @@
 from collections.abc import Callable
 
-from PySide6.QtWidgets import QInputDialog, QMessageBox, QStatusBar, QWidget
+from PySide6.QtWidgets import QInputDialog, QMessageBox, QWidget
 
 from src.core.exceptions import ConfigWriteError, ProfileWriteError
 from src.ui.widgets.preset_selector_widget import PresetSelectorWidget
@@ -20,7 +20,7 @@ class PresetController:
         save_preset: Callable[[str], None],
         delete_preset: Callable[[str], bool],
         get_all_presets: Callable[[], dict[str, list[str]]],
-        status_bar: QStatusBar,
+        show_info_message: Callable[[str, str], None],
         show_missing_mods_dialog: Callable[
             [str, str, list[str] | list[dict[str, str]]], None
         ],
@@ -33,7 +33,7 @@ class PresetController:
         self._save_preset = save_preset
         self._delete_preset = delete_preset
         self._get_all_presets = get_all_presets
-        self._status_bar = status_bar
+        self._show_info_message = show_info_message
         self._show_missing_mods_dialog = show_missing_mods_dialog
         self._handle_profile_write_error = handle_profile_write_error
         self._update_unsaved_state = update_unsaved_state
@@ -47,8 +47,9 @@ class PresetController:
 
         if success:
             self._preset_selector.set_current_preset(name)
-            self._status_bar.showMessage(
-                self._parent.tr("Applied preset: {0}").format(name), 3000
+            self._show_info_message(
+                self._parent.tr("Preset Applied"),
+                self._parent.tr("Applied preset: {0}").format(name),
             )
 
             if missing:
@@ -74,8 +75,9 @@ class PresetController:
 
         self._preset_selector.set_current_preset(name)
         self._update_unsaved_state()
-        self._status_bar.showMessage(
-            self._parent.tr("Saved preset: {0}").format(name), 3000
+        self._show_info_message(
+            self._parent.tr("Preset Saved"),
+            self._parent.tr("Saved preset: {0}").format(name),
         )
 
     def save_preset_as(self):
@@ -110,8 +112,9 @@ class PresetController:
 
         self._preset_selector.set_current_preset(name)
         self._update_unsaved_state()
-        self._status_bar.showMessage(
-            self._parent.tr("Saved new preset: {0}").format(name), 3000
+        self._show_info_message(
+            self._parent.tr("Preset Saved"),
+            self._parent.tr("Saved new preset: {0}").format(name),
         )
 
     def delete_preset(self, name: str):
@@ -131,8 +134,9 @@ class PresetController:
         except ConfigWriteError as error:
             self._show_config_write_error(error)
             return
-        self._status_bar.showMessage(
-            self._parent.tr("Deleted preset: {0}").format(name), 3000
+        self._show_info_message(
+            self._parent.tr("Preset Deleted"),
+            self._parent.tr("Deleted preset: {0}").format(name),
         )
 
     def _show_config_write_error(self, error: ConfigWriteError):
@@ -143,4 +147,3 @@ class PresetController:
                 error.path, error.reason
             ),
         )
-        self._status_bar.showMessage(self._parent.tr("Preset update failed."), 5000)

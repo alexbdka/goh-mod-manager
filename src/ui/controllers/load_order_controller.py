@@ -58,29 +58,27 @@ class LoadOrderController:
             self._handle_profile_write_error(error)
             return
 
-        if not result.changed:
-            return
-
-        self._status_message(
-            self._tr("Activated mod(s): {0}").format(
-                ", ".join(result.activated_mod_ids)
-            ),
-            3000,
-        )
+        if result.changed:
+            self._status_message(
+                self._tr("Activated mod(s): {0}").format(
+                    ", ".join(result.activated_mod_ids)
+                ),
+                3000,
+            )
 
         if result.missing_dependencies:
-            if len(result.activated_mod_ids) == 1:
-                mod_id = result.activated_mod_ids[0]
+            if len(mod_ids) == 1:
+                mod_id = mod_ids[0]
                 mod = self._get_mod_by_id(mod_id)
                 mod_name = mod.name if mod else mod_id
                 desc = self._tr(
-                    "The mod '<b>{0}</b>' was activated, but the following "
+                    "The mod '{0}' was not activated because the following "
                     "required dependencies are missing from your catalogue. "
                     "You must subscribe to them on the Workshop:"
                 ).format(mod_name)
             else:
                 desc = self._tr(
-                    "The selected mods were activated, but the following "
+                    "Some selected mods were not activated because the following "
                     "required dependencies are missing from your catalogue. "
                     "You must subscribe to them on the Workshop:"
                 )
@@ -90,6 +88,10 @@ class LoadOrderController:
                 desc,
                 result.missing_dependencies,
             )
+            return
+
+        if not result.changed:
+            return
 
     def remove_selected_mod(self) -> None:
         mod_id = self._active_mods_widget.get_selected_mod_id()

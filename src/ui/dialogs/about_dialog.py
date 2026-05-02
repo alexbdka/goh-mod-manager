@@ -12,6 +12,7 @@ class AboutDialog(LanguageChangeMixin, QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFixedSize(350, 180)
+        self.setAccessibleName("aboutDialog")
         self._setup_ui()
         self.retranslate_ui()
 
@@ -22,6 +23,7 @@ class AboutDialog(LanguageChangeMixin, QDialog):
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setWordWrap(True)
         self.label.setOpenExternalLinks(True)
+        self.label.setAccessibleName("aboutDialogText")
         layout.addWidget(self.label)
 
         # OK Button
@@ -43,16 +45,14 @@ class AboutDialog(LanguageChangeMixin, QDialog):
         icons = self.tr(
             'Icons by QtAwesome and <a href="https://github.com/philippedward">awsde</a>.'
         )
-        made = self.tr(
-            'Made with ♥ by <a href="https://github.com/alexbdka">alexbdka</a>.'
-        )
+        made = self.tr('Made by <a href="https://github.com/alexbdka">alexbdka</a>.')
 
         text = (
-            "<h3 style='margin-bottom: 5px;'>Gates of Hell - Mod Manager</h3>"
+            "<h3>Gates of Hell - Mod Manager</h3>"
             f"<p>{desc}</p>"
             f"<p>v{version}</p>"
             "<hr>"
-            f"<p style='color: gray; font-size: 10px;'>{dev}<br>"
+            f"<p>{dev}<br>"
             f"{icons}<br>"
             f"{made}</p>"
         )

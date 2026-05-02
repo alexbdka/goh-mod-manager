@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
     QHBoxLayout,
@@ -58,6 +58,7 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
         self.search_bar = QLineEdit()
         self.search_bar.setClearButtonEnabled(True)
         self.search_bar.textChanged.connect(self._apply_filters)
+        self.search_bar.setAccessibleName("catalogueSearch")
         search_layout.addWidget(self.search_bar)
 
         self.btn_toggle_view = QPushButton()
@@ -65,6 +66,7 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
         self.btn_toggle_view.setCheckable(True)
         self.btn_toggle_view.setChecked(True)
         self.btn_toggle_view.toggled.connect(self._on_toggle_view)
+        self.btn_toggle_view.setAccessibleName("catalogueToggleThumbnails")
         search_layout.addWidget(self.btn_toggle_view)
 
         layout.addLayout(search_layout)
@@ -74,13 +76,15 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
         self.tab_bar.addTab("")
         self.tab_bar.addTab("")
         self.tab_bar.currentChanged.connect(self._apply_filters)
+        self.tab_bar.setAccessibleName("catalogueSourceTabs")
         layout.addWidget(self.tab_bar)
 
         self.list_widget = QListWidget()
-        self.list_widget.setAlternatingRowColors(True)
+        self.list_widget.setAlternatingRowColors(False)
         self.list_widget.setSelectionMode(QListWidget.SelectionMode.ExtendedSelection)
         self.list_widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.list_widget.setMouseTracking(True)
+        self.list_widget.setAccessibleName("catalogueList")
         self.list_widget.itemSelectionChanged.connect(self.selection_changed.emit)
         self.list_widget.customContextMenuRequested.connect(
             self.context_menu_requested.emit
@@ -118,10 +122,31 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
     def retranslate_ui(self):
         self.title_label.setText(self.tr("Catalogue (Available Mods)"))
         self.search_bar.setPlaceholderText(self.tr("Search mods..."))
+        self.search_bar.setToolTip(
+            self.tr(
+                "Search by name, id, tags, dependencies, or source."
+                " Examples: id:123, tag:ui, dep:mod_x, source:local."
+            )
+        )
+        self.search_bar.setAccessibleDescription(
+            self.tr(
+                "Search by name, id, tags, dependencies, or source."
+                " Examples: id:123, tag:ui, dep:mod_x, source:local."
+            )
+        )
         self.btn_toggle_view.setText(self.tr("Thumbnails"))
+        self.btn_toggle_view.setAccessibleDescription(
+            self.tr("Toggle thumbnail previews in the catalogue list.")
+        )
         self.tab_bar.setTabText(0, self.tr("All"))
         self.tab_bar.setTabText(1, self.tr("Workshop"))
         self.tab_bar.setTabText(2, self.tr("Local"))
+        self.tab_bar.setAccessibleDescription(
+            self.tr("Filter the catalogue by source.")
+        )
+        self.list_widget.setAccessibleDescription(
+            self.tr("List of available mods in the catalogue.")
+        )
         self._apply_filters()
 
     def _apply_filters(self):
@@ -137,7 +162,7 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
             if current_tab == 2 and not mod.is_local:
                 continue
 
-            if search_text and search_text not in mod.name.lower():
+            if not self._matches_search(mod, search_text):
                 continue
 
             clean_name = markup_parser.strip_markup(mod.name)
@@ -179,6 +204,8 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
         has_filters = bool(search_text) or tab_index != 0
         is_empty = visible_count == 0
         self.empty_label.setVisible(is_empty)
+        if is_empty:
+            self.empty_label.raise_()
         self._position_empty_label()
 
         if not is_empty:
@@ -196,6 +223,10 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self._position_empty_label()
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        QTimer.singleShot(0, self._position_empty_label)
 
     def _position_empty_label(self):
         self.empty_label.setGeometry(self.list_widget.viewport().rect())
@@ -257,6 +288,69 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
                 ),
             }
         ]
+
+    def _matches_search(self, mod: ModState, query: str) -> bool:
+        if not query:
+            return True
+
+        parsed = self._parse_search_query(query)
+        source = "local" if mod.is_local else "workshop"
+
+        if parsed["source"] and source not in parsed["source"]:
+            return False
+
+        if parsed["id"] and not all(term in mod.id.lower() for term in parsed["id"]):
+            return False
+
+        tags_lower = [tag.lower() for tag in mod.tags]
+        if parsed["tag"] and not all(
+            any(term in tag for tag in tags_lower) for term in parsed["tag"]
+        ):
+            return False
+
+        dependencies_lower = [dep.lower() for dep in mod.dependencies]
+        if parsed["dep"] and not all(
+            any(term in dep for dep in dependencies_lower) for term in parsed["dep"]
+        ):
+            return False
+
+        searchable = " ".join(
+            [
+                markup_parser.strip_markup(mod.name).lower(),
+                mod.id.lower(),
+                " ".join(tags_lower),
+                " ".join(dependencies_lower),
+                source,
+            ]
+        )
+        return all(term in searchable for term in parsed["terms"])
+
+    @staticmethod
+    def _parse_search_query(query: str) -> dict[str, list[str]]:
+        parsed: dict[str, list[str]] = {
+            "terms": [],
+            "id": [],
+            "tag": [],
+            "dep": [],
+            "source": [],
+        }
+        for raw_token in query.split():
+            token = raw_token.strip().lower()
+            if not token:
+                continue
+
+            if ":" not in token:
+                parsed["terms"].append(token)
+                continue
+
+            key, value = token.split(":", 1)
+            if not value:
+                continue
+            if key in {"id", "tag", "dep", "source"}:
+                parsed[key].append(value)
+            else:
+                parsed["terms"].append(token)
+        return parsed
 
     def get_mod_id_at(self, pos) -> str | None:
         item = self.list_widget.itemAt(pos)

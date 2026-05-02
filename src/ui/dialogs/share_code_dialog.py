@@ -26,6 +26,7 @@ class ImportShareCodeDialog(LanguageChangeMixin, QDialog):
         layout.addWidget(self.label)
 
         self.code_input = QLineEdit()
+        self.code_input.setAccessibleName("shareCodeInput")
         self.code_input.setPlaceholderText(self.tr("e.g. eJzT0y..."))
         layout.addWidget(self.code_input)
 
@@ -46,3 +47,6 @@ class ImportShareCodeDialog(LanguageChangeMixin, QDialog):
         self.setWindowTitle(self.tr("Import Share Code"))
         self.label.setText(self.tr("Paste the Share Code below:"))
         self.code_input.setPlaceholderText(self.tr("e.g. eJzT0y..."))
+        self.code_input.setAccessibleDescription(
+            self.tr("Field used to paste an exported share code.")
+        )

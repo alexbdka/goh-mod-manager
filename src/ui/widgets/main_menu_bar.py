@@ -1,5 +1,5 @@
 import qtawesome as qta
-from PySide6.QtGui import QAction
+from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import QMainWindow, QMenuBar
 from src.ui.appearance_manager import AppearanceManager
 from src.ui.language_change_mixin import LanguageChangeMixin
@@ -21,13 +21,16 @@ class MainMenuBar(LanguageChangeMixin, QMenuBar):
         self.file_menu = self.addMenu("")
 
         self.import_code_action = QAction(self)
+        self.import_code_action.setShortcut("Ctrl+Shift+I")
         self.export_code_action = QAction(self)
+        self.export_code_action.setShortcut("Ctrl+Shift+E")
 
         self.file_menu.addAction(self.import_code_action)
         self.file_menu.addAction(self.export_code_action)
         self.file_menu.addSeparator()
 
         self.import_mod_action = QAction(self)
+        self.import_mod_action.setShortcut("Ctrl+I")
         self.file_menu.addAction(self.import_mod_action)
         self.file_menu.addSeparator()
 
@@ -54,12 +57,13 @@ class MainMenuBar(LanguageChangeMixin, QMenuBar):
         # Edit Menu
         self.edit_menu = self.addMenu("")
         self.settings_action = QAction(self)
+        self.settings_action.setShortcut("Ctrl+,")
         self.edit_menu.addAction(self.settings_action)
 
         # View Menu
         self.view_menu = self.addMenu("")
         self.refresh_action = QAction(self)
-        self.refresh_action.setShortcut("F5")
+        self.refresh_action.setShortcuts([QKeySequence("F5"), QKeySequence("Ctrl+R")])
         self.view_menu.addAction(self.refresh_action)
 
         # Help Menu

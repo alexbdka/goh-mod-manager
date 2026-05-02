@@ -58,6 +58,7 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         main_layout = QVBoxLayout(self)
 
         self.tabs = QTabWidget()
+        self.tabs.setAccessibleName("settingsTabs")
         main_layout.addWidget(self.tabs)
 
         self.paths_tab = QWidget()
@@ -88,6 +89,7 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         self.paths_form_layout = QFormLayout()
 
         self.game_path_input = QLineEdit(self.current_game_path)
+        self.game_path_input.setAccessibleName("settingsGamePath")
         self.btn_browse_game = QPushButton()
         self.btn_browse_game.clicked.connect(self._browse_game_path)
 
@@ -98,6 +100,7 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         self.paths_form_layout.addRow(self.game_path_label, game_layout)
 
         self.workshop_path_input = QLineEdit(self.current_workshop_path)
+        self.workshop_path_input.setAccessibleName("settingsWorkshopPath")
         self.btn_browse_workshop = QPushButton()
         self.btn_browse_workshop.clicked.connect(self._browse_workshop_path)
 
@@ -108,6 +111,7 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         self.paths_form_layout.addRow(self.workshop_path_label, workshop_layout)
 
         self.profile_path_input = QLineEdit(self.current_profile_path)
+        self.profile_path_input.setAccessibleName("settingsProfilePath")
         self.btn_browse_profile = QPushButton()
         self.btn_browse_profile.clicked.connect(self._browse_profile_path)
 
@@ -129,6 +133,7 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         self.appearance_form_layout = QFormLayout()
 
         self.theme_combo = QComboBox()
+        self.theme_combo.setAccessibleName("settingsTheme")
         self.theme_combo.addItem("", "auto")
         self.theme_combo.addItem("", "dark")
         self.theme_combo.addItem("", "light")
@@ -141,6 +146,7 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         self.appearance_form_layout.addRow(self.theme_label, self.theme_combo)
 
         self.font_combo = QComboBox()
+        self.font_combo.setAccessibleName("settingsFont")
         self.font_combo.addItem("", "default")
         self.font_combo.addItem("Inter", "Inter")
         self.font_combo.addItem("OpenDyslexic", "OpenDyslexic")
@@ -164,6 +170,7 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         self.language_form_layout = QFormLayout()
 
         self.language_combo = QComboBox()
+        self.language_combo.setAccessibleName("settingsLanguage")
         self._populate_language_options()
         self.language_label = QLabel()
         self.language_form_layout.addRow(self.language_label, self.language_combo)
@@ -262,10 +269,19 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         )
         self.btn_browse_game.setText(self.tr("Browse..."))
         self.game_path_label.setText(self.tr("Game Directory:"))
+        self.btn_browse_game.setAccessibleDescription(
+            self.tr("Browse for the game installation folder.")
+        )
         self.btn_browse_workshop.setText(self.tr("Browse..."))
         self.workshop_path_label.setText(self.tr("Workshop Directory:"))
+        self.btn_browse_workshop.setAccessibleDescription(
+            self.tr("Browse for the Steam Workshop content folder.")
+        )
         self.btn_browse_profile.setText(self.tr("Browse..."))
         self.profile_path_label.setText(self.tr("Profile (options.set):"))
+        self.btn_browse_profile.setAccessibleDescription(
+            self.tr("Browse for the profile options.set file.")
+        )
 
         self.appearance_info_label.setText(
             self.tr("Configure the visual appearance of the application.")

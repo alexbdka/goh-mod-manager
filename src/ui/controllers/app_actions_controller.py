@@ -56,8 +56,9 @@ class AppActionsController:
     def launch_game(self):
         success = self._launch_game()
         if success:
-            self._status_bar.showMessage(
-                self._parent.tr("Launching Call to Arms - Gates of Hell..."), 5000
+            self._show_info_message(
+                self._parent.tr("Launching Game"),
+                self._parent.tr("Launching Call to Arms - Gates of Hell..."),
             )
         else:
             self._show_error_message(

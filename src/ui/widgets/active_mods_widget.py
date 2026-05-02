@@ -1,5 +1,5 @@
 import qtawesome as qta
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QHBoxLayout,
@@ -78,7 +78,7 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
             0, QHeaderView.ResizeMode.Stretch
         )
         self.list_widget.setRootIsDecorated(False)
-        self.list_widget.setAlternatingRowColors(True)
+        self.list_widget.setAlternatingRowColors(False)
         self.list_widget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
         self.list_widget.setDefaultDropAction(Qt.DropAction.MoveAction)
         self.list_widget.setSelectionMode(
@@ -86,6 +86,7 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
         )
         self.list_widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.list_widget.setItemDelegate(ActiveModsItemDelegate(self.list_widget))
+        self.list_widget.setAccessibleName("activeModsList")
         layout.addWidget(self.list_widget)
 
         self.empty_label = QLabel(self.list_widget.viewport())
@@ -101,6 +102,9 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
         self.btn_up.setProperty("uiRole", "compactAction")
         self.btn_down.setProperty("uiRole", "compactAction")
         self.btn_clear.setProperty("uiRole", "compactAction")
+        self.btn_up.setAccessibleName("activeModsMoveUp")
+        self.btn_down.setAccessibleName("activeModsMoveDown")
+        self.btn_clear.setAccessibleName("activeModsClear")
         buttons_layout.addWidget(self.btn_up)
         buttons_layout.addWidget(self.btn_down)
         buttons_layout.addWidget(self.btn_clear)
@@ -201,6 +205,12 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
         self.btn_up.setToolTip(self.tr("Move selected mod up"))
         self.btn_down.setToolTip(self.tr("Move selected mod down"))
         self.btn_clear.setToolTip(self.tr("Clear active load order"))
+        self.btn_up.setAccessibleDescription(self.tr("Move the selected mod up."))
+        self.btn_down.setAccessibleDescription(self.tr("Move the selected mod down."))
+        self.btn_clear.setAccessibleDescription(self.tr("Remove all active mods."))
+        self.list_widget.setAccessibleDescription(
+            self.tr("List of active mods in load order.")
+        )
         self._update_header()
         self._update_empty_state()
         if self._current_mods:
@@ -212,6 +222,8 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
     def _update_empty_state(self):
         is_empty = len(self._current_mods) == 0
         self.empty_label.setVisible(is_empty)
+        if is_empty:
+            self.empty_label.raise_()
         self.empty_label.setText(
             self.tr(
                 "No active mods yet. Add mods from the catalogue to build a load order."
@@ -225,6 +237,10 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self._position_empty_label()
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        QTimer.singleShot(0, self._position_empty_label)
 
     def _position_empty_label(self):
         self.empty_label.setGeometry(self.list_widget.viewport().rect())
