@@ -21,13 +21,17 @@ plugins:
           paths:
             - .
           options:
-            force_inspection: true
+            force_inspection: false
             show_source: false
             show_root_heading: true
             show_root_toc_entry: false
             members_order: source
             separate_signature: true
             docstring_style: google
+            show_if_no_docstring: false
+            filters:
+              - "!^_"
+              - "^__init__$"
 nav:
   - Home: index.md
   - Architecture: architecture.md

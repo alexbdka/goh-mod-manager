@@ -62,7 +62,7 @@ class OnboardingOverlay(LanguageChangeMixin, QWidget):
 
         self._title_label = QLabel(self._card)
         self._title_label.setWordWrap(True)
-        self._title_label.setStyleSheet("font-weight: 600; font-size: 15px;")
+        self._title_label.setProperty("uiRole", "onboardingTitle")
         layout.addWidget(self._title_label)
 
         self._body_label = QLabel(self._card)
@@ -70,7 +70,7 @@ class OnboardingOverlay(LanguageChangeMixin, QWidget):
         layout.addWidget(self._body_label)
 
         self._step_label = QLabel(self._card)
-        self._step_label.setStyleSheet("font-size: 11px;")
+        self._step_label.setProperty("uiRole", "onboardingStep")
         layout.addWidget(self._step_label)
 
         button_row = QHBoxLayout()

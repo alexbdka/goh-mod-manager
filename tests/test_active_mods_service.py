@@ -107,8 +107,8 @@ class TestActiveModsService:
         # Activate Main Mod
         missing = self.service.activate_mod("Main")
 
-        # Check load order (Dep1 should be activated BEFORE Main)
-        assert self.service.active_mods_ids == ["Dep1", "Main"]
+        # Strict activation: do not activate mod tree when a dependency is missing.
+        assert self.service.active_mods_ids == []
 
         # Check missing dependencies
         assert missing == ["MissingDep"]

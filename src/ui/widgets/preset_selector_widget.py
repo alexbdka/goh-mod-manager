@@ -40,19 +40,26 @@ class PresetSelectorWidget(LanguageChangeMixin, QWidget):
 
         self.combo = QComboBox()
         self.combo.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
+        self.combo.setAccessibleName("presetSelector")
         layout.addWidget(self.combo, stretch=1)
 
         # Action Buttons
         self.btn_save = QPushButton()
+        self.btn_save.setProperty("uiRole", "iconButton")
         self.btn_save.setFixedWidth(30)
+        self.btn_save.setAccessibleName("presetSave")
         layout.addWidget(self.btn_save)
 
         self.btn_save_as = QPushButton()
+        self.btn_save_as.setProperty("uiRole", "iconButton")
         self.btn_save_as.setFixedWidth(30)
+        self.btn_save_as.setAccessibleName("presetSaveAs")
         layout.addWidget(self.btn_save_as)
 
         self.btn_delete = QPushButton()
+        self.btn_delete.setProperty("uiRole", "iconButton")
         self.btn_delete.setFixedWidth(30)
+        self.btn_delete.setAccessibleName("presetDelete")
         layout.addWidget(self.btn_delete)
         self.refresh_icons()
 
@@ -167,3 +174,6 @@ class PresetSelectorWidget(LanguageChangeMixin, QWidget):
             self.btn_save.setToolTip(self.tr("Save current load order to this preset"))
         self.btn_save_as.setToolTip(self.tr("Save as new preset"))
         self.btn_delete.setToolTip(self.tr("Delete this preset"))
+        self.combo.setAccessibleDescription(
+            self.tr("Select a preset to apply to the current load order.")
+        )

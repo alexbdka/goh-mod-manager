@@ -2,6 +2,7 @@ from contextlib import contextmanager
 
 import qtawesome as qta
 from PySide6.QtCore import Qt, QThreadPool, QTimer
+from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QApplication,
     QDialog,
@@ -39,6 +40,7 @@ from src.ui.widgets.catalogue_widget import CatalogueWidget
 from src.ui.widgets.main_menu_bar import MainMenuBar
 from src.ui.widgets.main_tool_bar import MainToolBar
 from src.ui.widgets.mod_details_widget import ModDetailsWidget
+from src.ui.widgets.toast_manager import ToastManager
 from src.utils import app_paths
 
 
@@ -49,6 +51,7 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         super().__init__()
         self.app_model = app_model
         self._onboarding_overlay: OnboardingOverlay | None = None
+        self._shortcuts: list[QShortcut] = []
 
         self.resize(1000, 1000)
 
@@ -75,6 +78,7 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         self._setup_menu()
         self._setup_toolbar()
         self._setup_ui()
+        self.toast_manager = ToastManager(self)
         self.selection_controller = SelectionController(
             parent=self,
             catalogue_widget=self.catalogue_widget,
@@ -106,13 +110,14 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
             save_preset=self.app_model.save_preset,
             delete_preset=self.app_model.delete_preset,
             get_all_presets=self.app_model.get_all_presets,
-            status_bar=self.statusBar(),
+            show_info_message=self._show_info_message,
             show_missing_mods_dialog=self._show_missing_mods_dialog,
             handle_profile_write_error=self._handle_profile_write_error,
             update_unsaved_state=self._update_preset_unsaved_state,
         )
         self._connect_signals()
         self._connect_menu_signals()
+        self._setup_shortcuts()
         self._connect_model_events()
         self.retranslate_ui()
 
@@ -147,8 +152,10 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         middle_layout = QVBoxLayout(middle_widget)
         middle_layout.setContentsMargins(5, 0, 5, 0)
         self.btn_add = QPushButton()
+        self.btn_add.setProperty("uiRole", "iconButton")
         self.btn_add.setIcon(qta.icon("fa5s.angle-double-right"))
         self.btn_remove = QPushButton()
+        self.btn_remove.setProperty("uiRole", "iconButton")
         self.btn_remove.setIcon(qta.icon("fa5s.angle-double-left"))
         middle_layout.addStretch()
         middle_layout.addWidget(self.btn_add)
@@ -223,13 +230,15 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         dialog.exec()
 
     def _show_info_message(self, title: str, message: str):
-        QMessageBox.information(self, title, message)
+        self.toast_manager.show_toast(title=title, message=message, level="info")
+        self.statusBar().showMessage(message.replace("\n", " "), 3000)
 
     def _show_error_message(self, title: str, message: str):
         QMessageBox.critical(self, title, message)
 
     def _show_warning_message(self, title: str, message: str):
-        QMessageBox.warning(self, title, message)
+        self.toast_manager.show_toast(title=title, message=message, level="warning")
+        self.statusBar().showMessage(message.replace("\n", " "), 4000)
 
     def retranslate_ui(self):
         self.setWindowTitle(self.tr("GoH Mod Manager"))
@@ -275,6 +284,8 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         self._connect_catalogue_signals()
         self._connect_active_mods_signals()
         self._connect_preset_signals()
+        self.toolbar.import_share_code_requested.connect(self._on_import_share_code)
+        self.toolbar.export_share_code_requested.connect(self._on_export_share_code)
         self.toolbar.play_requested.connect(self._on_launch_game)
 
     def _connect_catalogue_signals(self):
@@ -331,7 +342,9 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         icon_colors = AppearanceManager.get_icon_colors(self)
         self.btn_add.setIcon(qta.icon("fa5s.angle-double-right", **icon_colors))
         self.btn_remove.setIcon(qta.icon("fa5s.angle-double-left", **icon_colors))
+        self.main_menu_bar.refresh_icons()
         self.toolbar.refresh_icons()
+        self.active_mods_widget.refresh_icons()
         self.active_mods_widget.preset_selector.refresh_icons()
         self.catalogue_widget.refresh_icons()
 
@@ -372,6 +385,59 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         )
         self.main_menu_bar.about_action.triggered.connect(self._on_about)
 
+    def _setup_shortcuts(self):
+        self._register_shortcut("Ctrl+F", self._focus_catalogue_search)
+        self._register_shortcut("Ctrl+L", self._focus_active_mods_list)
+        self._register_shortcut("Delete", self._remove_selected_active_mod)
+        self._register_shortcut("Ctrl+Up", self._move_selected_active_mod_up)
+        self._register_shortcut("Ctrl+Down", self._move_selected_active_mod_down)
+        self._register_shortcut("Ctrl+Shift+C", self._clear_active_mods_shortcut)
+        self._register_shortcut("Ctrl+P", self._on_launch_game)
+
+    def _register_shortcut(self, key_sequence: str, callback):
+        shortcut = QShortcut(QKeySequence(key_sequence), self)
+        shortcut.setContext(Qt.ShortcutContext.WindowShortcut)
+        shortcut.activated.connect(callback)
+        self._shortcuts.append(shortcut)
+
+    def _focus_catalogue_search(self):
+        self.catalogue_widget.search_bar.setFocus(Qt.FocusReason.ShortcutFocusReason)
+        self.catalogue_widget.search_bar.selectAll()
+
+    def _focus_active_mods_list(self):
+        self.active_mods_widget.list_widget.setFocus(Qt.FocusReason.ShortcutFocusReason)
+
+    def _active_mods_has_focus(self) -> bool:
+        focused = QApplication.focusWidget()
+        active_list = self.active_mods_widget.list_widget
+        return bool(
+            focused and (focused is active_list or active_list.isAncestorOf(focused))
+        )
+
+    def _remove_selected_active_mod(self):
+        if not self._active_mods_has_focus():
+            return
+        self.load_order_controller.remove_selected_mod()
+
+    def _move_selected_active_mod_up(self):
+        if not self._active_mods_has_focus():
+            return
+        mod_id = self.active_mods_widget.get_selected_mod_id()
+        if mod_id:
+            self.load_order_controller.move_up(mod_id)
+
+    def _move_selected_active_mod_down(self):
+        if not self._active_mods_has_focus():
+            return
+        mod_id = self.active_mods_widget.get_selected_mod_id()
+        if mod_id:
+            self.load_order_controller.move_down(mod_id)
+
+    def _clear_active_mods_shortcut(self):
+        if not self._active_mods_has_focus():
+            return
+        self.load_order_controller.clear_mods()
+
     def refresh_ui(self):
         """Refresh all top-level widgets from the latest application state."""
         self._populate_catalogue()
@@ -388,9 +454,10 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
     def _on_export_share_code(self):
         result = self.app_model.build_share_code_export()
         if not result.has_active_mods:
-            self._show_info_message(
-                self.tr("Export Failed"),
-                self.tr("There are no active mods to export."),
+            self.toast_manager.show_toast(
+                title=self.tr("Export Failed"),
+                message=self.tr("There are no active mods to export."),
+                level="warning",
             )
             return
 
@@ -474,12 +541,22 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
     def _on_open_log_file(self):
         self.selection_controller.open_existing_path(str(app_paths.get_log_file_path()))
 
-    def _on_refresh_data(self):
+    def _refresh_data(self, *, notify: bool) -> None:
         """Reload data from disk while suppressing intermediate list signals."""
         with self._signals_blocked(self.catalogue_widget, self.active_mods_widget):
             self.app_model.reload()
 
-        self.statusBar().showMessage(self.tr("All data refreshed from disk."), 3000)
+        if notify:
+            message = self.tr("All data refreshed from disk.")
+            self.toast_manager.show_toast(
+                title=self.tr("Refresh Complete"),
+                message=message,
+                level="success",
+            )
+            self.statusBar().showMessage(message, 3000)
+
+    def _on_refresh_data(self):
+        self._refresh_data(notify=True)
 
     def open_settings_dialog(self):
         dialog = self._create_settings_dialog()
@@ -516,20 +593,46 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
             self._apply_language_settings(settings_state, previous_settings)
 
         if result.path_changed:
-            self._on_refresh_data()
-            self.statusBar().showMessage(
-                self.tr("Settings saved and data reloaded."), 3000
+            self._refresh_data(notify=False)
+            message = self.tr("Settings saved and data reloaded.")
+            self.toast_manager.show_toast(
+                title=self.tr("Settings Updated"),
+                message=message,
+                level="success",
             )
+            self.statusBar().showMessage(message, 3000)
         elif result.language_changed and result.appearance_changed:
-            self.statusBar().showMessage(
-                self.tr("Language and appearance settings applied."), 3000
+            message = self.tr("Language and appearance settings applied.")
+            self.toast_manager.show_toast(
+                title=self.tr("Settings Updated"),
+                message=message,
+                level="success",
             )
+            self.statusBar().showMessage(message, 3000)
         elif result.language_changed:
-            self.statusBar().showMessage(self.tr("Language settings applied."), 3000)
+            message = self.tr("Language settings applied.")
+            self.toast_manager.show_toast(
+                title=self.tr("Settings Updated"),
+                message=message,
+                level="success",
+            )
+            self.statusBar().showMessage(message, 3000)
         elif result.appearance_changed:
-            self.statusBar().showMessage(self.tr("Appearance settings applied."), 3000)
+            message = self.tr("Appearance settings applied.")
+            self.toast_manager.show_toast(
+                title=self.tr("Settings Updated"),
+                message=message,
+                level="success",
+            )
+            self.statusBar().showMessage(message, 3000)
         else:
-            self.statusBar().showMessage(self.tr("Settings saved."), 3000)
+            message = self.tr("Settings saved.")
+            self.toast_manager.show_toast(
+                title=self.tr("Settings Updated"),
+                message=message,
+                level="success",
+            )
+            self.statusBar().showMessage(message, 3000)
 
     def _apply_appearance_settings(
         self, settings_state: SettingsState, previous_settings: SettingsState
@@ -673,3 +776,7 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
 
     def _on_launch_game(self):
         self.app_actions_controller.launch_game()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.toast_manager.reposition_toasts()

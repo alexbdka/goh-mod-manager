@@ -3,6 +3,7 @@ import qtawesome as qta
 from PySide6.QtGui import QFont, QFontDatabase, QPalette
 from PySide6.QtWidgets import QApplication, QWidget
 
+from src.ui.styles import build_app_stylesheet
 from src.utils import app_paths
 
 
@@ -27,6 +28,18 @@ class AppearanceManager:
         app.setProperty(
             "resolved_theme_mode",
             AppearanceManager.resolve_theme_mode(app, normalized_theme),
+        )
+        resolved_theme = app.property("resolved_theme_mode")
+        stylesheet_theme = (
+            resolved_theme if resolved_theme in {"dark", "light"} else "light"
+        )
+        app.setStyleSheet(
+            "\n\n".join(
+                (
+                    app.styleSheet(),
+                    build_app_stylesheet(stylesheet_theme),
+                )
+            )
         )
         AppearanceManager._setup_icon_defaults(app)
 

@@ -29,3 +29,14 @@ def test_save_to_profile_raises_profile_write_error_on_atomic_write_failure(
 
     with pytest.raises(ProfileWriteError, match="file is locked"):
         service.save_to_profile(str(profile_path), catalogue_service=catalogue)
+
+
+def test_save_to_profile_raises_profile_write_error_when_profile_file_is_missing(
+    tmp_path: Path,
+):
+    missing_profile_path = tmp_path / "missing_options.set"
+    catalogue = ModsCatalogueService()
+    service = ActiveModsService(catalogue)
+
+    with pytest.raises(ProfileWriteError, match="Profile file not found"):
+        service.save_to_profile(str(missing_profile_path), catalogue_service=catalogue)

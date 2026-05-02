@@ -29,42 +29,53 @@ class ActiveModsService:
                 logger.warning(f"Active mod with ID {mod_id} not found in catalogue.")
         return active_mods
 
-    def activate_mod(self, mod_id: str, _visited: set | None = None) -> list[str]:
+    def activate_mod(self, mod_id: str, _visited: set[str] | None = None) -> list[str]:
         """
         Activate a mod and recursively activate any known dependencies first.
 
         Returns a list of dependency IDs that were referenced by the target mod
         but are missing from the catalogue.
         """
-        if _visited is None:
-            _visited = set()
+        root_call = _visited is None
+        snapshot = list(self.active_mods_ids) if root_call else None
+        visited = _visited if _visited is not None else set()
+        missing_deps = self._activate_mod_recursive(mod_id, visited)
 
-        missing_deps = []
-        if mod_id in _visited:
+        if root_call and missing_deps:
+            self.active_mods_ids = snapshot if snapshot is not None else []
+
+        return missing_deps
+
+    def _activate_mod_recursive(self, mod_id: str, visited: set[str]) -> list[str]:
+        missing_deps: list[str] = []
+        if mod_id in visited:
             return missing_deps
 
-        _visited.add(mod_id)
+        visited.add(mod_id)
 
-        if mod_id not in self.active_mods_ids:
-            mod = self.catalogue.get_mod(mod_id)
-            if mod and mod.dependencies:
-                for dep in mod.dependencies:
-                    if dep not in self.active_mods_ids:
-                        dep_mod = self.catalogue.get_mod(dep)
-                        if dep_mod:
-                            missing_deps.extend(
-                                self.activate_mod(dep, _visited=_visited)
-                            )
-                        else:
-                            missing_deps.append(dep)
-                            logger.warning(
-                                f"Dependency {dep} for mod {mod_id} "
-                                "not found in catalogue."
-                            )
+        if mod_id in self.active_mods_ids:
+            return missing_deps
 
-            self.active_mods_ids.append(mod_id)
-            logger.info(f"Activated mod: {mod_id}")
+        mod = self.catalogue.get_mod(mod_id)
+        if mod and mod.dependencies:
+            for dep in mod.dependencies:
+                if dep in self.active_mods_ids:
+                    continue
 
+                dep_mod = self.catalogue.get_mod(dep)
+                if dep_mod:
+                    missing_deps.extend(self._activate_mod_recursive(dep, visited))
+                else:
+                    missing_deps.append(dep)
+                    logger.warning(
+                        f"Dependency {dep} for mod {mod_id} not found in catalogue."
+                    )
+
+        if missing_deps:
+            return missing_deps
+
+        self.active_mods_ids.append(mod_id)
+        logger.info(f"Activated mod: {mod_id}")
         return missing_deps
 
     def replace_active_mods(self, mod_ids: list[str]) -> list[str]:
@@ -167,8 +178,9 @@ class ActiveModsService:
         remains untouched.
         """
         if not os.path.exists(options_set_path):
-            logger.error(f"Cannot save profile, file not found: {options_set_path}")
-            return
+            reason = "Profile file not found."
+            logger.error(f"Cannot save profile {options_set_path}: {reason}")
+            raise ProfileWriteError(options_set_path, reason)
 
         try:
             with open(options_set_path, encoding="utf-8") as f:

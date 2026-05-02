@@ -43,13 +43,19 @@ class ApplicationLoadOrderUseCase:
         profile_path = self._require_profile_path()
 
         for mod_id in mod_ids_to_activate:
+            missing = self._active_mods_service.activate_mod(mod_id)
+            if missing:
+                missing_dependencies.extend(missing)
+                continue
             activated_mod_ids.append(mod_id)
-            missing_dependencies.extend(self._active_mods_service.activate_mod(mod_id))
 
-        self._persist_changes(profile_path)
+        changed = bool(activated_mod_ids)
+        if changed:
+            self._persist_changes(profile_path)
+
         unique_missing = list(dict.fromkeys(missing_dependencies))
         return LoadOrderActivationResult(
-            changed=True,
+            changed=changed,
             activated_mod_ids=activated_mod_ids,
             missing_dependencies=unique_missing,
         )
