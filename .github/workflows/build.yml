@@ -67,7 +67,7 @@ jobs:
           $ErrorActionPreference = "Stop"
 
           $args = @(
-            "--onefile"
+            "--onedir"
             "--clean"
             "--windowed"
             "--paths", "."
@@ -95,10 +95,10 @@ jobs:
         run: |
           $ErrorActionPreference = "Stop"
           New-Item -ItemType Directory -Force -Path out | Out-Null
-          if (!(Test-Path "dist\goh_mod_manager.exe")) {
-            throw "Missing dist\goh_mod_manager.exe"
+          if (!(Test-Path "dist\goh_mod_manager")) {
+            throw "Missing dist\goh_mod_manager directory"
           }
-          Compress-Archive -Path "dist\goh_mod_manager.exe" -DestinationPath "out\goh_mod_manager-windows-x64.zip" -Force
+          Compress-Archive -Path "dist\goh_mod_manager" -DestinationPath "out\goh_mod_manager-windows-x64.zip" -Force
 
       # LINUX BUILD
       - name: Build (Linux)
