@@ -6,32 +6,32 @@
     <message>
         <location filename="../dialogs/about_dialog.py" line="36"/>
         <source>About GoH Mod Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>О GoH Mod Manager</translation>
     </message>
     <message>
         <location filename="../dialogs/about_dialog.py" line="38"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестно</translation>
     </message>
     <message>
         <location filename="../dialogs/about_dialog.py" line="40"/>
         <source>A modern, lightweight mod manager for Call to Arms - Gates of Hell.</source>
-        <translation type="unfinished"></translation>
+        <translation>Современный и легкий менеджер модов для Call to Arms — Gates of Hell.</translation>
     </message>
     <message>
         <location filename="../dialogs/about_dialog.py" line="42"/>
         <source>Developed with PySide6.</source>
-        <translation type="unfinished"></translation>
+        <translation>Разработано с использованием PySide6.</translation>
     </message>
     <message>
         <location filename="../dialogs/about_dialog.py" line="44"/>
         <source>Icons by QtAwesome and &lt;a href=&quot;https://github.com/philippedward&quot;&gt;awsde&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Иконки от QtAwesome и &lt;a href=&quot;https://github.com/philippedward&quot;&gt;awsde&lt;/a&gt;.</translation>
     </message>
     <message>
         <location filename="../dialogs/about_dialog.py" line="47"/>
         <source>Made with ♥ by &lt;a href=&quot;https://github.com/alexbdka&quot;&gt;alexbdka&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сделано с ♥ &lt;a href=&quot;https://github.com/alexbdka&quot;&gt;alexbdka&lt;/a&gt;.</translation>
     </message>
 </context>
 <context>
@@ -39,42 +39,42 @@
     <message>
         <location filename="../widgets/active_mods_widget.py" line="112"/>
         <source>Local Mod</source>
-        <translation type="unfinished"></translation>
+        <translation>Локальный Мод</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="114"/>
         <source>Workshop Mod</source>
-        <translation type="unfinished"></translation>
+        <translation>Workshop Мод</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="170"/>
         <source>Load Order (Active Mods)</source>
-        <translation type="unfinished"></translation>
+        <translation>Порядок загрузки (активные моды)</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="171"/>
         <source>Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Порядок</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="171"/>
         <source>Mod Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Название мода</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="172"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Вверх</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="173"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Вниз</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="174"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить</translation>
     </message>
 </context>
 <context>
@@ -82,60 +82,61 @@
     <message>
         <location filename="../widgets/catalogue_widget.py" line="105"/>
         <source>Catalogue (Available Mods)</source>
-        <translation type="unfinished"></translation>
+        <translation>Каталог (доступные моды)</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="106"/>
         <source>Search mods...</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск модов...</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="107"/>
         <source>Thumbnails</source>
-        <translation type="unfinished"></translation>
+        <translation>Миниатюры</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="108"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Все</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="109"/>
         <source>Workshop</source>
-        <translation type="unfinished"></translation>
+        <translation>Workshop</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="110"/>
         <source>Local</source>
-        <translation type="unfinished"></translation>
+        <translation>Локальные</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="132"/>
         <source>{0}
 Already active in the load order.</source>
-        <translation type="unfinished"></translation>
+        <translation>{0}
+Уже включено в порядок загрузки.</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="165"/>
         <source>Local Mod</source>
-        <translation type="unfinished"></translation>
+        <translation>Локальный Mod</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="165"/>
         <source>Workshop Mod</source>
-        <translation type="unfinished"></translation>
+        <translation>Workshop Мод</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="171"/>
         <location filename="../widgets/catalogue_widget.py" line="191"/>
         <source>Missing dependencies: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсутствующие зависимости: {0}</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="177"/>
         <location filename="../widgets/catalogue_widget.py" line="200"/>
         <source>Dependencies: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Зависимости: {0}</translation>
     </message>
 </context>
 <context>
@@ -143,7 +144,7 @@ Already active in the load order.</source>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="36"/>
         <source>Drag &amp; Drop a Mod Archive or Folder here</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетащите сюда архив модификаций или папку</translation>
     </message>
 </context>
 <context>
@@ -151,42 +152,42 @@ Already active in the load order.</source>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="106"/>
         <source>Select Mod Archive</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать архив мода</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="108"/>
         <source>Archives (*.zip *.rar *.7z *.tar *.gz);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Archives (*.zip *.rar *.7z *.tar *.gz);;All Files (*)</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="116"/>
         <source>Select Mod Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать папку мода</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="126"/>
         <source>Import Mod</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортировать мод</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="127"/>
         <source>Select Archive...</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать архив...</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="128"/>
         <source>Import from .zip, .rar, .7z, etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт из файлов формата .zip, .rar, .7z и т. д.</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="129"/>
         <source>Select Folder...</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать папку...</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="130"/>
         <source>Import an uncompressed mod folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортировать папку с модам в несжатом виде</translation>
     </message>
 </context>
 <context>
@@ -195,12 +196,12 @@ Already active in the load order.</source>
         <location filename="../dialogs/share_code_dialog.py" line="29"/>
         <location filename="../dialogs/share_code_dialog.py" line="48"/>
         <source>e.g. eJzT0y...</source>
-        <translation type="unfinished"></translation>
+        <translation>например, eJzT0y...</translation>
     </message>
     <message>
         <location filename="../dialogs/share_code_dialog.py" line="46"/>
         <source>Import Share Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт по коду доступа</translation>
     </message>
     <message>
         <location filename="../dialogs/share_code_dialog.py" line="47"/>
