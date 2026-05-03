@@ -136,11 +136,20 @@ jobs:
           tar -czf out/goh-mod-manager-linux.tar.gz -C dist "GoH Mod Manager"
 
       # UPLOAD ARTIFACTS
-      - name: Upload build artifact
+      - name: Upload Windows artifact
+        if: matrix.id == 'windows'
         uses: actions/upload-artifact@v4
         with:
-          name: goh_mod_manager-${{ matrix.id }}
+          name: goh_mod_manager-windows
           path: out/*.zip
+          if-no-files-found: error
+
+      - name: Upload Linux artifact
+        if: matrix.id == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: goh_mod_manager-linux
+          path: out/*.tar.gz
           if-no-files-found: error
 
   release:
@@ -163,7 +172,9 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/**/*.zip
+          files: |
+            dist/**/*.zip
+            dist/**/*.tar.gz
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
