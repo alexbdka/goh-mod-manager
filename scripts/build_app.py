@@ -2,6 +2,7 @@ import argparse
 import platform
 import subprocess
 import sys
+import tarfile
 import zipfile
 from pathlib import Path
 
@@ -59,7 +60,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--package",
         action="store_true",
-        help="Create a zip archive in out/ after a successful onefile build.",
+        help="Create an archive (zip on Windows, tar.gz on Linux) after build.",
     )
     parser.add_argument(
         "--skip-tests",
@@ -123,20 +124,61 @@ def add_data(source: str, destination: str, separator: str) -> str:
 
 
 def package_build(root_dir: Path, app_name: str, onefile: bool) -> None:
-    """Package a onefile build into a zip archive under ``out/``."""
-    if not onefile:
-        raise SystemExit("--package is only supported with --onefile builds.")
+    """Package the build into an archive under ``out/``.
 
-    executable = root_dir / "dist" / executable_name(app_name)
-    if not executable.exists():
-        raise SystemExit(f"Missing build output: {executable}")
-
+    - Windows: zip archive (supports both onefile and onedir)
+    - Linux: tar.gz archive (supports both onefile and onedir)
+    """
     out_dir = root_dir / "out"
     out_dir.mkdir(exist_ok=True)
-    archive_path = out_dir / archive_name(app_name)
 
-    with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
-        zf.write(executable, executable.name)
+    if is_windows():
+        _package_windows(root_dir, app_name, onefile, out_dir)
+    else:
+        _package_linux(root_dir, app_name, onefile, out_dir)
+
+
+def _package_windows(
+    root_dir: Path, app_name: str, onefile: bool, out_dir: Path
+) -> None:
+    """Package Windows build into zip."""
+    if onefile:
+        executable = root_dir / "dist" / executable_name(app_name)
+        if not executable.exists():
+            raise SystemExit(f"Missing build output: {executable}")
+        archive_path = out_dir / f"{_archive_base_name()}-windows.zip"
+        with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+            zf.write(executable, executable.name)
+    else:
+        # onedir: zip the directory
+        app_dir = root_dir / "dist" / app_name
+        if not app_dir.exists():
+            raise SystemExit(f"Missing build output: {app_dir}")
+        archive_path = out_dir / f"{_archive_base_name()}-windows.zip"
+        with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+            for file_path in app_dir.rglob("*"):
+                arcname = file_path.relative_to(app_dir.parent)
+                zf.write(file_path, arcname)
+
+
+def _package_linux(root_dir: Path, app_name: str, onefile: bool, out_dir: Path) -> None:
+    """Package Linux build into tar.gz."""
+
+    if onefile:
+        executable = root_dir / "dist" / executable_name(app_name)
+        if not executable.exists():
+            raise SystemExit(f"Missing build output: {executable}")
+        archive_path = out_dir / f"{_archive_base_name()}-linux.tar.gz"
+        with tarfile.open(archive_path, "w:gz") as tf:
+            tf.add(executable, arcname=executable.name)
+    else:
+        # onedir: tar the directory
+        app_dir = root_dir / "dist" / app_name
+        if not app_dir.exists():
+            raise SystemExit(f"Missing build output: {app_dir}")
+        archive_path = out_dir / f"{_archive_base_name()}-linux.tar.gz"
+        with tarfile.open(archive_path, "w:gz") as tf:
+            tf.add(app_dir, arcname=app_name)
 
 
 def print_build_summary(
@@ -165,9 +207,17 @@ def executable_name(app_name: str) -> str:
 
 
 def archive_name(app_name: str) -> str:
-    """Return the packaged zip file name for the current platform."""
-    os_id = "windows" if is_windows() else "linux"
-    return f"{app_name}-{os_id}-x64.zip"
+    """Return the packaged archive file name for the current platform."""
+    base = _archive_base_name()
+    if is_windows():
+        return f"{base}-windows.zip"
+    else:
+        return f"{base}-linux.tar.gz"
+
+
+def _archive_base_name() -> str:
+    """Return the base archive name (without extension)."""
+    return "goh-mod-manager"
 
 
 def is_windows() -> bool:

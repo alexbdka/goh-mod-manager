@@ -62,78 +62,16 @@ jobs:
       # WINDOWS BUILD
       - name: Build (Windows)
         if: matrix.id == 'windows'
-        shell: pwsh
+        shell: bash
         run: |
-          $ErrorActionPreference = "Stop"
-
-          $args = @(
-            "--onedir"
-            "--clean"
-            "--windowed"
-            "--paths", "."
-            "--name", "GoH Mod Manager"
-            "--icon", "assets\icons\logo.ico"
-          )
-
-          $qm = Get-ChildItem -Path "src\ui\i18n" -Filter *.qm -ErrorAction SilentlyContinue
-          if ($qm) {
-            $args += "--add-data"
-            $args += "src\ui\i18n\*.qm;src\ui\i18n"
-          }
-
-          $args += "--add-data"
-          $args += "assets\fonts;assets\fonts"
-          $args += "--add-data"
-          $args += ".app-version;."
-          $args += "src\main.py"
-
-          uv run pyinstaller @args
-
-      - name: Package output (Windows)
-        if: matrix.id == 'windows'
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = "Stop"
-          New-Item -ItemType Directory -Force -Path out | Out-Null
-          if (!(Test-Path "dist\GoH Mod Manager")) {
-            throw "Missing dist\GoH Mod Manager directory"
-          }
-          Compress-Archive -Path "dist\GoH Mod Manager" -DestinationPath "out\goh-mod-manager-windows.zip" -Force
+          uv run python scripts/build_app.py --onedir --package --skip-tests --skip-translations
 
       # LINUX BUILD
       - name: Build (Linux)
         if: matrix.id == 'linux'
         shell: bash
         run: |
-          set -euo pipefail
-
-          args=(
-            --onefile
-            --clean
-            --windowed
-            --paths .
-            --name "GoH Mod Manager"
-            --icon assets/icons/logo.png
-          )
-
-          if ls src/ui/i18n/*.qm >/dev/null 2>&1; then
-            args+=(--add-data "src/ui/i18n/*.qm:src/ui/i18n")
-          fi
-
-          args+=(--add-data "assets/fonts:assets/fonts")
-          args+=(--add-data ".app-version:.")
-          args+=(src/main.py)
-
-          uv run pyinstaller "${args[@]}"
-
-      - name: Package output (Linux)
-        if: matrix.id == 'linux'
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p out
-          test -f "dist/GoH Mod Manager"
-          tar -czf out/goh-mod-manager-linux.tar.gz -C dist "GoH Mod Manager"
+          uv run python scripts/build_app.py --onefile --package --skip-tests --skip-translations
 
       # UPLOAD ARTIFACTS
       - name: Upload Windows artifact
