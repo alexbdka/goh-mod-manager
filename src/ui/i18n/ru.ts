@@ -16,7 +16,7 @@
     <message>
         <location filename="../dialogs/about_dialog.py" line="42"/>
         <source>A modern, lightweight mod manager for Call to Arms - Gates of Hell.</source>
-        <translation>Современный и легкий менеджер модов для Call to Arms — Gates of Hell.</translation>
+        <translation>Современный и лёгкий менеджер модов для Call to Arms — Gates of Hell.</translation>
     </message>
     <message>
         <location filename="../dialogs/about_dialog.py" line="44"/>
@@ -31,7 +31,7 @@
     <message>
         <location filename="../dialogs/about_dialog.py" line="48"/>
         <source>Made by &lt;a href=&quot;https://github.com/alexbdka&quot;&gt;alexbdka&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Создано &lt;a href=&quot;https://github.com/alexbdka&quot;&gt;alexbdka&lt;/a&gt;.</translation>
     </message>
 </context>
 <context>
@@ -39,12 +39,12 @@
     <message>
         <location filename="../widgets/active_mods_widget.py" line="139"/>
         <source>Local Mod</source>
-        <translation>Локальный Мод</translation>
+        <translation>Локальный мод</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="139"/>
         <source>Workshop Mod</source>
-        <translation>Workshop Мод</translation>
+        <translation>Мод из Workshop</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="204"/>
@@ -54,47 +54,47 @@
     <message>
         <location filename="../widgets/active_mods_widget.py" line="205"/>
         <source>Move selected mod up</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить выбранный мод вверх</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="206"/>
         <source>Move selected mod down</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить выбранный мод вниз</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="207"/>
         <source>Clear active load order</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить активный порядок загрузки</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="208"/>
         <source>Move the selected mod up.</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить выбранный мод вверх.</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="209"/>
         <source>Move the selected mod down.</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить выбранный мод вниз.</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="210"/>
         <source>Remove all active mods.</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить все активные моды.</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="212"/>
         <source>List of active mods in load order.</source>
-        <translation type="unfinished"></translation>
+        <translation>Список активных модов в порядке загрузки.</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="220"/>
         <source>{0} active</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} активных</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="229"/>
         <source>No active mods yet. Add mods from the catalogue to build a load order.</source>
-        <translation type="unfinished"></translation>
+        <translation>Активных модов пока нет. Добавьте моды из каталога, чтобы сформировать порядок загрузки.</translation>
     </message>
 </context>
 <context>
@@ -113,7 +113,7 @@
         <location filename="../widgets/catalogue_widget.py" line="127"/>
         <location filename="../widgets/catalogue_widget.py" line="133"/>
         <source>Search by name, id, tags, dependencies, or source. Examples: id:123, tag:ui, dep:mod_x, source:local.</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск по названию, ID, тегам, зависимостям или источнику. Примеры: id:123, tag:ui, dep:mod_x, source:local.</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="137"/>
@@ -123,7 +123,7 @@
     <message>
         <location filename="../widgets/catalogue_widget.py" line="139"/>
         <source>Toggle thumbnail previews in the catalogue list.</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить или отключить предпросмотр миниатюр в списке каталога.</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="141"/>
@@ -143,49 +143,49 @@
     <message>
         <location filename="../widgets/catalogue_widget.py" line="145"/>
         <source>Filter the catalogue by source.</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтровать каталог по источнику.</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="148"/>
         <source>List of available mods in the catalogue.</source>
-        <translation type="unfinished"></translation>
+        <translation>Список доступных модов в каталоге.</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="171"/>
         <source>{0}
 Already active in the load order.</source>
         <translation>{0}
-Уже включено в порядок загрузки.</translation>
+Уже включён в порядок загрузки.</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="194"/>
         <source>{0} mods</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} модов</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="197"/>
         <source>{visible} of {total} mods</source>
-        <translation type="unfinished"></translation>
+        <translation>{visible} из {total} модов</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="215"/>
         <source>No mods match the current filters.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ни один мод не соответствует текущим фильтрам.</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="219"/>
         <source>No mods found. Configure your paths, then refresh the catalogue.</source>
-        <translation type="unfinished"></translation>
+        <translation>Моды не найдены. Настройте пути и обновите каталог.</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="251"/>
         <source>Local Mod</source>
-        <translation>Локальный Mod</translation>
+        <translation>Локальный мод</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="251"/>
         <source>Workshop Mod</source>
-        <translation>Workshop Мод</translation>
+        <translation>Мод из Workshop</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="257"/>
@@ -205,17 +205,17 @@ Already active in the load order.</source>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="60"/>
         <source>Drop a mod archive or folder here</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетащите сюда архив мода или папку</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="62"/>
         <source>Supported archives: .zip, .rar, .7z, .tar, .gz</source>
-        <translation type="unfinished"></translation>
+        <translation>Поддерживаемые форматы архивов: .zip, .rar, .7z, .tar, .gz</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="65"/>
         <source>Drop zone used to import a mod archive or folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Зона для перетаскивания архива мода или папки при импорте.</translation>
     </message>
 </context>
 <context>
@@ -263,12 +263,12 @@ Already active in the load order.</source>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="169"/>
         <source>Open a file picker to import a mod archive.</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть диалог выбора файла для импорта архива мода.</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="172"/>
         <source>Open a folder picker to import an uncompressed mod.</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть диалог выбора папки для импорта несжатого мода.</translation>
     </message>
 </context>
 <context>
@@ -292,7 +292,7 @@ Already active in the load order.</source>
     <message>
         <location filename="../dialogs/share_code_dialog.py" line="51"/>
         <source>Field used to paste an exported share code.</source>
-        <translation type="unfinished"></translation>
+        <translation>Поле для вставки экспортированного кода доступа.</translation>
     </message>
 </context>
 <context>
@@ -393,12 +393,12 @@ Already active in the load order.</source>
     <message>
         <location filename="../widgets/main_tool_bar.py" line="54"/>
         <source>Import Share Code</source>
-        <translation type="unfinished">Импорт по коду доступа</translation>
+        <translation>Импорт по коду доступа</translation>
     </message>
     <message>
         <location filename="../widgets/main_tool_bar.py" line="55"/>
         <source>Export Share Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт кода доступа</translation>
     </message>
     <message>
         <location filename="../widgets/main_tool_bar.py" line="56"/>
@@ -535,7 +535,7 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../main_window.py" line="552"/>
         <source>Refresh Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновление завершено</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="581"/>
@@ -570,7 +570,7 @@ You can now paste it to your friends.</source>
         <location filename="../main_window.py" line="623"/>
         <location filename="../main_window.py" line="631"/>
         <source>Settings Updated</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки обновлены</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="605"/>
@@ -707,27 +707,27 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../widgets/mod_details_widget.py" line="130"/>
         <source>ID: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>ID: {0}</translation>
     </message>
     <message>
         <location filename="../widgets/mod_details_widget.py" line="133"/>
         <source>Game Version: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Версия игры: {0}</translation>
     </message>
     <message>
         <location filename="../widgets/mod_details_widget.py" line="139"/>
         <source>Tags: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Теги: {0}</translation>
     </message>
     <message>
         <location filename="../widgets/mod_details_widget.py" line="143"/>
         <source>Requires: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Требует: {0}</translation>
     </message>
     <message>
         <location filename="../widgets/mod_details_widget.py" line="151"/>
         <source>No description available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание отсутствует.</translation>
     </message>
 </context>
 <context>
@@ -793,7 +793,7 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../widgets/preset_selector_widget.py" line="178"/>
         <source>Select a preset to apply to the current load order.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите пресет для применения к текущему порядку загрузки.</translation>
     </message>
 </context>
 <context>
@@ -821,7 +821,7 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="232"/>
         <source>{0} (Unavailable)</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} (недоступно)</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="260"/>
@@ -863,7 +863,7 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="273"/>
         <source>Browse for the game installation folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать папку с установленной игрой.</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="276"/>
@@ -873,7 +873,7 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="278"/>
         <source>Browse for the Steam Workshop content folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать папку с контентом Steam Workshop.</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="281"/>
@@ -883,7 +883,7 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="283"/>
         <source>Browse for the profile options.set file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать файл профиля options.set.</translation>
     </message>
     <message>
         <location filename="../dialogs/settings_dialog.py" line="287"/>
@@ -956,7 +956,7 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="60"/>
         <source>Launching Game</source>
-        <translation type="unfinished"></translation>
+        <translation>Запуск игры</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="61"/>
@@ -1060,7 +1060,7 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../controllers/preset_controller.py" line="51"/>
         <source>Preset Applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Пресет применён</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="52"/>
@@ -1081,7 +1081,7 @@ You can now paste it to your friends.</source>
         <location filename="../controllers/preset_controller.py" line="79"/>
         <location filename="../controllers/preset_controller.py" line="116"/>
         <source>Preset Saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Пресет сохранён</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="80"/>
@@ -1126,7 +1126,7 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../controllers/preset_controller.py" line="138"/>
         <source>Preset Deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>Пресет удалён</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="139"/>
