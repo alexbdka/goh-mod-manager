@@ -71,7 +71,7 @@ jobs:
             "--clean"
             "--windowed"
             "--paths", "."
-            "--name", "goh_mod_manager"
+            "--name", "GoH Mod Manager"
             "--icon", "assets\icons\logo.ico"
           )
 
@@ -95,10 +95,10 @@ jobs:
         run: |
           $ErrorActionPreference = "Stop"
           New-Item -ItemType Directory -Force -Path out | Out-Null
-          if (!(Test-Path "dist\goh_mod_manager")) {
-            throw "Missing dist\goh_mod_manager directory"
+          if (!(Test-Path "dist\GoH Mod Manager")) {
+            throw "Missing dist\GoH Mod Manager directory"
           }
-          Compress-Archive -Path "dist\goh_mod_manager" -DestinationPath "out\goh_mod_manager-windows-x64.zip" -Force
+          Compress-Archive -Path "dist\GoH Mod Manager" -DestinationPath "out\goh-mod-manager-windows.zip" -Force
 
       # LINUX BUILD
       - name: Build (Linux)
@@ -112,7 +112,7 @@ jobs:
             --clean
             --windowed
             --paths .
-            --name goh_mod_manager
+            --name "GoH Mod Manager"
             --icon assets/icons/logo.png
           )
 
@@ -132,8 +132,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p out
-          test -f dist/goh_mod_manager
-          zip -j out/goh_mod_manager-linux-x64.zip dist/goh_mod_manager
+          test -f "dist/GoH Mod Manager"
+          tar -czf out/goh-mod-manager-linux.tar.gz -C dist "GoH Mod Manager"
 
       # UPLOAD ARTIFACTS
       - name: Upload build artifact
