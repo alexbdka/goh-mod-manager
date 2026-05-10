@@ -38,10 +38,13 @@ class MainMenuBar(LanguageChangeMixin, QMenuBar):
         self.open_menu = self.file_menu.addMenu("")
         self.open_game_dir_action = QAction(self)
         self.open_profile_file_action = QAction(self)
+        self.open_config_folder_action = QAction(self)
         self.open_log_file_action = QAction(self)
 
         self.open_menu.addAction(self.open_game_dir_action)
         self.open_menu.addAction(self.open_profile_file_action)
+        self.open_menu.addSeparator()
+        self.open_menu.addAction(self.open_config_folder_action)
         self.open_menu.addAction(self.open_log_file_action)
 
         self.file_menu.addSeparator()
@@ -83,6 +86,7 @@ class MainMenuBar(LanguageChangeMixin, QMenuBar):
         self.import_mod_action.setText(self.tr("Import Mod..."))
         self.open_menu.setTitle(self.tr("Open..."))
         self.open_game_dir_action.setText(self.tr("Game Directory"))
+        self.open_config_folder_action.setText(self.tr("Config Folder"))
         self.open_profile_file_action.setText(self.tr("Profile (options.set)"))
         self.open_log_file_action.setText(self.tr("Log File"))
         self.exit_action.setText(self.tr("E&xit"))
@@ -101,6 +105,9 @@ class MainMenuBar(LanguageChangeMixin, QMenuBar):
         self.export_code_action.setIcon(qta.icon("fa5s.file-export", **icon_colors))
         self.import_mod_action.setIcon(qta.icon("fa5s.box-open", **icon_colors))
         self.open_game_dir_action.setIcon(qta.icon("fa5s.folder-open", **icon_colors))
+        self.open_config_folder_action.setIcon(
+            qta.icon("fa5s.folder-open", **icon_colors)
+        )
         self.open_profile_file_action.setIcon(qta.icon("fa5s.file-alt", **icon_colors))
         self.open_log_file_action.setIcon(
             qta.icon("fa5s.file-medical-alt", **icon_colors)

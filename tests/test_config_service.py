@@ -1,6 +1,8 @@
 import json
 import os
+import shutil
 import tempfile
+from typing import Any
 
 import pytest
 from src.core.config import AppConfig
@@ -110,3 +112,150 @@ class TestConfigService:
 
         with pytest.raises(ConfigWriteError):
             self.service.save(AppConfig(game_path="C:/Games/GoH"))
+
+    def test_empty_file_migrates_selected_legacy_qsettings_fields(self, monkeypatch):
+        with open(self.config_path, "w", encoding="utf-8") as f:
+            f.write("")
+
+        class FakeQSettings:
+            def __init__(self, _organization, _application):
+                self._values = {
+                    "game_directory": "C:/Legacy/Game",
+                    "mods_directory": "C:/Legacy/Workshop",
+                    "options_file": "C:/Legacy/Profile/options.set",
+                    "presets": '{"Main":[101, "202"], "Skirmish":"[\\"303\\", 404]"}',
+                    "language": "fr_FR",
+                    "font": "LegacyFont",
+                }
+
+            def value(self, key, default=None):
+                return self._values.get(key, default)
+
+        monkeypatch.setattr("src.services.config_service.QSettings", FakeQSettings)
+        self.service._allow_legacy_migration = True
+
+        loaded = self.service.load()
+
+        assert loaded.game_path == "C:/Legacy/Game"
+        assert loaded.workshop_path == "C:/Legacy/Workshop"
+        assert loaded.profile_path == "C:/Legacy/Profile/options.set"
+        assert loaded.presets == {"Main": ["101", "202"], "Skirmish": ["303", "404"]}
+        assert loaded.language == "en_US"
+        assert loaded.font == "Inter"
+
+        reloaded = ConfigService(config_path=self.config_path).get_config()
+        assert reloaded.game_path == "C:/Legacy/Game"
+        assert reloaded.workshop_path == "C:/Legacy/Workshop"
+        assert reloaded.profile_path == "C:/Legacy/Profile/options.set"
+        assert reloaded.presets == {"Main": ["101", "202"], "Skirmish": ["303", "404"]}
+
+    def test_effectively_empty_json_payload_triggers_legacy_migration(
+        self, monkeypatch
+    ):
+        with open(self.config_path, "w", encoding="utf-8") as f:
+            json.dump({"presets": {}}, f)
+
+        class FakeQSettings:
+            def __init__(self, _organization, _application):
+                self._values = {
+                    "game_directory": "C:/Legacy/Game",
+                    "mods_directory": "C:/Legacy/Workshop",
+                    "options_file": "C:/Legacy/Profile/options.set",
+                    "presets": {"Main": ["111", 222]},
+                }
+
+            def value(self, key, default=None):
+                return self._values.get(key, default)
+
+        monkeypatch.setattr("src.services.config_service.QSettings", FakeQSettings)
+        self.service._allow_legacy_migration = True
+
+        loaded = self.service.load()
+
+        assert loaded.game_path == "C:/Legacy/Game"
+        assert loaded.workshop_path == "C:/Legacy/Workshop"
+        assert loaded.profile_path == "C:/Legacy/Profile/options.set"
+        assert loaded.presets == {"Main": ["111", "222"]}
+
+    def test_missing_file_triggers_legacy_migration(self, monkeypatch):
+        class FakeQSettings:
+            def __init__(self, _organization, _application):
+                self._values = {
+                    "game_directory": "C:/Legacy/Game",
+                    "mods_directory": "C:/Legacy/Workshop",
+                    "options_file": "C:/Legacy/Profile/options.set",
+                    "presets": {"Campaign": ["9001"]},
+                }
+
+            def value(self, key, default=None):
+                return self._values.get(key, default)
+
+        monkeypatch.setattr("src.services.config_service.QSettings", FakeQSettings)
+        self.service._allow_legacy_migration = True
+
+        loaded = self.service.get_config()
+
+        assert loaded.game_path == "C:/Legacy/Game"
+        assert loaded.workshop_path == "C:/Legacy/Workshop"
+        assert loaded.profile_path == "C:/Legacy/Profile/options.set"
+        assert loaded.presets == {"Campaign": ["9001"]}
+
+    def test_qsettings_roundtrip_payload_is_migrated(self, monkeypatch):
+        from PySide6.QtCore import QSettings
+
+        qsettings_cls: Any = QSettings
+        ini_format = qsettings_cls.IniFormat
+        user_scope = qsettings_cls.UserScope
+        native_format = qsettings_cls.NativeFormat
+
+        settings_dir = tempfile.mkdtemp()
+        try:
+            qsettings_cls.setDefaultFormat(ini_format)
+            qsettings_cls.setPath(ini_format, user_scope, settings_dir)
+
+            writer = qsettings_cls("alex6", "GoH Mod Manager")
+            writer.clear()
+            writer.setValue("presets", {"Main": ["123", 456]})
+            writer.sync()
+
+            class QtSettingsBacked:
+                def __init__(self, organization, application):
+                    self._settings = qsettings_cls(organization, application)
+
+                def value(self, key, default=None):
+                    return self._settings.value(key, default)
+
+            monkeypatch.setattr(
+                "src.services.config_service.QSettings", QtSettingsBacked
+            )
+            self.service._allow_legacy_migration = True
+
+            with open(self.config_path, "w", encoding="utf-8") as f:
+                f.write("")
+
+            loaded = self.service.get_config()
+            assert loaded.presets == {"Main": ["123", "456"]}
+        finally:
+            qsettings_cls.setDefaultFormat(native_format)
+            shutil.rmtree(settings_dir, ignore_errors=True)
+
+    def test_migration_reads_legacy_single_identity(self, monkeypatch):
+        with open(self.config_path, "w", encoding="utf-8") as f:
+            f.write("")
+
+        class FakeQSettings:
+            def __init__(self, organization, application):
+                assert organization == "alex6"
+                assert application == "GoH Mod Manager"
+
+            def value(self, key, default=None):
+                if key == "presets":
+                    return {"LegacyPreset": ["42"]}
+                return default
+
+        monkeypatch.setattr("src.services.config_service.QSettings", FakeQSettings)
+        self.service._allow_legacy_migration = True
+
+        loaded = self.service.get_config()
+
+        assert loaded.presets == {"LegacyPreset": ["42"]}

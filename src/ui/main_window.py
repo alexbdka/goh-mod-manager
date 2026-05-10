@@ -369,6 +369,9 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         self.main_menu_bar.open_game_dir_action.triggered.connect(
             self._on_open_game_dir
         )
+        self.main_menu_bar.open_config_folder_action.triggered.connect(
+            self._on_open_config_folder
+        )
         self.main_menu_bar.open_profile_file_action.triggered.connect(
             self._on_open_profile
         )
@@ -537,6 +540,11 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         config = self.app_model.get_config()
         if config.profile_path:
             self.selection_controller.open_existing_path(config.profile_path)
+
+    def _on_open_config_folder(self):
+        self.selection_controller.open_existing_path(
+            str(app_paths.get_config_file_path().parent)
+        )
 
     def _on_open_log_file(self):
         self.selection_controller.open_existing_path(str(app_paths.get_log_file_path()))

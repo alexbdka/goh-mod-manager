@@ -1,13 +1,23 @@
 import json
 import logging
 import os
+from collections.abc import Mapping
+from typing import Any
 
 from src.core.config import AppConfig
 from src.core.exceptions import ConfigLoadError, ConfigWriteError
 from src.utils import app_paths
 from src.utils.file_utils import atomic_write_text
 
+try:
+    from PySide6.QtCore import QSettings
+except Exception:  # pragma: no cover - guarded fallback for non-Qt contexts
+    QSettings = None
+
 logger = logging.getLogger(__name__)
+
+LEGACY_QSETTINGS_ORGANIZATION = "alex6"
+LEGACY_QSETTINGS_APPLICATION = "GoH Mod Manager"
 
 
 class ConfigService:
@@ -19,6 +29,7 @@ class ConfigService:
     """
 
     def __init__(self, config_path: str | None = None):
+        self._allow_legacy_migration = config_path is None
         if config_path is None:
             self.config_path = str(app_paths.get_config_file_path())
         else:
@@ -40,6 +51,7 @@ class ConfigService:
 
         if not os.path.exists(self.config_path):
             logger.info(f"Config file not found at {self.config_path}. Using defaults.")
+            self._migrate_from_legacy_qsettings_if_possible()
             return self._config
 
         try:
@@ -47,6 +59,7 @@ class ConfigService:
                 logger.debug(
                     f"Config file {self.config_path} is empty. Using defaults."
                 )
+                self._migrate_from_legacy_qsettings_if_possible()
                 return self._config
 
             with open(self.config_path, encoding="utf-8") as f:
@@ -65,6 +78,9 @@ class ConfigService:
             self._config.font = data.get("font", "Inter")
             self._config.onboarding_seen = bool(data.get("onboarding_seen", False))
 
+            if self._is_effectively_empty_payload(data):
+                self._migrate_from_legacy_qsettings_if_possible()
+
             logger.info(f"Configuration loaded from {self.config_path}")
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse config file {self.config_path}: {e}")
@@ -76,6 +92,45 @@ class ConfigService:
             raise ConfigLoadError(self.config_path, str(e)) from e
 
         return self._config
+
+    def _is_effectively_empty_payload(self, data: Mapping[str, Any]) -> bool:
+        """Return True when JSON config has no meaningful migrated values yet."""
+        game_path = data.get("game_path")
+        workshop_path = data.get("workshop_path")
+        profile_path = data.get("profile_path")
+        presets = data.get("presets")
+
+        has_game_path = isinstance(game_path, str) and bool(game_path.strip())
+        has_workshop_path = isinstance(workshop_path, str) and bool(
+            workshop_path.strip()
+        )
+        has_profile_path = isinstance(profile_path, str) and bool(profile_path.strip())
+        has_presets = isinstance(presets, Mapping) and bool(presets)
+
+        return not any(
+            [has_game_path, has_workshop_path, has_profile_path, has_presets]
+        )
+
+    def _migrate_from_legacy_qsettings_if_possible(self) -> None:
+        """
+        Delegate legacy QSettings migration to a dedicated module.
+        """
+        try:
+            from src.db.migration.legacy_qsettings import (
+                migrate_from_legacy_qsettings,
+            )
+        except Exception:
+            logger.exception(
+                "Failed to import legacy migration module; skipping legacy migration."
+            )
+            return
+
+        migrate_from_legacy_qsettings(
+            config=self._config,
+            save_fn=self.save,
+            allow_legacy_migration=self._allow_legacy_migration,
+            config_path=self.config_path,
+        )
 
     def save(self, config: AppConfig | None = None) -> None:
         """Persist the provided config, or the cached config when omitted."""

@@ -298,87 +298,92 @@ Already active in the load order.</source>
 <context>
     <name>MainMenuBar</name>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="80"/>
+        <location filename="../widgets/main_menu_bar.py" line="83"/>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="81"/>
+        <location filename="../widgets/main_menu_bar.py" line="84"/>
         <source>Import Share Code...</source>
         <translation>Импортировать код доступа...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="82"/>
+        <location filename="../widgets/main_menu_bar.py" line="85"/>
         <source>Export Share Code...</source>
         <translation>Экспортировать код доступа...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="83"/>
+        <location filename="../widgets/main_menu_bar.py" line="86"/>
         <source>Import Mod...</source>
         <translation>Импортировать мод...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="84"/>
+        <location filename="../widgets/main_menu_bar.py" line="87"/>
         <source>Open...</source>
         <translation>Открыть...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="85"/>
+        <location filename="../widgets/main_menu_bar.py" line="88"/>
         <source>Game Directory</source>
         <translation>Папка игры</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="86"/>
+        <location filename="../widgets/main_menu_bar.py" line="89"/>
+        <source>Config Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/main_menu_bar.py" line="90"/>
         <source>Profile (options.set)</source>
         <translation>Профиль (options.set)</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="87"/>
+        <location filename="../widgets/main_menu_bar.py" line="91"/>
         <source>Log File</source>
         <translation>Файл журнала</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="88"/>
+        <location filename="../widgets/main_menu_bar.py" line="92"/>
         <source>E&amp;xit</source>
         <translation>В&amp;ыход</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="89"/>
+        <location filename="../widgets/main_menu_bar.py" line="93"/>
         <source>&amp;Edit</source>
         <translation>&amp;Правка</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="90"/>
+        <location filename="../widgets/main_menu_bar.py" line="94"/>
         <source>Preferences...</source>
         <translation>Настройки...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="91"/>
+        <location filename="../widgets/main_menu_bar.py" line="95"/>
         <source>&amp;View</source>
         <translation>&amp;Вид</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="92"/>
+        <location filename="../widgets/main_menu_bar.py" line="96"/>
         <source>Refresh</source>
         <translation>Обновить</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="93"/>
+        <location filename="../widgets/main_menu_bar.py" line="97"/>
         <source>&amp;Help</source>
         <translation>&amp;Справка</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="94"/>
+        <location filename="../widgets/main_menu_bar.py" line="98"/>
         <source>Generate Debug Report...</source>
         <translation>Сформировать отладочный отчёт...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="95"/>
+        <location filename="../widgets/main_menu_bar.py" line="99"/>
         <source>Interface Tour...</source>
         <translation>Обзор интерфейса...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="96"/>
+        <location filename="../widgets/main_menu_bar.py" line="100"/>
         <source>About</source>
         <translation>О программе</translation>
     </message>
@@ -409,32 +414,32 @@ Already active in the load order.</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../main_window.py" line="244"/>
+        <location filename="../main_window.py" line="245"/>
         <source>GoH Mod Manager</source>
         <translation>GoH Mod Manager</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="245"/>
+        <location filename="../main_window.py" line="246"/>
         <source>Add selected mod</source>
         <translation>Добавить выбранный мод</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="246"/>
+        <location filename="../main_window.py" line="247"/>
         <source>Remove selected mod</source>
         <translation>Удалить выбранный мод</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="248"/>
+        <location filename="../main_window.py" line="249"/>
         <source>Ready</source>
         <translation>Готово</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="274"/>
+        <location filename="../main_window.py" line="275"/>
         <source>Profile Update Failed</source>
         <translation>Ошибка обновления профиля</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="276"/>
+        <location filename="../main_window.py" line="277"/>
         <source>Could not update the game&apos;s profile file:
 {0}
 
@@ -451,27 +456,27 @@ Technical details:
 {1}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="281"/>
+        <location filename="../main_window.py" line="282"/>
         <source>Profile update failed.</source>
         <translation>Ошибка обновления профиля.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="458"/>
+        <location filename="../main_window.py" line="462"/>
         <source>Export Failed</source>
         <translation>Ошибка экспорта</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="459"/>
+        <location filename="../main_window.py" line="463"/>
         <source>There are no active mods to export.</source>
         <translation>Нет активных модов для экспорта.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="468"/>
+        <location filename="../main_window.py" line="472"/>
         <source>Export Success</source>
         <translation>Экспорт выполнен</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="470"/>
+        <location filename="../main_window.py" line="474"/>
         <source>Share Code has been copied to your clipboard!
 
 You can now paste it to your friends.</source>
@@ -480,70 +485,70 @@ You can now paste it to your friends.</source>
 Теперь вы можете поделиться им с друзьями.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="476"/>
+        <location filename="../main_window.py" line="480"/>
         <source>Export Error</source>
         <translation>Ошибка экспорта</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="476"/>
+        <location filename="../main_window.py" line="480"/>
         <source>Failed to generate Share Code.</source>
         <translation>Не удалось сформировать код доступа.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="494"/>
-        <location filename="../main_window.py" line="501"/>
+        <location filename="../main_window.py" line="498"/>
+        <location filename="../main_window.py" line="505"/>
         <source>Import Error</source>
         <translation>Ошибка импорта</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="495"/>
+        <location filename="../main_window.py" line="499"/>
         <source>Invalid or corrupted Share Code.</source>
         <translation>Недействительный или повреждённый код доступа.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="502"/>
+        <location filename="../main_window.py" line="506"/>
         <source>An unexpected error occurred:
 {0}</source>
         <translation>Произошла непредвиденная ошибка:
 {0}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="516"/>
+        <location filename="../main_window.py" line="520"/>
         <source>Imported with Missing Mods</source>
         <translation>Импортировано с отсутствующими модами</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="518"/>
+        <location filename="../main_window.py" line="522"/>
         <source>The load order was imported, but you are missing the following mods. You must subscribe to them on the Workshop for the preset to work perfectly:</source>
         <translation>Порядок загрузки импортирован, однако следующие моды отсутствуют. Для корректной работы пресета необходимо подписаться на них в Workshop:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="527"/>
+        <location filename="../main_window.py" line="531"/>
         <source>Import Success</source>
         <translation>Импорт выполнен</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="528"/>
+        <location filename="../main_window.py" line="532"/>
         <source>Share Code successfully applied!</source>
         <translation>Код доступа успешно применён!</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="550"/>
+        <location filename="../main_window.py" line="559"/>
         <source>All data refreshed from disk.</source>
         <translation>Все данные обновлены с диска.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="552"/>
+        <location filename="../main_window.py" line="561"/>
         <source>Refresh Complete</source>
         <translation>Обновление завершено</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="581"/>
+        <location filename="../main_window.py" line="590"/>
         <source>Settings Save Failed</source>
         <translation>Ошибка сохранения настроек</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="582"/>
+        <location filename="../main_window.py" line="591"/>
         <source>Could not save settings:
 {0}
 
@@ -554,51 +559,51 @@ You can now paste it to your friends.</source>
 {1}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="586"/>
+        <location filename="../main_window.py" line="595"/>
         <source>Settings save failed.</source>
         <translation>Ошибка сохранения настроек.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="597"/>
+        <location filename="../main_window.py" line="606"/>
         <source>Settings saved and data reloaded.</source>
         <translation>Настройки сохранены, данные перезагружены.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="599"/>
-        <location filename="../main_window.py" line="607"/>
-        <location filename="../main_window.py" line="615"/>
-        <location filename="../main_window.py" line="623"/>
-        <location filename="../main_window.py" line="631"/>
+        <location filename="../main_window.py" line="608"/>
+        <location filename="../main_window.py" line="616"/>
+        <location filename="../main_window.py" line="624"/>
+        <location filename="../main_window.py" line="632"/>
+        <location filename="../main_window.py" line="640"/>
         <source>Settings Updated</source>
         <translation>Настройки обновлены</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="605"/>
+        <location filename="../main_window.py" line="614"/>
         <source>Language and appearance settings applied.</source>
         <translation>Настройки языка и внешнего вида применены.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="613"/>
+        <location filename="../main_window.py" line="622"/>
         <source>Language settings applied.</source>
         <translation>Настройки языка применены.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="621"/>
+        <location filename="../main_window.py" line="630"/>
         <source>Appearance settings applied.</source>
         <translation>Настройки внешнего вида применены.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="629"/>
+        <location filename="../main_window.py" line="638"/>
         <source>Settings saved.</source>
         <translation>Настройки сохранены.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="696"/>
+        <location filename="../main_window.py" line="705"/>
         <source>Onboarding Save Failed</source>
         <translation>Ошибка сохранения обучения</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="697"/>
+        <location filename="../main_window.py" line="706"/>
         <source>Could not save onboarding progress:
 {0}
 
@@ -609,67 +614,67 @@ You can now paste it to your friends.</source>
 {1}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="702"/>
+        <location filename="../main_window.py" line="711"/>
         <source>Onboarding progress was not saved.</source>
         <translation>Прогресс обучения не был сохранён.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="711"/>
+        <location filename="../main_window.py" line="720"/>
         <source>Available Mods</source>
         <translation>Доступные моды</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="713"/>
+        <location filename="../main_window.py" line="722"/>
         <source>This catalogue lists the mods detected in your local mods folder and subscribed Workshop content.</source>
         <translation>В этом каталоге отображаются моды, обнаруженные в локальной папке, а также контент из подписок Workshop.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="722"/>
+        <location filename="../main_window.py" line="731"/>
         <source>Find What You Need</source>
         <translation>Найдите нужное</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="724"/>
+        <location filename="../main_window.py" line="733"/>
         <source>Use search and filters to narrow the catalogue by name and by source.</source>
         <translation>Используйте поиск и фильтры для отбора модов по названию и источнику.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="730"/>
+        <location filename="../main_window.py" line="739"/>
         <source>Manage the Load Order</source>
         <translation>Управление порядком загрузки</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="732"/>
+        <location filename="../main_window.py" line="741"/>
         <source>Use these controls, double-click, or drag and drop to move mods between the catalogue and the active load order.</source>
         <translation>Используйте кнопки, двойной щелчок или перетаскивание, чтобы перемещать моды между каталогом и активным порядком загрузки.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="739"/>
+        <location filename="../main_window.py" line="748"/>
         <source>Active Mods</source>
         <translation>Активные моды</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="741"/>
+        <location filename="../main_window.py" line="750"/>
         <source>This list is the load order that will be written to the game&apos;s profile. Lower entries load later and can override earlier ones.</source>
         <translation>Этот список — порядок загрузки, который будет записан в профиль игры. Моды, расположенные ниже, загружаются позже и могут перекрывать предыдущие.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="748"/>
+        <location filename="../main_window.py" line="757"/>
         <source>Presets</source>
         <translation>Пресеты</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="750"/>
+        <location filename="../main_window.py" line="759"/>
         <source>Save the current load order as a preset, reapply it later, or compare the current state against a saved setup.</source>
         <translation>Сохраните текущий порядок загрузки как пресет, чтобы применить его позже или сравнить с сохранённой конфигурацией.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="757"/>
+        <location filename="../main_window.py" line="766"/>
         <source>Mod Details</source>
         <translation>Сведения о моде</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="759"/>
+        <location filename="../main_window.py" line="768"/>
         <source>The details panel shows the selected mod&apos;s description, metadata, and dependency status.</source>
         <translation>Панель сведений отображает описание выбранного мода, метаданные и статус зависимостей.</translation>
     </message>
