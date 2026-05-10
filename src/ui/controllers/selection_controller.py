@@ -93,7 +93,10 @@ class SelectionController:
 
         action = menu.exec(global_pos)
 
+        if action is None:
+            return
+
         if action == open_folder_action:
             self.open_existing_path(mod.path)
-        elif action == open_workshop_action:
+        elif open_workshop_action is not None and action == open_workshop_action:
             system_actions.open_url(f"steam://url/CommunityFilePage/{mod_id}")
