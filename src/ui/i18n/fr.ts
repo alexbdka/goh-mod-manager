@@ -330,7 +330,7 @@ Déjà actif dans l&apos;ordre de chargement.</translation>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="89"/>
         <source>Config Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Dossier de configuration</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="90"/>
