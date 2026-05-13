@@ -1,8 +1,8 @@
 import qdarktheme
-import qtawesome as qta
 from PySide6.QtGui import QFont, QFontDatabase, QPalette
 from PySide6.QtWidgets import QApplication, QWidget
 
+from src.ui.qtawesome_compat import qta
 from src.ui.styles import build_app_stylesheet
 from src.utils import app_paths
 
