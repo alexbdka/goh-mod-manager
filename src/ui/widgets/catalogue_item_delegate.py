@@ -1,4 +1,3 @@
-import qtawesome as qta
 from PySide6.QtCore import QRect, QSize, Qt
 from PySide6.QtGui import QIcon, QPainter, QPalette, QPixmap
 from PySide6.QtWidgets import (
@@ -9,6 +8,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 from src.ui.appearance_manager import AppearanceManager
+from src.ui.qtawesome_compat import qta
 
 ROLE_MOD_ID = Qt.ItemDataRole.UserRole
 ROLE_TITLE = Qt.ItemDataRole.UserRole + 1

@@ -1,8 +1,8 @@
-import qtawesome as qta
 from PySide6.QtCore import QSize, Signal
 from PySide6.QtWidgets import QPushButton, QToolBar
 from src.ui.appearance_manager import AppearanceManager
 from src.ui.language_change_mixin import LanguageChangeMixin
+from src.ui.qtawesome_compat import qta
 
 
 class MainToolBar(LanguageChangeMixin, QToolBar):

@@ -27,6 +27,11 @@ jobs:
       - name: Sync dependencies
         run: uv sync --group dev --group docs --frozen
 
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y libegl1-mesa-dev libgl1-mesa-glx
+
       - name: Show tool versions
         run: |
           uv --version

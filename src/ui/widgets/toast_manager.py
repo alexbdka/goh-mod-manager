@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-import qtawesome as qta
 from PySide6.QtCore import QPoint, QRect, Qt, QTimer
 from PySide6.QtWidgets import (
     QFrame,
@@ -15,6 +14,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 from src.ui.appearance_manager import AppearanceManager
+from src.ui.qtawesome_compat import qta
 
 
 class ToastWidget(QFrame):

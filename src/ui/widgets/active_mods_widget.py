@@ -1,4 +1,3 @@
-import qtawesome as qta
 from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -15,6 +14,7 @@ from src.application.state import ActiveModsState, ModState
 from src.core.mod_reference import to_reference_key
 from src.ui.appearance_manager import AppearanceManager
 from src.ui.language_change_mixin import LanguageChangeMixin
+from src.ui.qtawesome_compat import qta
 from src.ui.widgets.active_mods_item_delegate import (
     ROLE_MOD_ID,
     ROLE_MOD_REF,

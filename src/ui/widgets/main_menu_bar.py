@@ -1,8 +1,8 @@
-import qtawesome as qta
 from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import QMainWindow, QMenuBar
 from src.ui.appearance_manager import AppearanceManager
 from src.ui.language_change_mixin import LanguageChangeMixin
+from src.ui.qtawesome_compat import qta
 
 
 class MainMenuBar(LanguageChangeMixin, QMenuBar):

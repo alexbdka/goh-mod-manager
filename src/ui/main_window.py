@@ -1,6 +1,5 @@
 from contextlib import contextmanager
 
-import qtawesome as qta
 from PySide6.QtCore import Qt, QThreadPool, QTimer
 from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtWidgets import (
@@ -34,6 +33,7 @@ from src.ui.dialogs.settings_dialog import SettingsDialog
 from src.ui.dialogs.share_code_dialog import ImportShareCodeDialog
 from src.ui.language_change_mixin import LanguageChangeMixin
 from src.ui.onboarding_overlay import OnboardingOverlay, OnboardingStep
+from src.ui.qtawesome_compat import qta
 from src.ui.translation_manager import TranslationManager
 from src.ui.widgets.active_mods_widget import ActiveModsWidget
 from src.ui.widgets.catalogue_widget import CatalogueWidget
