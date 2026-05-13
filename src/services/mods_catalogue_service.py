@@ -4,7 +4,7 @@ from typing import cast
 
 from src.core import constants
 from src.core.mod import ModInfo
-from src.utils.gem_parser import GemNodeValue, parse_gem_file
+from src.utils.gem_parser import GemNode, GemNodeValue, parse_gem_file
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +103,7 @@ class ModsCatalogueService:
                 return None
 
             # Find the root {mod ...} node
-            mod_node = next((node for node in nodes if node.name == "mod"), None)
+            mod_node = self._find_node_by_name(nodes, "mod")
             if not mod_node:
                 logger.error(f"No {{mod ...}} root node found in {file_path}")
                 return None
@@ -115,15 +115,27 @@ class ModsCatalogueService:
             data = cast(dict[str, GemNodeValue], raw_data)
 
             # Fall back to the folder ID when badly formatted mods omit a name.
-            name = self._coerce_string(data.get("name"), mod_id)
+            name = self._coerce_string(
+                self._get_value_ignore_case(data, "name"), mod_id
+            )
 
             # Normalize single-string tags and dependencies to lists so the rest
             # of the application can treat them consistently.
-            tags_raw = data.get("tags", [])
-            tags = tags_raw if isinstance(tags_raw, list) else [tags_raw]
+            tags_raw = self._get_value_ignore_case(data, "tags")
+            if tags_raw is None:
+                tags = []
+            elif isinstance(tags_raw, list):
+                tags = tags_raw
+            else:
+                tags = [tags_raw]
 
-            req_raw = data.get("require", [])
-            dependencies = req_raw if isinstance(req_raw, list) else [req_raw]
+            req_raw = self._get_value_ignore_case(data, "require")
+            if req_raw is None:
+                dependencies = []
+            elif isinstance(req_raw, list):
+                dependencies = req_raw
+            else:
+                dependencies = [req_raw]
 
             # Filter out empty strings from lists
             tags = [str(t) for t in tags if t]
@@ -135,7 +147,9 @@ class ModsCatalogueService:
                 if d
             ]
 
-            image_name = self._coerce_string(data.get("image"), "").strip('"/\\')
+            image_name = self._coerce_string(
+                self._get_value_ignore_case(data, "image"), ""
+            ).strip('"/\\')
             image_path = None
             if image_name:
                 img_path = os.path.join(mod_dir_path, image_name)
@@ -152,10 +166,14 @@ class ModsCatalogueService:
             return ModInfo(
                 id=mod_id,
                 name=name,
-                desc=self._coerce_string(data.get("desc"), ""),
+                desc=self._coerce_string(self._get_value_ignore_case(data, "desc"), ""),
                 tags=tags,
-                minGameVersion=self._coerce_optional_string(data.get("minGameVersion")),
-                maxGameVersion=self._coerce_optional_string(data.get("maxGameVersion")),
+                minGameVersion=self._coerce_optional_string(
+                    self._get_value_ignore_case(data, "minGameVersion")
+                ),
+                maxGameVersion=self._coerce_optional_string(
+                    self._get_value_ignore_case(data, "maxGameVersion")
+                ),
                 dependencies=dependencies,
                 isLocal=is_local,
                 # Keep shader detection disabled until we add a dedicated scan.
@@ -179,3 +197,29 @@ class ModsCatalogueService:
         if isinstance(value, str):
             return value
         return None
+
+    @staticmethod
+    def _find_node_by_name(nodes: list[GemNode], node_name: str) -> GemNode | None:
+        target = node_name.casefold()
+        return next(
+            (
+                node
+                for node in nodes
+                if node.name is not None and node.name.casefold() == target
+            ),
+            None,
+        )
+
+    @staticmethod
+    def _get_value_ignore_case(
+        data: dict[str, GemNodeValue], key: str
+    ) -> GemNodeValue | None:
+        target = key.casefold()
+        return next(
+            (
+                value
+                for existing_key, value in data.items()
+                if existing_key.casefold() == target
+            ),
+            None,
+        )

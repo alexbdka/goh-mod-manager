@@ -6,7 +6,7 @@ from src.core.exceptions import ProfileWriteError
 from src.core.mod import ModInfo
 from src.services.mods_catalogue_service import ModsCatalogueService
 from src.utils.file_utils import atomic_write_text
-from src.utils.gem_parser import parse_gem_file
+from src.utils.gem_parser import GemNode, parse_gem_file
 
 logger = logging.getLogger(__name__)
 
@@ -141,13 +141,11 @@ class ActiveModsService:
             if not nodes:
                 return
 
-            options_node = next((n for n in nodes if n.name == "options"), None)
+            options_node = self._find_node_by_name(nodes, "options")
             if not options_node:
                 return
 
-            mods_node = next(
-                (n for n in options_node.children if n.name == "mods"), None
-            )
+            mods_node = self._find_node_by_name(options_node.children, "mods")
             if not mods_node:
                 return
 
@@ -242,6 +240,18 @@ class ActiveModsService:
         except Exception as e:
             logger.error(f"Failed to save profile to {options_set_path}: {e}")
             raise ProfileWriteError(options_set_path, str(e)) from e
+
+    @staticmethod
+    def _find_node_by_name(nodes: list[GemNode], node_name: str) -> GemNode | None:
+        target = node_name.casefold()
+        return next(
+            (
+                node
+                for node in nodes
+                if node.name is not None and node.name.casefold() == target
+            ),
+            None,
+        )
 
     @staticmethod
     def _find_matching_block_end(content: str, block_start: int) -> int | None:

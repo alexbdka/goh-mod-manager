@@ -89,6 +89,6 @@ def parse_gem_file(file_path: str) -> list[GemNode]:
     """
     Reads and parses a GEM engine format file.
     """
-    with open(file_path, encoding="utf-8") as f:
+    with open(file_path, encoding="utf-8", errors="replace") as f:
         content = f.read()
     return parse_gem(content)

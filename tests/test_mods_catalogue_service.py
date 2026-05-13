@@ -52,6 +52,33 @@ class TestModsCatalogueService:
         assert workshop_mod.name == "Workshop 1"
         assert not workshop_mod.isLocal
 
+    def test_load_catalogue_with_case_mixed_mod_info(self):
+        mod_dir = os.path.join(self.local_path, "mixed_case_mod")
+        os.makedirs(mod_dir)
+        info_path = os.path.join(mod_dir, "mod.info")
+        with open(info_path, "w", encoding="utf-8") as f:
+            f.write(
+                "{MoD\n"
+                '\t{NaMe "Mixed Case Mod"}\n'
+                '\t{DeSc "Mixed Case Description"}\n'
+                '\t{TaGs "tag_one tag_two"}\n'
+                '\t{ReQuIrE "mod_12345"}\n'
+                '\t{MiNgAmEvErSiOn "1.061"}\n'
+                '\t{MaXgAmEvErSiOn "1.062"}\n'
+                "}"
+            )
+
+        self.service.load_catalogue(self.local_path, self.workshop_path)
+
+        mod = self.service.get_mod("mixed_case_mod")
+        assert mod is not None
+        assert mod.name == "Mixed Case Mod"
+        assert mod.desc == "Mixed Case Description"
+        assert mod.tags == ["tag_one tag_two"]
+        assert mod.dependencies == ["12345"]
+        assert mod.minGameVersion == "1.061"
+        assert mod.maxGameVersion == "1.062"
+
     def test_get_mod_not_found(self):
         self.service.load_catalogue(self.local_path, self.workshop_path)
         mod = self.service.get_mod("non_existent_mod")

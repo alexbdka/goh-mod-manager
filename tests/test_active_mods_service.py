@@ -91,6 +91,24 @@ class TestActiveModsService:
         finally:
             os.remove(temp_path)
 
+    def test_load_from_profile_handles_case_mixed_block_names(self):
+        with tempfile.NamedTemporaryFile(
+            mode="w", delete=False, suffix=".set", encoding="utf-8"
+        ) as tf:
+            tf.write(
+                "{Options\n"
+                '\t{Video {adapter "NVIDIA"}}\n'
+                '\t{MoDs\n\t\t"mod_12345:0"\n\t}\n'
+                "}"
+            )
+            temp_path = tf.name
+
+        try:
+            self.service.load_from_profile(temp_path)
+            assert self.service.active_mods_ids == ["12345"]
+        finally:
+            os.remove(temp_path)
+
     def test_activate_with_dependencies(self):
         # Setup mods with dependencies
         self.catalogue._local_mods["Dep1"] = ModInfo(
