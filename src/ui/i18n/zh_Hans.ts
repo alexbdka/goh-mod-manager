@@ -330,7 +330,7 @@ Already active in the load order.</source>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="89"/>
         <source>Config Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>配置文件夹</translation>
     </message>
     <message>
         <location filename="../widgets/main_menu_bar.py" line="90"/>
