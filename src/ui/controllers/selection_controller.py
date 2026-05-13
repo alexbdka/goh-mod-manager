@@ -4,6 +4,7 @@ from contextlib import AbstractContextManager
 from PySide6.QtWidgets import QMenu, QWidget
 
 from src.application.state import ModState
+from src.core.mod_reference import parse_reference_key
 from src.ui.widgets.active_mods_widget import ActiveModsWidget
 from src.ui.widgets.catalogue_widget import CatalogueWidget
 from src.ui.widgets.mod_details_widget import ModDetailsWidget
@@ -22,7 +23,7 @@ class SelectionController:
         catalogue_widget: CatalogueWidget,
         active_mods_widget: ActiveModsWidget,
         mod_details_widget: ModDetailsWidget,
-        get_mod_by_id: Callable[[str], ModState | None],
+        get_mod_by_id: Callable[[str, bool | None], ModState | None],
         signals_blocked: Callable[..., AbstractContextManager],
         show_warning_message: Callable[[str, str], None],
     ):
@@ -35,40 +36,50 @@ class SelectionController:
         self._show_warning_message = show_warning_message
 
     def show_catalogue_context_menu(self, pos):
-        mod_id = self._catalogue_widget.get_mod_id_at(pos)
-        if not mod_id:
+        mod_ref = self._catalogue_widget.get_mod_ref_at(pos)
+        if not mod_ref:
             return
         self._show_mod_context_menu(
-            mod_id, self._catalogue_widget.map_list_pos_to_global(pos)
+            mod_ref, self._catalogue_widget.map_list_pos_to_global(pos)
         )
 
     def show_active_mods_context_menu(self, pos):
-        mod_id = self._active_mods_widget.get_mod_id_at(pos)
-        if not mod_id:
+        mod_ref = self._active_mods_widget.get_mod_ref_at(pos)
+        if not mod_ref:
             return
         self._show_mod_context_menu(
-            mod_id, self._active_mods_widget.map_list_pos_to_global(pos)
+            mod_ref, self._active_mods_widget.map_list_pos_to_global(pos)
         )
 
     def handle_catalogue_selection_changed(self):
-        mod_id = self._catalogue_widget.get_selected_mod_id()
-        if not mod_id:
+        mod_ref = self._catalogue_widget.get_selected_mod_ref()
+        if not mod_ref:
+            return
+        reference = parse_reference_key(mod_ref)
+        if reference is None:
             return
 
         with self._signals_blocked(self._active_mods_widget):
             self._active_mods_widget.clear_selection()
 
-        self._mod_details_widget.display_mod(self._get_mod_by_id(mod_id))
+        self._mod_details_widget.display_mod(
+            self._get_mod_by_id(reference.id, reference.is_local)
+        )
 
     def handle_active_mods_selection_changed(self):
-        mod_id = self._active_mods_widget.get_selected_mod_id()
-        if not mod_id:
+        mod_ref = self._active_mods_widget.get_selected_mod_ref()
+        if not mod_ref:
+            return
+        reference = parse_reference_key(mod_ref)
+        if reference is None:
             return
 
         with self._signals_blocked(self._catalogue_widget):
             self._catalogue_widget.clear_selection()
 
-        self._mod_details_widget.display_mod(self._get_mod_by_id(mod_id))
+        self._mod_details_widget.display_mod(
+            self._get_mod_by_id(reference.id, reference.is_local)
+        )
 
     def open_existing_path(self, path: str):
         if not path or not system_actions.open_path(path):
@@ -77,8 +88,12 @@ class SelectionController:
                 self._parent.tr("Cannot find path:\n{0}").format(path),
             )
 
-    def _show_mod_context_menu(self, mod_id: str, global_pos):
-        mod = self._get_mod_by_id(mod_id)
+    def _show_mod_context_menu(self, mod_ref: str, global_pos):
+        reference = parse_reference_key(mod_ref)
+        if reference is None:
+            return
+
+        mod = self._get_mod_by_id(reference.id, reference.is_local)
         if not mod:
             return
 
@@ -86,7 +101,7 @@ class SelectionController:
 
         open_folder_action = menu.addAction(self._parent.tr("Open Mod Folder"))
         open_workshop_action = None
-        if not mod.is_local and mod_id.isdigit():
+        if not mod.is_local and mod.id.isdigit():
             open_workshop_action = menu.addAction(
                 self._parent.tr("Open in Steam Workshop")
             )
@@ -99,4 +114,4 @@ class SelectionController:
         if action == open_folder_action:
             self.open_existing_path(mod.path)
         elif open_workshop_action is not None and action == open_workshop_action:
-            system_actions.open_url(f"steam://url/CommunityFilePage/{mod_id}")
+            system_actions.open_url(f"steam://url/CommunityFilePage/{mod.id}")

@@ -207,9 +207,11 @@ class ModManager:
         """Returns a view-neutral snapshot of the active load order."""
         return self.queries.get_active_mods_state()
 
-    def get_mod_state(self, mod_id: str) -> ModState | None:
+    def get_mod_state(
+        self, mod_id: str, is_local: bool | None = None
+    ) -> ModState | None:
         """Returns a view-neutral snapshot for a specific mod."""
-        return self.queries.get_mod_state(mod_id)
+        return self.queries.get_mod_state(mod_id, is_local=is_local)
 
     def is_mod_active(self, mod_id: str) -> bool:
         """Checks if a specific mod is active."""

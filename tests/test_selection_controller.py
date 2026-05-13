@@ -12,6 +12,12 @@ class _DummyWidget:
     def get_mod_id_at(self, _pos):
         return None
 
+    def get_mod_ref_at(self, _pos):
+        return None
+
+    def get_selected_mod_ref(self):
+        return None
+
     def map_list_pos_to_global(self, pos):
         return pos
 
@@ -66,10 +72,10 @@ def test_local_mod_context_menu_cancel_does_not_open_workshop(monkeypatch):
 
     monkeypatch.setattr(sc.system_actions, "open_url", mock_open_url)
 
-    mod = SimpleNamespace(is_local=True, path="C:/mods/template")
-    controller = _build_controller(lambda _mod_id: mod)
+    mod = SimpleNamespace(id="template", is_local=True, path="C:/mods/template")
+    controller = _build_controller(lambda _mod_id, _is_local: mod)
 
-    controller._show_mod_context_menu("template", (0, 0))
+    controller._show_mod_context_menu("local::template", (0, 0))
 
     assert opened_urls == []
 
@@ -85,10 +91,10 @@ def test_workshop_action_opens_steam_for_workshop_mod(monkeypatch):
 
     monkeypatch.setattr(sc.system_actions, "open_url", mock_open_url)
 
-    mod = SimpleNamespace(is_local=False, path="C:/mods/123456")
-    controller = _build_controller(lambda _mod_id: mod)
+    mod = SimpleNamespace(id="123456", is_local=False, path="C:/mods/123456")
+    controller = _build_controller(lambda _mod_id, _is_local: mod)
 
     fake_menu.select_last = True
-    controller._show_mod_context_menu("123456", (0, 0))
+    controller._show_mod_context_menu("workshop::123456", (0, 0))
 
     assert opened_urls == ["steam://url/CommunityFilePage/123456"]

@@ -15,6 +15,7 @@ ROLE_TITLE = Qt.ItemDataRole.UserRole + 1
 ROLE_PIXMAP = Qt.ItemDataRole.UserRole + 2
 ROLE_STATUS_ENTRIES = Qt.ItemDataRole.UserRole + 3
 ROLE_IS_ACTIVE = Qt.ItemDataRole.UserRole + 4
+ROLE_MOD_REF = Qt.ItemDataRole.UserRole + 5
 
 
 class CatalogueItemDelegate(QStyledItemDelegate):

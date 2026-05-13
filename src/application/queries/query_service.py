@@ -41,13 +41,14 @@ class ApplicationQueryService:
 
     def get_catalogue_state(self) -> CatalogueState:
         """Return catalogue items annotated with active-state and dependency status."""
-        active_mod_ids = set(self._active_mods_service.active_mods_ids)
         known_mod_ids = {mod.id for mod in self._catalogue_service.all_mods}
 
         items = [
             self._to_mod_state(
                 mod,
-                is_active=mod.id in active_mod_ids,
+                is_active=self._active_mods_service.is_active(
+                    mod.id, is_local=mod.isLocal
+                ),
                 missing_dependencies=[
                     dep_id for dep_id in mod.dependencies if dep_id not in known_mod_ids
                 ],
@@ -64,21 +65,26 @@ class ApplicationQueryService:
         ]
         return ActiveModsState(items=items)
 
-    def get_mod_state(self, mod_id: str) -> ModState | None:
+    def get_mod_state(
+        self, mod_id: str, *, is_local: bool | None = None
+    ) -> ModState | None:
         """Return a single mod snapshot enriched with active/load-order metadata."""
-        mod = self._catalogue_service.get_mod(mod_id)
+        mod = (
+            self._catalogue_service.get_mod_by_source(mod_id, is_local=is_local)
+            if is_local is not None
+            else self._catalogue_service.get_mod(mod_id)
+        )
         if not mod:
             return None
 
-        active_mod_ids = set(self._active_mods_service.active_mods_ids)
         known_mod_ids = {item.id for item in self._catalogue_service.all_mods}
-        load_order = None
-        if mod_id in self._active_mods_service.active_mods_ids:
-            load_order = self._active_mods_service.active_mods_ids.index(mod_id) + 1
+        load_order = self._active_mods_service.get_load_order(
+            mod.id, is_local=mod.isLocal
+        )
 
         return self._to_mod_state(
             mod,
-            is_active=mod_id in active_mod_ids,
+            is_active=self._active_mods_service.is_active(mod.id, is_local=mod.isLocal),
             load_order=load_order,
             missing_dependencies=[
                 dep_id for dep_id in mod.dependencies if dep_id not in known_mod_ids

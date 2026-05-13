@@ -6,6 +6,7 @@ from src.application.state import (
     ModState,
 )
 from src.core.exceptions import ProfileWriteError
+from src.core.mod_reference import parse_reference_key
 from src.ui.widgets.active_mods_widget import ActiveModsWidget
 from src.ui.widgets.catalogue_widget import CatalogueWidget
 
@@ -30,7 +31,7 @@ class LoadOrderController:
             [str, str, list[str] | list[dict[str, str]]], None
         ],
         handle_profile_write_error: Callable[[ProfileWriteError], None],
-        get_mod_by_id: Callable[[str], ModState | None],
+        get_mod_by_id: Callable[[str, bool | None], ModState | None],
         tr: Callable[[str], str],
     ):
         self._catalogue_widget = catalogue_widget
@@ -48,12 +49,12 @@ class LoadOrderController:
         self._tr = tr
 
     def add_selected_mods(self) -> None:
-        mod_ids = self._catalogue_widget.get_selected_mod_ids()
-        if not mod_ids:
+        mod_refs = self._catalogue_widget.get_selected_mod_refs()
+        if not mod_refs:
             return
 
         try:
-            result = self._activate_mods(mod_ids)
+            result = self._activate_mods(mod_refs)
         except ProfileWriteError as error:
             self._handle_profile_write_error(error)
             return
@@ -67,10 +68,14 @@ class LoadOrderController:
             )
 
         if result.missing_dependencies:
-            if len(mod_ids) == 1:
-                mod_id = mod_ids[0]
-                mod = self._get_mod_by_id(mod_id)
-                mod_name = mod.name if mod else mod_id
+            if len(mod_refs) == 1:
+                reference = parse_reference_key(mod_refs[0])
+                if reference is None:
+                    mod = self._get_mod_by_id(mod_refs[0], None)
+                    mod_name = mod.name if mod else mod_refs[0]
+                else:
+                    mod = self._get_mod_by_id(reference.id, reference.is_local)
+                    mod_name = mod.name if mod else reference.id
                 desc = self._tr(
                     "The mod '{0}' was not activated because the following "
                     "required dependencies are missing from your catalogue. "
@@ -94,9 +99,9 @@ class LoadOrderController:
             return
 
     def remove_selected_mod(self) -> None:
-        mod_id = self._active_mods_widget.get_selected_mod_id()
-        if mod_id:
-            self.remove_mod(mod_id)
+        mod_ref = self._active_mods_widget.get_selected_mod_ref()
+        if mod_ref:
+            self.remove_mod(mod_ref)
 
     def remove_mod(self, mod_id: str) -> None:
         try:

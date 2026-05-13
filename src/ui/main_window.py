@@ -202,8 +202,8 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
             for blocker in blockers:
                 blocker(False)
 
-    def _get_mod_by_id(self, mod_id: str):
-        return self.app_model.get_mod_state(mod_id)
+    def _get_mod_by_id(self, mod_id: str, is_local: bool | None = None):
+        return self.app_model.get_mod_state(mod_id, is_local=is_local)
 
     def _current_preset_name(self) -> str:
         return self.active_mods_widget.preset_selector.current_preset_name()
@@ -425,16 +425,16 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
     def _move_selected_active_mod_up(self):
         if not self._active_mods_has_focus():
             return
-        mod_id = self.active_mods_widget.get_selected_mod_id()
-        if mod_id:
-            self.load_order_controller.move_up(mod_id)
+        mod_ref = self.active_mods_widget.get_selected_mod_ref()
+        if mod_ref:
+            self.load_order_controller.move_up(mod_ref)
 
     def _move_selected_active_mod_down(self):
         if not self._active_mods_has_focus():
             return
-        mod_id = self.active_mods_widget.get_selected_mod_id()
-        if mod_id:
-            self.load_order_controller.move_down(mod_id)
+        mod_ref = self.active_mods_widget.get_selected_mod_ref()
+        if mod_ref:
+            self.load_order_controller.move_down(mod_ref)
 
     def _clear_active_mods_shortcut(self):
         if not self._active_mods_has_focus():

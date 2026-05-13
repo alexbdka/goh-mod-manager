@@ -12,10 +12,12 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 from src.application.state import ActiveModsState, ModState
+from src.core.mod_reference import to_reference_key
 from src.ui.appearance_manager import AppearanceManager
 from src.ui.language_change_mixin import LanguageChangeMixin
 from src.ui.widgets.active_mods_item_delegate import (
     ROLE_MOD_ID,
+    ROLE_MOD_REF,
     ROLE_ORDER,
     ROLE_SOURCE,
     ROLE_TITLE,
@@ -139,6 +141,7 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
                 self.tr("Local Mod") if mod.is_local else self.tr("Workshop Mod")
             )
             item.setData(0, ROLE_MOD_ID, mod.id)
+            item.setData(0, ROLE_MOD_REF, to_reference_key(mod.id, mod.is_local))
             item.setData(0, ROLE_ORDER, order_text)
             item.setData(0, ROLE_TITLE, clean_name)
             item.setData(0, ROLE_SOURCE, source_text)
@@ -161,6 +164,18 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
             return None
         return item.data(0, ROLE_MOD_ID)
 
+    def get_mod_ref_at(self, pos) -> str | None:
+        item = self.list_widget.itemAt(pos)
+        if item is None:
+            return None
+        return item.data(0, ROLE_MOD_REF)
+
+    def get_selected_mod_ref(self) -> str | None:
+        selected_items = self.list_widget.selectedItems()
+        if not selected_items:
+            return None
+        return selected_items[0].data(0, ROLE_MOD_REF)
+
     def clear_selection(self):
         self.list_widget.clearSelection()
 
@@ -171,22 +186,22 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
         return self.list_widget.viewport().mapToGlobal(pos)
 
     def _on_move_up(self):
-        mod_id = self.get_selected_mod_id()
-        if mod_id:
-            self.move_up_requested.emit(mod_id)
+        mod_ref = self.get_selected_mod_ref()
+        if mod_ref:
+            self.move_up_requested.emit(mod_ref)
 
     def _on_move_down(self):
-        mod_id = self.get_selected_mod_id()
-        if mod_id:
-            self.move_down_requested.emit(mod_id)
+        mod_ref = self.get_selected_mod_ref()
+        if mod_ref:
+            self.move_down_requested.emit(mod_ref)
 
     def _on_clear(self):
         self.clear_requested.emit()
 
     def _on_item_double_clicked(self, item, _column):
-        mod_id = item.data(0, ROLE_MOD_ID)
-        if mod_id:
-            self.mod_double_clicked.emit(mod_id)
+        mod_ref = item.data(0, ROLE_MOD_REF)
+        if mod_ref:
+            self.mod_double_clicked.emit(mod_ref)
 
     def _on_reorder(self):
         new_order = []
@@ -195,9 +210,9 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
             if item is None:
                 continue
             item.setData(0, ROLE_ORDER, str(i + 1))
-            mod_id = item.data(0, ROLE_MOD_ID)
-            if mod_id:
-                new_order.append(mod_id)
+            mod_ref = item.data(0, ROLE_MOD_REF)
+            if mod_ref:
+                new_order.append(mod_ref)
         self.order_changed.emit(new_order)
 
     def retranslate_ui(self):

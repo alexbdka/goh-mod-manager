@@ -12,10 +12,12 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 from src.application.state import CatalogueState, ModState
+from src.core.mod_reference import to_reference_key
 from src.ui.language_change_mixin import LanguageChangeMixin
 from src.ui.widgets.catalogue_item_delegate import (
     ROLE_IS_ACTIVE,
     ROLE_MOD_ID,
+    ROLE_MOD_REF,
     ROLE_PIXMAP,
     ROLE_STATUS_ENTRIES,
     ROLE_TITLE,
@@ -150,7 +152,7 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
         self._apply_filters()
 
     def _apply_filters(self):
-        selected_mod_ids = set(self.get_selected_mod_ids())
+        selected_mod_refs = set(self.get_selected_mod_refs())
         self.list_widget.clear()
         search_text = self.search_bar.text().lower()
         current_tab = self.tab_bar.currentIndex()
@@ -175,6 +177,7 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
             item = QListWidgetItem(clean_name)
             item.setToolTip(tooltip)
             item.setData(ROLE_MOD_ID, mod.id)
+            item.setData(ROLE_MOD_REF, to_reference_key(mod.id, mod.is_local))
             item.setData(ROLE_TITLE, clean_name)
             item.setData(ROLE_PIXMAP, self._build_thumbnail_pixmap(mod))
             item.setData(ROLE_STATUS_ENTRIES, self._build_status_entries(mod))
@@ -182,7 +185,8 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
             self.list_widget.addItem(item)
             visible_count += 1
 
-            if mod.id in selected_mod_ids:
+            mod_ref = item.data(ROLE_MOD_REF)
+            if mod_ref in selected_mod_refs:
                 item.setSelected(True)
 
         self._update_header(visible_count)
@@ -358,6 +362,12 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
             return None
         return item.data(ROLE_MOD_ID)
 
+    def get_mod_ref_at(self, pos) -> str | None:
+        item = self.list_widget.itemAt(pos)
+        if item is None:
+            return None
+        return item.data(ROLE_MOD_REF)
+
     def clear_selection(self):
         self.list_widget.clearSelection()
 
@@ -375,6 +385,15 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
 
     def get_selected_mod_ids(self) -> list[str]:
         return [item.data(ROLE_MOD_ID) for item in self.list_widget.selectedItems()]
+
+    def get_selected_mod_ref(self) -> str | None:
+        selected_items = self.list_widget.selectedItems()
+        if not selected_items:
+            return None
+        return selected_items[0].data(ROLE_MOD_REF)
+
+    def get_selected_mod_refs(self) -> list[str]:
+        return [item.data(ROLE_MOD_REF) for item in self.list_widget.selectedItems()]
 
     def _on_item_double_clicked(self, _item):
         self.mod_double_clicked.emit()

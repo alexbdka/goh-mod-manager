@@ -12,6 +12,7 @@ ROLE_MOD_ID = Qt.ItemDataRole.UserRole
 ROLE_ORDER = Qt.ItemDataRole.UserRole + 1
 ROLE_TITLE = Qt.ItemDataRole.UserRole + 2
 ROLE_SOURCE = Qt.ItemDataRole.UserRole + 3
+ROLE_MOD_REF = Qt.ItemDataRole.UserRole + 4
 
 
 class ActiveModsItemDelegate(QStyledItemDelegate):

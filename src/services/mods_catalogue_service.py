@@ -35,6 +35,11 @@ class ModsCatalogueService:
             return self._local_mods[mod_id]
         return self._workshop_mods.get(mod_id)
 
+    def get_mod_by_source(self, mod_id: str, *, is_local: bool) -> ModInfo | None:
+        if is_local:
+            return self._local_mods.get(mod_id)
+        return self._workshop_mods.get(mod_id)
+
     def load_catalogue(self, local_mods_path: str, workshop_path: str) -> None:
         """
         Scans the provided directories and populates the local and workshop catalogues.

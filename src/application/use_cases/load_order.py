@@ -2,6 +2,7 @@ import logging
 
 from src.application.state import LoadOrderActivationResult, LoadOrderMutationResult
 from src.core.exceptions import ProfileWriteError
+from src.core.mod_reference import parse_reference_key
 from src.services.active_mods_service import ActiveModsService
 from src.services.config_service import ConfigService
 from src.services.mods_catalogue_service import ModsCatalogueService
@@ -24,13 +25,14 @@ class ApplicationLoadOrderUseCase:
         self._catalogue_service = catalogue_service
         self._config_service = config_service
 
-    def activate_mods(self, mod_ids: list[str]) -> LoadOrderActivationResult:
+    def activate_mods(self, mod_identifiers: list[str]) -> LoadOrderActivationResult:
         activated_mod_ids: list[str] = []
         missing_dependencies: list[str] = []
+        active_refs = set(self._active_mods_service.active_mod_refs)
         mod_ids_to_activate = [
-            mod_id
-            for mod_id in mod_ids
-            if mod_id not in self._active_mods_service.active_mods_ids
+            mod_identifier
+            for mod_identifier in mod_identifiers
+            if mod_identifier not in active_refs
         ]
 
         if not mod_ids_to_activate:
@@ -42,12 +44,13 @@ class ApplicationLoadOrderUseCase:
 
         profile_path = self._require_profile_path()
 
-        for mod_id in mod_ids_to_activate:
-            missing = self._active_mods_service.activate_mod(mod_id)
+        for mod_identifier in mod_ids_to_activate:
+            missing = self._active_mods_service.activate_mod(mod_identifier)
             if missing:
                 missing_dependencies.extend(missing)
                 continue
-            activated_mod_ids.append(mod_id)
+            parsed = parse_reference_key(mod_identifier)
+            activated_mod_ids.append(parsed.id if parsed else mod_identifier)
 
         changed = bool(activated_mod_ids)
         if changed:
@@ -60,66 +63,59 @@ class ApplicationLoadOrderUseCase:
             missing_dependencies=unique_missing,
         )
 
-    def deactivate_mod(self, mod_id: str) -> LoadOrderMutationResult:
-        if mod_id not in self._active_mods_service.active_mods_ids:
+    def deactivate_mod(self, mod_identifier: str) -> LoadOrderMutationResult:
+        before = list(self._active_mods_service.active_mod_refs)
+        profile_path = self._require_profile_path()
+        self._active_mods_service.deactivate_mod(mod_identifier)
+        return self._persist_if_changed(before, profile_path)
+
+    def clear(self) -> LoadOrderMutationResult:
+        if not self._active_mods_service.active_mod_refs:
+            return LoadOrderMutationResult(changed=False, active_mod_ids=[])
+
+        profile_path = self._require_profile_path()
+        self._active_mods_service.active_mod_refs = []
+        self._persist_changes(profile_path)
+        return LoadOrderMutationResult(changed=True, active_mod_ids=[])
+
+    def move_up(self, mod_identifier: str) -> LoadOrderMutationResult:
+        before = list(self._active_mods_service.active_mod_refs)
+        profile_path = self._require_profile_path()
+        self._active_mods_service.move_mod_up(mod_identifier)
+        return self._persist_if_changed(before, profile_path)
+
+    def move_down(self, mod_identifier: str) -> LoadOrderMutationResult:
+        before = list(self._active_mods_service.active_mod_refs)
+        profile_path = self._require_profile_path()
+        self._active_mods_service.move_mod_down(mod_identifier)
+        return self._persist_if_changed(before, profile_path)
+
+    def reorder(self, mod_identifiers: list[str]) -> LoadOrderMutationResult:
+        before = list(self._active_mods_service.active_mod_refs)
+        if list(mod_identifiers) == before:
             return LoadOrderMutationResult(
                 changed=False,
                 active_mod_ids=list(self._active_mods_service.active_mods_ids),
             )
 
         profile_path = self._require_profile_path()
-        self._active_mods_service.deactivate_mod(mod_id)
-        self._persist_changes(profile_path)
-        return LoadOrderMutationResult(
-            changed=True,
-            active_mod_ids=list(self._active_mods_service.active_mods_ids),
-        )
-
-    def clear(self) -> LoadOrderMutationResult:
-        if not self._active_mods_service.active_mods_ids:
-            return LoadOrderMutationResult(changed=False, active_mod_ids=[])
-
-        profile_path = self._require_profile_path()
-        self._active_mods_service.active_mods_ids.clear()
-        self._persist_changes(profile_path)
-        return LoadOrderMutationResult(changed=True, active_mod_ids=[])
-
-    def move_up(self, mod_id: str) -> LoadOrderMutationResult:
-        before = list(self._active_mods_service.active_mods_ids)
-        if mod_id not in before or before.index(mod_id) == 0:
-            return LoadOrderMutationResult(changed=False, active_mod_ids=before)
-
-        profile_path = self._require_profile_path()
-        self._active_mods_service.move_mod_up(mod_id)
-        return self._persist_if_changed(before, profile_path)
-
-    def move_down(self, mod_id: str) -> LoadOrderMutationResult:
-        before = list(self._active_mods_service.active_mods_ids)
-        if mod_id not in before or before.index(mod_id) == len(before) - 1:
-            return LoadOrderMutationResult(changed=False, active_mod_ids=before)
-
-        profile_path = self._require_profile_path()
-        self._active_mods_service.move_mod_down(mod_id)
-        return self._persist_if_changed(before, profile_path)
-
-    def reorder(self, mod_ids: list[str]) -> LoadOrderMutationResult:
-        before = list(self._active_mods_service.active_mods_ids)
-        if list(mod_ids) == before:
-            return LoadOrderMutationResult(changed=False, active_mod_ids=before)
-
-        profile_path = self._require_profile_path()
-        self._active_mods_service.active_mods_ids = list(mod_ids)
+        self._active_mods_service.active_mod_refs = list(mod_identifiers)
         return self._persist_if_changed(before, profile_path)
 
     def _persist_if_changed(
         self, before: list[str], profile_path: str
     ) -> LoadOrderMutationResult:
-        current = list(self._active_mods_service.active_mods_ids)
-        if current == before:
-            return LoadOrderMutationResult(changed=False, active_mod_ids=current)
+        current_refs = list(self._active_mods_service.active_mod_refs)
+        if current_refs == before:
+            return LoadOrderMutationResult(
+                changed=False,
+                active_mod_ids=list(self._active_mods_service.active_mods_ids),
+            )
 
         self._persist_changes(profile_path)
-        return LoadOrderMutationResult(changed=True, active_mod_ids=current)
+        return LoadOrderMutationResult(
+            changed=True, active_mod_ids=list(self._active_mods_service.active_mods_ids)
+        )
 
     def _require_profile_path(self) -> str:
         config = self._config_service.get_config()

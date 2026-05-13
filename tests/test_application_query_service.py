@@ -114,3 +114,18 @@ def test_get_presets_state_ignores_custom_selection_for_unsaved_state():
 
     assert state.current_preset_name is None
     assert state.is_unsaved is False
+
+
+def test_get_catalogue_state_tracks_active_by_source():
+    queries = _build_queries()
+    queries._catalogue_service._workshop_mods["dep"] = ModInfo(
+        id="dep", name="Dependency Workshop", desc="", isLocal=False
+    )
+    queries._active_mods_service.active_mod_refs = ["workshop::dep"]
+
+    state = queries.get_catalogue_state()
+    dep_items = [item for item in state.items if item.id == "dep"]
+
+    assert len(dep_items) == 2
+    assert any(item.is_local and not item.is_active for item in dep_items)
+    assert any((not item.is_local) and item.is_active for item in dep_items)
