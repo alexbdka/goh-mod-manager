@@ -37,6 +37,12 @@ jobs:
       - name: Sync dependencies (locked)
         run: uv sync --group dev --frozen
 
+      - name: Install system dependencies
+        if: matrix.id == 'linux'
+        run: |
+          sudo apt update
+          sudo apt install -y libegl1-mesa-dev
+
       - name: Show tool versions
         run: |
           uv --version
