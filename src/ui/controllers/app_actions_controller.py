@@ -17,6 +17,7 @@ class AppActionsController:
         parent: QWidget,
         build_debug_report: Callable[[], str],
         launch_game: Callable[[], bool],
+        launch_editor: Callable[[], bool],
         status_bar: QStatusBar,
         show_info_message: Callable[[str, str], None],
         show_error_message: Callable[[str, str], None],
@@ -24,6 +25,7 @@ class AppActionsController:
         self._parent = parent
         self._build_debug_report = build_debug_report
         self._launch_game = launch_game
+        self._launch_editor = launch_editor
         self._status_bar = status_bar
         self._show_info_message = show_info_message
         self._show_error_message = show_error_message
@@ -67,6 +69,19 @@ class AppActionsController:
                     "Failed to launch the game. Make sure Steam is installed "
                     "and running."
                 ),
+            )
+
+    def launch_editor(self):
+        success = self._launch_editor()
+        if success:
+            self._show_info_message(
+                self._parent.tr("Launching Editor"),
+                self._parent.tr("Launching editor..."),
+            )
+        else:
+            self._show_error_message(
+                self._parent.tr("Launch Failed"),
+                self._parent.tr("Failed to launch the editor."),
             )
 
     @staticmethod

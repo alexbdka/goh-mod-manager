@@ -4,6 +4,8 @@ from src.ui.appearance_manager import AppearanceManager
 from src.ui.language_change_mixin import LanguageChangeMixin
 from src.ui.qtawesome_compat import qta
 
+SCALE_FACTOR = 1.2
+
 
 class MainMenuBar(LanguageChangeMixin, QMenuBar):
     """
@@ -101,20 +103,42 @@ class MainMenuBar(LanguageChangeMixin, QMenuBar):
 
     def refresh_icons(self):
         icon_colors = AppearanceManager.get_icon_colors(self)
-        self.import_code_action.setIcon(qta.icon("fa5s.file-import", **icon_colors))
-        self.export_code_action.setIcon(qta.icon("fa5s.file-export", **icon_colors))
-        self.import_mod_action.setIcon(qta.icon("fa5s.box-open", **icon_colors))
-        self.open_game_dir_action.setIcon(qta.icon("fa5s.folder-open", **icon_colors))
+        self.import_code_action.setIcon(
+            qta.icon("mdi6.import", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.export_code_action.setIcon(
+            qta.icon("mdi6.export", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.import_mod_action.setIcon(
+            qta.icon("mdi6.archive-plus", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.open_game_dir_action.setIcon(
+            qta.icon("mdi6.folder", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
         self.open_config_folder_action.setIcon(
-            qta.icon("fa5s.folder-open", **icon_colors)
+            qta.icon("mdi6.folder-cog", **icon_colors, scale_factor=SCALE_FACTOR)
         )
-        self.open_profile_file_action.setIcon(qta.icon("fa5s.file-alt", **icon_colors))
+        self.open_profile_file_action.setIcon(
+            qta.icon("mdi6.file", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
         self.open_log_file_action.setIcon(
-            qta.icon("fa5s.file-medical-alt", **icon_colors)
+            qta.icon("mdi6.file-cog", **icon_colors, scale_factor=SCALE_FACTOR)
         )
-        self.exit_action.setIcon(qta.icon("fa5s.sign-out-alt", **icon_colors))
-        self.settings_action.setIcon(qta.icon("fa5s.cog", **icon_colors))
-        self.refresh_action.setIcon(qta.icon("fa5s.sync-alt", **icon_colors))
-        self.generate_report_action.setIcon(qta.icon("fa5s.bug", **icon_colors))
-        self.interface_tour_action.setIcon(qta.icon("fa5s.route", **icon_colors))
-        self.about_action.setIcon(qta.icon("fa5s.info-circle", **icon_colors))
+        self.exit_action.setIcon(
+            qta.icon("mdi6.exit-to-app", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.settings_action.setIcon(
+            qta.icon("mdi6.cog", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.refresh_action.setIcon(
+            qta.icon("mdi6.refresh", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.generate_report_action.setIcon(
+            qta.icon("mdi6.bug", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.interface_tour_action.setIcon(
+            qta.icon("mdi6.help", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.about_action.setIcon(
+            qta.icon("mdi6.information", **icon_colors, scale_factor=SCALE_FACTOR)
+        )

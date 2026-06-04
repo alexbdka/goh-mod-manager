@@ -26,6 +26,8 @@ from src.ui.widgets.active_mods_item_delegate import (
 from src.ui.widgets.preset_selector_widget import PresetSelectorWidget
 from src.utils import markup_parser
 
+SCALE_FACTOR = 1.2
+
 
 class InternalTree(QTreeWidget):
     order_dropped = Signal()
@@ -262,6 +264,12 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
 
     def refresh_icons(self):
         icon_colors = AppearanceManager.get_icon_colors(self)
-        self.btn_up.setIcon(qta.icon("fa5s.arrow-up", **icon_colors))
-        self.btn_down.setIcon(qta.icon("fa5s.arrow-down", **icon_colors))
-        self.btn_clear.setIcon(qta.icon("fa5s.trash", **icon_colors))
+        self.btn_up.setIcon(
+            qta.icon("mdi6.arrow-up", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.btn_down.setIcon(
+            qta.icon("mdi6.arrow-down", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.btn_clear.setIcon(
+            qta.icon("mdi6.nuke", **icon_colors, scale_factor=SCALE_FACTOR)
+        )

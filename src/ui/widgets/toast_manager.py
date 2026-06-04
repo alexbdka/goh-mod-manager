@@ -114,7 +114,7 @@ class ToastManager:
         QTimer.singleShot(duration_ms, toast.close)
 
     def reposition_toasts(self) -> None:
-        margin = 14
+        margin = 4
         gap = 8
         available_rect = self._available_rect(margin, gap)
         y = available_rect.bottom() + 1
@@ -146,7 +146,7 @@ class ToastManager:
         rect = self._parent.rect()
         top = rect.top() + margin
         left = rect.left() + margin
-        right = rect.right()
+        right = rect.right() - margin
 
         status_bar_top = self._status_bar_top()
         if status_bar_top is not None:

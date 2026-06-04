@@ -336,7 +336,7 @@ class ModManager:
             self.reload()
         return success
 
-    # --- Game Launching ---
+    # --- Game / Editor Launching ---
 
     def launch_game(self) -> bool:
         """Launch the game through the Steam protocol handler."""
@@ -347,3 +347,26 @@ class ModManager:
         else:
             logger.error("Failed to launch game via Steam protocol.")
         return success
+
+    def launch_editor(self) -> bool:
+        """Launch the editor directly."""
+        game_path = self.get_config().game_path
+        if not game_path:
+            logger.error("Game path not configured.")
+            return False
+
+        editor_exe = os.path.join(game_path, "binaries", "x64", "call_to_arms_ed.exe")
+        logger.info("Launching editor from " + editor_exe)
+
+        if not os.path.exists(editor_exe):
+            logger.error("Editor not found at " + editor_exe)
+            return False
+
+        if system_actions.launch_executable(
+            editor_exe, cwd=os.path.dirname(editor_exe)
+        ):
+            logger.info("Editor launched successfully.")
+            return True
+
+        logger.error("Failed to launch editor.")
+        return False
