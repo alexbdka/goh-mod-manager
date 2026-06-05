@@ -12,7 +12,13 @@ from src.core.mod_reference import (
 )
 from src.services.mods_catalogue_service import ModsCatalogueService
 from src.utils.file_utils import atomic_write_text
-from src.utils.gem_parser import GemNode, parse_gem_file
+from src.utils.gem_parser import (
+    GemNode,
+    GemParseError,
+    parse_gem,
+    parse_gem_file,
+    repair_gem_braces,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -208,7 +214,7 @@ class ActiveModsService:
             return
 
         try:
-            nodes = parse_gem_file(options_set_path)
+            nodes = self._parse_profile_nodes(options_set_path)
             if not nodes:
                 return
 
@@ -237,6 +243,32 @@ class ActiveModsService:
 
         except Exception as e:
             logger.error(f"Failed to load profile from {options_set_path}: {e}")
+
+    def _parse_profile_nodes(self, options_set_path: str) -> list[GemNode]:
+        try:
+            return parse_gem_file(options_set_path)
+        except GemParseError as original_error:
+            with open(options_set_path, encoding="utf-8", errors="replace") as f:
+                content = f.read()
+
+            repair = repair_gem_braces(content)
+            if not repair.changed:
+                raise
+
+            try:
+                nodes = parse_gem(repair.content)
+            except GemParseError as repair_error:
+                raise original_error from repair_error
+
+            atomic_write_text(options_set_path, repair.content)
+            logger.warning(
+                "Auto-repaired profile GEM braces in %s "
+                "(added %d closing brace(s), removed %d extra closing brace(s)).",
+                options_set_path,
+                repair.added_closing_braces,
+                repair.removed_extra_closing_braces,
+            )
+            return nodes
 
     def save_to_profile(self, options_set_path: str, catalogue_service=None) -> None:
         """
