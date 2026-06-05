@@ -364,6 +364,12 @@ class ActiveModsService:
         )
 
     def _is_installed(self, mod_id: str) -> bool:
+        parsed = parse_reference_key(mod_id)
+        if parsed:
+            return bool(
+                self.catalogue.get_mod_by_source(parsed.id, is_local=parsed.is_local)
+            )
+
         return bool(
             self.catalogue.get_mod_by_source(mod_id, is_local=True)
             or self.catalogue.get_mod_by_source(mod_id, is_local=False)

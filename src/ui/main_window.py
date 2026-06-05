@@ -527,8 +527,8 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
                 self.tr("Imported with Missing Mods"),
                 self.tr(
                     "The load order was imported, but you are missing the "
-                    "following mods. You must subscribe to them on the "
-                    "Workshop for the preset to work perfectly:"
+                    "following mods. Workshop mods can be opened from the "
+                    "links below; local mods must be installed manually:"
                 ),
                 missing_mods,
             )

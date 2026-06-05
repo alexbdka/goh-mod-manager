@@ -2,6 +2,7 @@ import logging
 
 from src.application.state import ShareCodeExportResult, ShareCodeImportResult
 from src.core.exceptions import ProfileWriteError
+from src.core.mod_reference import to_reference_key
 from src.services.active_mods_service import ActiveModsService
 from src.services.config_service import ConfigService
 from src.services.mods_catalogue_service import ModsCatalogueService
@@ -49,13 +50,13 @@ class ApplicationShareCodeUseCase:
         )
 
         dependency_missing_ids = self._active_mods_service.replace_active_mods(
-            [mod.id for mod in found_mods]
+            [to_reference_key(mod.id, mod.isLocal) for mod in found_mods]
         )
 
         known_missing_ids = {str(item.get("id", "")) for item in missing_mods}
         for mod_id in dependency_missing_ids:
             if mod_id not in known_missing_ids:
-                missing_mods.append({"id": mod_id, "name": mod_id})
+                missing_mods.append({"id": mod_id, "name": mod_id, "source": ""})
                 known_missing_ids.add(mod_id)
 
         self._active_mods_service.save_to_profile(

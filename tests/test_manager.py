@@ -85,7 +85,9 @@ class TestModManager:
         result = manager.apply_share_code(code)
 
         assert result.success is True
-        assert result.missing_mods == [{"id": "missing_dep", "name": "missing_dep"}]
+        assert result.missing_mods == [
+            {"id": "missing_dep", "name": "missing_dep", "source": ""}
+        ]
         assert manager.active_mods.active_mods_ids == []
 
     def test_has_seen_onboarding_reads_config_flag(self):

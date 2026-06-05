@@ -42,12 +42,21 @@ class MissingModsDialog(QDialog):
             if isinstance(item, dict):
                 mod_id = str(item.get("id", ""))
                 mod_name = str(item.get("name", mod_id))
+                source = str(item.get("source", ""))
             else:
                 mod_id = str(item)
                 mod_name = str(item)
+                source = ""
 
             # Simple heuristic: Workshop IDs are usually purely numeric
-            if mod_id.isdigit():
+            if source == "local":
+                local_mod = self.tr("Local mod")
+                install_manually = self.tr("Install this local mod manually.")
+                items_html.append(
+                    f"<li>{mod_name} ({local_mod}, ID: {mod_id})"
+                    f"<br>{install_manually}</li>"
+                )
+            elif mod_id.isdigit():
                 steam_url = f"steam://url/CommunityFilePage/{mod_id}"
                 web_url = (
                     f"https://steamcommunity.com/sharedfiles/filedetails/?id={mod_id}"
@@ -60,7 +69,7 @@ class MissingModsDialog(QDialog):
                 )
                 items_html.append(f"<li>{mod_name} (ID: {mod_id})<br>{links}</li>")
             else:
-                local_id = self.tr("(Local/Unknown ID)")
+                local_id = self.tr("(Local or unknown ID)")
                 items_html.append(f"<li>{mod_name} {local_id}</li>")
 
         list_html = "<ul>" + "".join(items_html) + "</ul>"
