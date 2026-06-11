@@ -89,7 +89,7 @@ Write flow:
 
 ## Documentation notes
 
-For future MkDocs integration, the best auto-documented targets are:
+The most useful API reference targets are:
 
 - `src/core/manager.py`
 - `src/application/state.py`

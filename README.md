@@ -1,112 +1,125 @@
 # GoH Mod Manager
 
-GoH Mod Manager is a PySide6 desktop application for managing mods for
+GoH Mod Manager is a PySide6 desktop app for managing mods for
 [Call to Arms: Gates of Hell](https://www.barbed-wire.eu/we-are-barbedwire-studios/our-game-development/).
-It focuses on local and Workshop mod discovery, load order management, presets,
-share codes, and a polished desktop workflow.
 
-## Requirements
+It is built for the everyday Gates of Hell modding loop: find installed mods,
+shape a load order, save presets, share setups with friends, and get back into
+the game without hand-editing `options.set`.
+
+## What It Does
+
+- Discovers local and Steam Workshop mods.
+- Reads and writes the active load order from the game profile.
+- Keeps named presets for different play sessions.
+- Imports mods from folders and archives.
+- Exports and imports share codes.
+- Supports translated UI strings through Qt `.ts` / `.qm` files.
+
+## Quick Start
+
+Requirements:
 
 - Python **3.12+**
 - [uv](https://docs.astral.sh/uv/)
 
-## Installation
-
-Clone the repository and install dependencies:
+Install dependencies:
 
 ```bash
-git clone https://github.com/alexbdka/goh-mod-manager.git
-cd goh-mod-manager
 uv sync
 ```
 
-For development, quality tooling, and documentation:
-
-```bash
-uv sync --group dev --group docs
-```
-
-## Usage
-
-Run the application locally with:
+Run the desktop app:
 
 ```bash
 uv run python -m src.main
 ```
 
-## Development Guidelines
-
-Common local checks:
+Run the CLI status command:
 
 ```bash
-uv run --group dev ruff check .
-uv run --group dev ruff format --check .
-uv run --group dev basedpyright
-uv run --group dev deptry .
-uv run --group dev pytest -q
-uv run pre-commit validate-config
+uv run python -m src.cli.main status
 ```
 
-Install git hooks locally:
+## Development
+
+Install development and documentation tools:
+
+```bash
+uv sync --group dev --group docs
+```
+
+Common checks:
+
+```bash
+uv run pre-commit validate-config
+uv run python -m compileall -q src tests scripts
+uv run python scripts/validate_translations.py
+uv run python scripts/build_translations.py --no-update
+uv run deptry .
+uv run ruff check .
+uv run ruff format --check .
+uv run basedpyright
+uv run pytest -q
+```
+
+Install local git hooks:
 
 ```bash
 uv run pre-commit install
 ```
 
-The repository uses:
-- `ruff` for linting and formatting
-- `basedpyright` for type checking
-- `pytest` for tests
-- `deptry` for dependency validation
+## Project Map
 
-## Documentation
+- `src/core/`: domain-facing facade, events, config model, constants
+- `src/application/`: query surfaces, use cases, immutable state objects
+- `src/services/`: persistence, parsing, Steam discovery, imports, share codes
+- `src/ui/`: PySide6 windows, widgets, controllers, workers, translations
+- `src/cli/`: command-line entry point
+- `tests/`: pytest suite and stable fixtures
+- `docs/`: hand-written project documentation and static site pages
+- `www/`: static GitHub Pages site root; Zensical writes docs to `www/doc/`
+- `scripts/`: build, packaging, and translation helpers
 
-Build the documentation locally:
-
-```bash
-uv run --group docs mkdocs build
-```
-
-Serve it during development:
-
-```bash
-uv run --group docs mkdocs serve
-```
-
-The documentation site is deployed automatically to GitHub Pages from `main`.
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE).
+The architecture overview lives in [docs/architecture.md](docs/architecture.md).
 
 ## Translations
 
-UI translations are managed through **Weblate** and stored in
-`src/ui/i18n/*.ts`. Runtime `.qm` files are generated from those source files.
+Translations are hosted on Weblate, which makes contributing UI translations
+possible without setting up a local development environment:
+[GoH Mod Manager - Qt UI on Weblate](https://hosted.weblate.org/projects/goh-mod-manager/qt-ui/).
 
-- Translation source files follow Qt/Weblate locale naming such as
-  `en_US.ts`, `fr.ts`, or `zh_Hans.ts`
-- Runtime language availability is discovered dynamically by the app
-- Translation metadata and filenames are validated in CI
+- Source files: `src/ui/i18n/*.ts`
+- Runtime files: `src/ui/i18n/*.qm`
+- Validation: `scripts/validate_translations.py`
+- Build helper: `scripts/build_translations.py`
 
-Useful commands:
+For the actual translation workflow, naming rules, and maintainer checklist,
+see [src/ui/i18n/README.md](src/ui/i18n/README.md).
+
+## Documentation
+
+Build the docs site:
 
 ```bash
-uv run python scripts/validate_translations.py
-uv run python scripts/build_translations.py
+uv run --group docs zensical build
 ```
 
-Additional translation workflow details are documented in
-[src/ui/i18n/README.md](src/ui/i18n/README.md) and [docs/translations.md](docs/translations.md).
+Serve it locally:
+
+```bash
+uv run --group docs zensical serve
+```
+
+The public project site is deployed from `main` to GitHub Pages from `www/`,
+with the docs generated under `/doc/`.
 
 ## Releases
 
 Prebuilt Windows and Linux binaries are published in
 [GitHub Releases](https://github.com/alexbdka/goh-mod-manager/releases).
 
-## Builds
-
-Use the local build helper:
+Local release-style builds use:
 
 ```bash
 uv run python scripts/build_app.py
@@ -120,22 +133,13 @@ uv run python scripts/build_app.py --onefile --package
 uv run python scripts/build_app.py --skip-tests
 ```
 
-The script rebuilds translations, runs compile checks, optionally runs tests,
-and packages the application with PyInstaller using the same conventions as CI.
+## License
 
-## Dependencies
-
-Main runtime dependencies:
-
-- `PySide6` for the desktop UI
-- `pyqtdarktheme` for light and dark themes
-- `qtawesome` for icon integration
-- `py7zr`, `rarfile`, and `vdf` for archive and Steam-related workflows
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
 
 ## Acknowledgements
 
 - Logo design by [awasde](https://www.linkedin.com/in/amélie-rakowiecki-970818350)
 - Original mod manager concept by
-  [Elaindil (MrCookie)](https://github.com/Elaindil/ModManager) as an
-  acknowledged predecessor; this repository is an independent implementation
-  and does not reuse its code
+  [Elaindil (MrCookie)](https://github.com/Elaindil/ModManager). This project
+  is an independent implementation and does not reuse its code.

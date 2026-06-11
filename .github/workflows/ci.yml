@@ -39,7 +39,7 @@ jobs:
           uv run ruff --version
           uv run basedpyright --version
           uv run deptry --version
-          uv run mkdocs --version
+          uv run zensical --version
 
       - name: Validate pre-commit configuration
         run: uv run pre-commit validate-config
@@ -58,4 +58,4 @@ jobs:
         run: uv run pytest -q
 
       - name: Build documentation
-        run: uv run --group docs mkdocs build
+        run: uv run --group docs zensical build

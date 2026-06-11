@@ -86,6 +86,6 @@ Expected outputs:
 - Linux: `dist/goh_mod_manager`
 - packaged zips in `out/`
 
-## Notes for future docs automation
+## Notes for docs automation
 
-When MkDocs is added later, this page should remain mostly hand-written. It documents process and repository conventions rather than Python API surface.
+This page should remain mostly hand-written. It documents process and repository conventions rather than Python API surface.

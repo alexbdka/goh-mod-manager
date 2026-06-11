@@ -1,0 +1,55 @@
+[project]
+site_name = "GoH Mod Manager"
+site_description = "Documentation for the Gates of Hell Mod Manager project."
+site_url = "https://alexbdka.github.io/goh-mod-manager/doc/"
+repo_url = "https://github.com/alexbdka/goh-mod-manager"
+repo_name = "alexbdka/goh-mod-manager"
+docs_dir = "docs"
+site_dir = "www/doc"
+nav = [
+  { "Home" = "index.md" },
+  { "Architecture" = "architecture.md" },
+  { "UI Flow" = "ui-flow.md" },
+  { "Translations" = "translations.md" },
+  { "Packaging" = "packaging.md" },
+  { "API" = [
+    { "Core" = "api/core.md" },
+    { "Application" = "api/application.md" },
+    { "Services" = "api/services.md" },
+  ] },
+]
+
+[project.theme]
+language = "en"
+features = [
+  "content.code.copy",
+  "navigation.expand",
+  "navigation.sections",
+]
+
+[[project.theme.palette]]
+scheme = "slate"
+
+[project.markdown_extensions.admonition]
+
+[project.markdown_extensions.toc]
+permalink = true
+
+[project.plugins.search]
+
+[project.plugins.mkdocstrings.handlers.python]
+paths = ["."]
+
+[project.plugins.mkdocstrings.handlers.python.options]
+force_inspection = false
+show_source = false
+show_root_heading = true
+show_root_toc_entry = false
+members_order = "source"
+separate_signature = true
+docstring_style = "google"
+show_if_no_docstring = false
+filters = [
+  "!^_",
+  "^__init__$",
+]

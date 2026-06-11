@@ -21,7 +21,8 @@ legacy/
 .pytest_cache/
 .uv-cache/
 .ruff_cache/
-site/
+/site/
+/www/doc/
 
 # Temporary local packaging/debug specs
 GoH Mod Manager.spec
