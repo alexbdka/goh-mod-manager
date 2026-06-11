@@ -31,6 +31,18 @@ class TestShareCodeService:
 
         assert decoded_data[1]["id"] == "2905667604"
         assert decoded_data[1]["name"] == "MACE"
+        assert decoded_data[1]["source"] == "workshop"
+
+    def test_encode_and_decode_preserves_local_source(self):
+        code = self.service.encode(
+            [ModInfo(id="local_mod", name="Local Mod", desc="", isLocal=True)]
+        )
+
+        decoded_data = self.service.decode(code)
+
+        assert decoded_data == [
+            {"id": "local_mod", "name": "Local Mod", "source": "local"}
+        ]
 
     def test_decode_invalid_code(self):
         with pytest.raises(InvalidShareCodeError):
@@ -54,6 +66,15 @@ class TestShareCodeService:
         with pytest.raises(InvalidShareCodeError):
             self.service.decode(code)
 
+    def test_decode_rejects_invalid_source(self):
+        payload = {"v": 2, "m": [{"i": "2867922286", "n": "GOH ARm", "s": "steam"}]}
+        code = base64.b64encode(
+            zlib.compress(json.dumps(payload).encode("utf-8"))
+        ).decode("utf-8")
+
+        with pytest.raises(InvalidShareCodeError):
+            self.service.decode(code)
+
     def test_resolve_mods_all_found(self):
         decoded_data = [
             {"id": "2867922286", "name": "GOH ARm"},
@@ -66,6 +87,44 @@ class TestShareCodeService:
         assert len(missing) == 0
         assert found[0].id == "2867922286"
         assert found[1].id == "2905667604"
+
+    def test_resolve_mods_uses_source_when_present(self):
+        catalogue_mods = [
+            ModInfo(id="shared", name="Local Shared", desc="", isLocal=True),
+            ModInfo(id="shared", name="Workshop Shared", desc="", isLocal=False),
+        ]
+        decoded_data = [{"id": "shared", "name": "Local Shared", "source": "local"}]
+
+        found, missing = self.service.resolve_mods(decoded_data, catalogue_mods)
+
+        assert missing == []
+        assert len(found) == 1
+        assert found[0].id == "shared"
+        assert found[0].isLocal is True
+
+    def test_resolve_mods_does_not_fallback_when_sourced_mod_is_missing(self):
+        catalogue_mods = [
+            ModInfo(id="shared", name="Workshop Shared", desc="", isLocal=False),
+        ]
+        decoded_data = [{"id": "shared", "name": "Local Shared", "source": "local"}]
+
+        found, missing = self.service.resolve_mods(decoded_data, catalogue_mods)
+
+        assert found == []
+        assert missing == [{"id": "shared", "name": "Local Shared", "source": "local"}]
+
+    def test_resolve_mods_keeps_legacy_id_only_codes_supported(self):
+        catalogue_mods = [
+            ModInfo(id="shared", name="Local Shared", desc="", isLocal=True),
+            ModInfo(id="shared", name="Workshop Shared", desc="", isLocal=False),
+        ]
+        decoded_data = [{"id": "shared", "name": "Shared", "source": ""}]
+
+        found, missing = self.service.resolve_mods(decoded_data, catalogue_mods)
+
+        assert missing == []
+        assert len(found) == 1
+        assert found[0].id == "shared"
 
     def test_resolve_mods_some_missing(self):
         decoded_data = [

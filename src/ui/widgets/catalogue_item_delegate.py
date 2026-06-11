@@ -17,6 +17,8 @@ ROLE_STATUS_ENTRIES = Qt.ItemDataRole.UserRole + 3
 ROLE_IS_ACTIVE = Qt.ItemDataRole.UserRole + 4
 ROLE_MOD_REF = Qt.ItemDataRole.UserRole + 5
 
+SCALE_FACTOR = 1.2
+
 
 class CatalogueItemDelegate(QStyledItemDelegate):
     def __init__(self, parent: QWidget | None = None, thumbnail_enabled: bool = True):
@@ -127,14 +129,19 @@ class CatalogueItemDelegate(QStyledItemDelegate):
         if kind == "missing_dependencies":
             warning_color = "#f59e0b" if theme_mode == "dark" else "#b45309"
             icon = qta.icon(
-                "fa5s.exclamation-triangle",
+                "mdi6.alert",
                 color=warning_color,
                 color_active=warning_color,
                 color_selected=warning_color,
                 color_disabled=warning_color,
+                scale_factor=SCALE_FACTOR,
             )
         elif kind == "dependencies":
-            icon = qta.icon("fa5s.link", **AppearanceManager.get_icon_colors(source))
+            icon = qta.icon(
+                "mdi6.link",
+                **AppearanceManager.get_icon_colors(source),
+                scale_factor=SCALE_FACTOR,
+            )
         else:
             icon = QIcon()
 

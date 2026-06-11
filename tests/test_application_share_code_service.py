@@ -53,13 +53,52 @@ def test_import_share_code_applies_found_mods_and_reports_missing_dependencies(
     tmp_path,
 ):
     app_service, share_code_service, active_mods = _make_services(tmp_path)
-    code = share_code_service.encode([ModInfo(id="main", name="Main", desc="")])
+    code = share_code_service.encode(
+        [ModInfo(id="main", name="Main", desc="", isLocal=True)]
+    )
 
     result = app_service.import_share_code(code)
 
     assert result.success is True
     assert result.missing_mods == []
     assert active_mods.active_mods_ids == ["dep", "main"]
+
+
+def test_import_share_code_preserves_source_when_ids_overlap(tmp_path):
+    app_service, share_code_service, active_mods = _make_services(tmp_path)
+    app_service._catalogue_service._local_mods["shared"] = ModInfo(
+        id="shared", name="Local Shared", desc="", isLocal=True
+    )
+    app_service._catalogue_service._workshop_mods["shared"] = ModInfo(
+        id="shared", name="Workshop Shared", desc="", isLocal=False
+    )
+    code = share_code_service.encode(
+        [ModInfo(id="shared", name="Local Shared", desc="", isLocal=True)]
+    )
+
+    result = app_service.import_share_code(code)
+
+    assert result.success is True
+    assert result.missing_mods == []
+    assert active_mods.active_mod_refs == ["local::shared"]
+
+
+def test_import_share_code_reports_missing_local_without_workshop_fallback(tmp_path):
+    app_service, share_code_service, active_mods = _make_services(tmp_path)
+    app_service._catalogue_service._workshop_mods["shared"] = ModInfo(
+        id="shared", name="Workshop Shared", desc="", isLocal=False
+    )
+    code = share_code_service.encode(
+        [ModInfo(id="shared", name="Local Shared", desc="", isLocal=True)]
+    )
+
+    result = app_service.import_share_code(code)
+
+    assert result.success is True
+    assert result.missing_mods == [
+        {"id": "shared", "name": "Local Shared", "source": "local"}
+    ]
+    assert active_mods.active_mod_refs == []
 
 
 def test_import_share_code_raises_on_invalid_code(tmp_path):

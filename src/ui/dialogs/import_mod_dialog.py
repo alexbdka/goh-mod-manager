@@ -14,6 +14,8 @@ from src.ui.appearance_manager import AppearanceManager
 from src.ui.language_change_mixin import LanguageChangeMixin
 from src.ui.qtawesome_compat import qta
 
+SCALE_FACTOR = 1.2
+
 
 class DropZoneWidget(LanguageChangeMixin, QWidget):
     """
@@ -67,7 +69,7 @@ class DropZoneWidget(LanguageChangeMixin, QWidget):
 
     def refresh_icons(self):
         icon_colors = AppearanceManager.get_icon_colors(self)
-        icon = qta.icon("fa5s.upload", **icon_colors)
+        icon = qta.icon("mdi6.upload", **icon_colors, scale_factor=SCALE_FACTOR)
         self.icon_label.setPixmap(icon.pixmap(32, 32))
 
     def dragEnterEvent(self, event):
@@ -176,5 +178,9 @@ class ImportModDialog(LanguageChangeMixin, QDialog):
     def refresh_icons(self):
         icon_colors = AppearanceManager.get_icon_colors(self)
         self.drop_zone.refresh_icons()
-        self.btn_archive.setIcon(qta.icon("fa5s.file-archive", **icon_colors))
-        self.btn_folder.setIcon(qta.icon("fa5s.folder-open", **icon_colors))
+        self.btn_archive.setIcon(
+            qta.icon("mdi6.zip-box", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.btn_folder.setIcon(
+            qta.icon("mdi6.folder", **icon_colors, scale_factor=SCALE_FACTOR)
+        )

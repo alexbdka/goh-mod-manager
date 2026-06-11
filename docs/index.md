@@ -32,11 +32,11 @@ uv sync --group docs
 Run the local docs server:
 
 ```bash
-uv run --group docs mkdocs serve
+uv run --group docs zensical serve
 ```
 
 Build the static site:
 
 ```bash
-uv run --group docs mkdocs build
+uv run --group docs zensical build
 ```

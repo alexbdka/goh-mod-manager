@@ -40,3 +40,49 @@ def test_save_to_profile_raises_profile_write_error_when_profile_file_is_missing
 
     with pytest.raises(ProfileWriteError, match="Profile file not found"):
         service.save_to_profile(str(missing_profile_path), catalogue_service=catalogue)
+
+
+def test_load_from_profile_repairs_missing_closing_brace(tmp_path: Path):
+    profile_path = tmp_path / "options.set"
+    profile_path.write_text(
+        '{options\n\t{mods\n\t\t"mod_12345:0"\n\t}\n',
+        encoding="utf-8",
+    )
+
+    catalogue = ModsCatalogueService()
+    service = ActiveModsService(catalogue)
+
+    service.load_from_profile(str(profile_path))
+
+    assert service.active_mod_refs == ["workshop::12345"]
+    assert profile_path.read_text(encoding="utf-8").rstrip().endswith("}")
+
+
+def test_load_from_profile_repairs_extra_closing_brace(tmp_path: Path):
+    profile_path = tmp_path / "options.set"
+    profile_path.write_text(
+        '{options\n\t{mods\n\t\t"mod_12345:0"\n\t}\n}}',
+        encoding="utf-8",
+    )
+
+    catalogue = ModsCatalogueService()
+    service = ActiveModsService(catalogue)
+
+    service.load_from_profile(str(profile_path))
+
+    assert service.active_mod_refs == ["workshop::12345"]
+    assert profile_path.read_text(encoding="utf-8").count("}") == 2
+
+
+def test_load_from_profile_does_not_autofix_unterminated_quote(tmp_path: Path):
+    profile_path = tmp_path / "options.set"
+    original_content = '{options\n\t{mods\n\t\t"mod_12345:0\n\t}\n}'
+    profile_path.write_text(original_content, encoding="utf-8")
+
+    catalogue = ModsCatalogueService()
+    service = ActiveModsService(catalogue)
+
+    service.load_from_profile(str(profile_path))
+
+    assert service.active_mod_refs == []
+    assert profile_path.read_text(encoding="utf-8") == original_content

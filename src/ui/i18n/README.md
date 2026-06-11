@@ -1,49 +1,132 @@
-# Translation Files
+# UI Translations
 
-This directory stores Qt translation source files (`.ts`) and compiled runtime
-files (`.qm`).
+This directory is the home of the app's Qt translation files.
 
-## Naming Convention
+If you are translating the interface, this is the practical reference. The root
+README only gives the short version.
 
-Translation files must use locale-based names such as:
+## Files
 
-- `en_US.ts`
+- `*.ts`: Qt Linguist source files. These are the files translators and Weblate
+  work with.
+- `*.qm`: compiled runtime files. The app loads these files to populate the
+  language selector and translate the UI.
+
+The `.ts` files are the source of truth. The `.qm` files are generated from
+them and should not be edited by hand.
+
+## Naming Rules
+
+Translation files use Qt/Weblate locale names:
+
+- `en.ts`
 - `fr.ts`
+- `ru.ts`
 - `zh_Hans.ts`
+- `pt_BR.ts`
 
-Compiled runtime files follow the same convention:
+The `<TS language="...">` metadata inside a `.ts` file must match the filename.
+For example:
 
-- `en_US.qm`
-- `fr.qm`
-- `zh_Hans.qm`
+```xml
+<TS version="2.1" language="fr">
+```
 
-Invalid names or inconsistent metadata are rejected by
-`scripts/validate_translations.py`.
+Invalid names or mismatched metadata are rejected by:
 
-## Workflow
+```bash
+uv run python scripts/validate_translations.py
+```
 
-1. Update the translation source catalog:
+## Translator Workflow
 
-   ```bash
-   uv run python scripts/build_translations.py --no-compile
-   ```
+The preferred workflow is Weblate:
 
-2. Translate through **Weblate** or edit the `.ts` files with Qt Linguist.
+1. Translate strings in the
+   [hosted Weblate project](https://hosted.weblate.org/projects/goh-mod-manager/qt-ui/).
+2. Let Weblate open or update a pull request.
+3. Keep review focused on wording, placeholders, and UI fit.
 
-3. Validate the translation tree:
+Local editing is also possible with Qt Linguist:
 
-   ```bash
-   uv run python scripts/validate_translations.py
-   ```
+1. Open the relevant `.ts` file.
+2. Translate or review strings.
+3. Save the file.
+4. Run validation before committing.
 
-4. Compile runtime `.qm` files:
+```bash
+uv run python scripts/validate_translations.py
+```
 
-   ```bash
-   uv run python scripts/build_translations.py --no-update
-   ```
+Do not edit `.qm` files directly. Rebuild them from `.ts` sources.
 
-## Runtime Behavior
+## Maintainer Workflow
 
-The application discovers selectable languages dynamically from the compiled
-`.qm` files present in this directory. A new language becomes selectable in the
-settings UI as soon as its runtime file exists and passes validation.
+When UI source text changes, refresh the `.ts` catalogs:
+
+```bash
+uv run python scripts/build_translations.py --no-compile
+```
+
+This updates translation sources without rebuilding runtime `.qm` files.
+
+Before testing translated UI locally or shipping a release, compile runtime
+files:
+
+```bash
+uv run python scripts/build_translations.py --no-update
+```
+
+Validate after translation or build changes:
+
+```bash
+uv run python scripts/validate_translations.py
+```
+
+For a full refresh and compile in one pass:
+
+```bash
+uv run python scripts/build_translations.py
+```
+
+## Adding A Language
+
+1. Add a new locale file using the naming rules above.
+2. Use `en.ts` as the template/base language.
+3. Make sure the `<TS language="...">` metadata matches the filename.
+4. Run validation.
+5. Compile `.qm` files when you want the language to appear in the app.
+
+The app discovers languages dynamically from compiled `.qm` files in this
+directory. If a new language has a valid `.qm` file, it can appear in the
+settings UI without hard-coding it in Python.
+
+## Placeholders
+
+Keep placeholders intact. Strings like `{0}`, `{name}`, `%1`, and HTML-ish Qt
+markup are part of the UI contract.
+
+Good:
+
+```text
+Could not save settings: {0}
+```
+
+Bad:
+
+```text
+Could not save settings:
+```
+
+If a placeholder looks strange, keep it and ask in the pull request.
+
+## CI Expectations
+
+CI validates:
+
+- locale filenames
+- `<TS language="...">` metadata
+- translation compilation
+- the regular Python quality checks
+
+Release builds also recompile translations before packaging the app.

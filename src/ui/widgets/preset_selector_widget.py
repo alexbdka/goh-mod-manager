@@ -10,6 +10,8 @@ from src.ui.appearance_manager import AppearanceManager
 from src.ui.language_change_mixin import LanguageChangeMixin
 from src.ui.qtawesome_compat import qta
 
+SCALE_FACTOR = 1.2
+
 
 class PresetSelectorWidget(LanguageChangeMixin, QWidget):
     """
@@ -83,11 +85,23 @@ class PresetSelectorWidget(LanguageChangeMixin, QWidget):
     def refresh_icons(self):
         icon_colors = AppearanceManager.get_icon_colors(self)
         if self._is_unsaved:
-            self.btn_save.setIcon(qta.icon("fa5s.save", color="#e67e22"))
+            self.btn_save.setIcon(
+                qta.icon(
+                    "mdi6.content-save-alert",
+                    color="#e67e22",
+                    scale_factor=SCALE_FACTOR,
+                )
+            )
         else:
-            self.btn_save.setIcon(qta.icon("fa5s.save", **icon_colors))
-        self.btn_save_as.setIcon(qta.icon("fa5s.plus", **icon_colors))
-        self.btn_delete.setIcon(qta.icon("fa5s.trash", **icon_colors))
+            self.btn_save.setIcon(
+                qta.icon("mdi6.content-save", **icon_colors, scale_factor=SCALE_FACTOR)
+            )
+        self.btn_save_as.setIcon(
+            qta.icon("mdi6.plus", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.btn_delete.setIcon(
+            qta.icon("mdi6.delete", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
 
     def populate(self, preset_names: list[str], current: str = ""):
         """

@@ -19,7 +19,7 @@ class ShareCodeService:
     def __init__(self):
         # We include a version number in our payload to allow future
         # changes to the share code format without breaking old codes.
-        self.CURRENT_VERSION = 1
+        self.CURRENT_VERSION = 2
 
     def encode(self, mods: list[ModInfo]) -> str:
         """
@@ -29,7 +29,14 @@ class ShareCodeService:
         # Minimal payload to keep the code short
         payload = {
             "v": self.CURRENT_VERSION,
-            "m": [{"i": mod.id, "n": mod.name} for mod in mods],
+            "m": [
+                {
+                    "i": mod.id,
+                    "n": mod.name,
+                    "s": "local" if mod.isLocal else "workshop",
+                }
+                for mod in mods
+            ],
             "t": int(time.time()),
         }
 
@@ -64,7 +71,7 @@ class ShareCodeService:
             if isinstance(payload, dict) and "m" in payload:
                 # Map our minified keys back to readable ones
                 return self._normalize_mod_entries(
-                    payload["m"], id_key="i", name_key="n"
+                    payload["m"], id_key="i", name_key="n", source_key="s"
                 )
 
             # Support for the legacy format (from your old project)
@@ -91,6 +98,10 @@ class ShareCodeService:
         Returns:
             A tuple of two lists: (Found Mods, Missing Mods Data)
         """
+        mods_by_source = {
+            (mod.id, "local" if mod.isLocal else "workshop"): mod
+            for mod in catalogue_mods
+        }
         mods_by_id = {mod.id: mod for mod in catalogue_mods}
 
         found_mods: list[ModInfo] = []
@@ -99,18 +110,30 @@ class ShareCodeService:
         for item in decoded_mods_data:
             mod_id = item.get("id", "").strip()
             mod_name = item.get("name", "Unknown Mod").strip()
+            source = item.get("source", "").strip()
 
-            if mod_id and mod_id in mods_by_id:
+            if mod_id and source:
+                mod = mods_by_source.get((mod_id, source))
+                if mod:
+                    found_mods.append(mod)
+                else:
+                    missing_mods.append(
+                        {"id": mod_id, "name": mod_name, "source": source}
+                    )
+            elif mod_id and mod_id in mods_by_id:
                 found_mods.append(mods_by_id[mod_id])
             else:
                 # If we can't find it by ID, it's missing on this user's machine
-                missing_mods.append({"id": mod_id, "name": mod_name})
+                missing_mods.append({"id": mod_id, "name": mod_name, "source": source})
 
         return found_mods, missing_mods
 
     @staticmethod
     def _normalize_mod_entries(
-        entries: object, id_key: str = "id", name_key: str = "name"
+        entries: object,
+        id_key: str = "id",
+        name_key: str = "name",
+        source_key: str = "source",
     ) -> list[dict[str, str]]:
         if not isinstance(entries, list):
             raise InvalidShareCodeError("Share code mods payload must be a list.")
@@ -129,6 +152,16 @@ class ShareCodeService:
                     "Share code mod IDs and names must be strings."
                 )
 
-            normalized.append({"id": mod_id, "name": mod_name})
+            source = item.get(source_key, "")
+            if source is None:
+                source = ""
+            if not isinstance(source, str):
+                raise InvalidShareCodeError("Share code mod source must be a string.")
+
+            source = source.strip().casefold()
+            if source not in {"", "local", "workshop"}:
+                raise InvalidShareCodeError("Share code mod source is invalid.")
+
+            normalized.append({"id": mod_id, "name": mod_name, "source": source})
 
         return normalized

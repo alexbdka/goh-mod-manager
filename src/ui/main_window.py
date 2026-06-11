@@ -43,6 +43,8 @@ from src.ui.widgets.mod_details_widget import ModDetailsWidget
 from src.ui.widgets.toast_manager import ToastManager
 from src.utils import app_paths
 
+SCALE_FACTOR = 1.2
+
 
 class MainWindow(LanguageChangeMixin, QMainWindow):
     """Primary application window that wires Qt widgets to the application facade."""
@@ -52,9 +54,9 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         self.app_model = app_model
         self._onboarding_overlay: OnboardingOverlay | None = None
         self._shortcuts: list[QShortcut] = []
-
-        self.resize(1000, 1000)
-
+        screen = QApplication.primaryScreen().availableGeometry()
+        self.resize(int(screen.width() * 0.75), int(screen.height() * 0.75))
+        # self.setMinimumSize(900, 650)
         self.thread_pool = QThreadPool()
         self.thread_pool.setMaxThreadCount(1)
         self.mod_import_controller = ModImportController(
@@ -70,6 +72,7 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
             parent=self,
             build_debug_report=self.app_model.build_debug_report,
             launch_game=self.app_model.launch_game,
+            launch_editor=self.app_model.launch_editor,
             status_bar=self.statusBar(),
             show_info_message=self._show_info_message,
             show_error_message=self._show_error_message,
@@ -153,10 +156,10 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         middle_layout.setContentsMargins(5, 0, 5, 0)
         self.btn_add = QPushButton()
         self.btn_add.setProperty("uiRole", "iconButton")
-        self.btn_add.setIcon(qta.icon("fa5s.angle-double-right"))
+        self.btn_add.setIcon(qta.icon("mdi6.arrow-right", scale_factor=SCALE_FACTOR))
         self.btn_remove = QPushButton()
         self.btn_remove.setProperty("uiRole", "iconButton")
-        self.btn_remove.setIcon(qta.icon("fa5s.angle-double-left"))
+        self.btn_remove.setIcon(qta.icon("mdi6.arrow-left", scale_factor=SCALE_FACTOR))
         middle_layout.addStretch()
         middle_layout.addWidget(self.btn_add)
         middle_layout.addWidget(self.btn_remove)
@@ -287,6 +290,7 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         self.toolbar.import_share_code_requested.connect(self._on_import_share_code)
         self.toolbar.export_share_code_requested.connect(self._on_export_share_code)
         self.toolbar.play_requested.connect(self._on_launch_game)
+        self.toolbar.editor_requested.connect(self._on_launch_editor)
 
     def _connect_catalogue_signals(self):
         self.btn_add.clicked.connect(self.load_order_controller.add_selected_mods)
@@ -340,8 +344,12 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
 
     def refresh_icons(self):
         icon_colors = AppearanceManager.get_icon_colors(self)
-        self.btn_add.setIcon(qta.icon("fa5s.angle-double-right", **icon_colors))
-        self.btn_remove.setIcon(qta.icon("fa5s.angle-double-left", **icon_colors))
+        self.btn_add.setIcon(
+            qta.icon("mdi6.arrow-right", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.btn_remove.setIcon(
+            qta.icon("mdi6.arrow-left", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
         self.main_menu_bar.refresh_icons()
         self.toolbar.refresh_icons()
         self.active_mods_widget.refresh_icons()
@@ -519,8 +527,8 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
                 self.tr("Imported with Missing Mods"),
                 self.tr(
                     "The load order was imported, but you are missing the "
-                    "following mods. You must subscribe to them on the "
-                    "Workshop for the preset to work perfectly:"
+                    "following mods. Workshop mods can be opened from the "
+                    "links below; local mods must be installed manually:"
                 ),
                 missing_mods,
             )
@@ -784,6 +792,9 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
 
     def _on_launch_game(self):
         self.app_actions_controller.launch_game()
+
+    def _on_launch_editor(self):
+        self.app_actions_controller.launch_editor()
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

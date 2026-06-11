@@ -1,57 +1,80 @@
 # Translations
 
-This project keeps Qt translation sources in `src/ui/i18n/*.ts` and generates
-runtime binaries as `*.qm`. The source of truth is the `.ts` file set.
+GoH Mod Manager uses Qt translation files for the desktop UI.
 
-## Repository Rules
+The recommended path is Weblate:
+[GoH Mod Manager - Qt UI](https://hosted.weblate.org/projects/goh-mod-manager/qt-ui/).
+It gives translators a web interface, handles language files for us, and keeps
+the contribution flow much lighter than asking people to edit Qt files by hand.
 
-- Locale files must use names such as `en_US.ts`, `fr_FR.ts`, or `zh_CN.ts`.
-- Non-default translation files must declare the matching `<TS language="...">`
-  attribute.
-- Runtime language selection is dynamic. A language appears in the settings UI
-  when the corresponding `.qm` file exists.
+The short version:
 
-Validate the tree locally with:
+- translators work on `.ts` files
+- the app loads compiled `.qm` files
+- Weblate is the preferred collaboration path for UI translations
+- CI validates naming, metadata, and compilation
+
+The detailed maintainer workflow lives next to the translation files in
+`src/ui/i18n/README.md`.
+
+## Where Files Live
+
+```text
+src/ui/i18n/
+├── en.ts
+├── fr.ts
+├── ru.ts
+├── zh_Hans.ts
+├── en.qm
+├── fr.qm
+├── ru.qm
+└── zh_Hans.qm
+```
+
+The `.ts` files are the source of truth. The `.qm` files are generated runtime
+artifacts used by the app.
+
+## Local Commands
+
+Validate translation files:
 
 ```bash
 uv run python scripts/validate_translations.py
 ```
 
-Compile runtime binaries with:
-
-```bash
-uv run python scripts/build_translations.py --no-update
-```
-
-## Maintainer Workflow
-
-When UI text changes, update the translation sources first:
+Refresh `.ts` catalogs after UI text changes:
 
 ```bash
 uv run python scripts/build_translations.py --no-compile
 ```
 
-That refreshes all tracked `.ts` files and removes obsolete entries through
-`pyside6-lupdate -no-obsolete`.
+Compile runtime `.qm` files:
 
-After translation changes land, rebuild the `.qm` files before shipping a
-release or testing the new language locally.
+```bash
+uv run python scripts/build_translations.py --no-update
+```
 
-## Weblate Setup
+## Weblate
 
-Use one Weblate component pointed at `src/ui/i18n/*.ts` with:
+Use Weblate for normal translation work:
 
-- File format: `Qt Linguist Translation File`
-- File mask: `src/ui/i18n/*.ts`
-- Monolingual base language file: `src/ui/i18n/en_US.ts`
-- Template for new translations: `src/ui/i18n/en_US.ts`
+[https://hosted.weblate.org/projects/goh-mod-manager/qt-ui/](https://hosted.weblate.org/projects/goh-mod-manager/qt-ui/)
 
-This follows Weblate's documented setup for Qt `.ts` files in monolingual mode.
-New translation files added in Git will be discovered by the repository and can
-be validated in CI before they are merged.
+This is the easiest way to suggest wording, improve an existing language, or
+start a new translation. It also keeps review focused on the actual UI text
+instead of file formatting.
 
-## CI Expectations
+Technical setup:
 
-CI validates translation naming and metadata, compiles `.qm` files, and then
-builds the documentation and test suite. Release builds also recompile the
-translations before packaging the app.
+- file mask: `src/ui/i18n/*.ts`
+- base language: `src/ui/i18n/en.ts`
+- file format: Qt Linguist Translation File
+
+New languages should follow Qt locale naming, such as `fr.ts`, `ru.ts`, or
+`zh_Hans.ts`.
+
+## Runtime Behavior
+
+The app discovers available languages from compiled `.qm` files. That keeps the
+settings UI data-driven: adding a valid translation file and compiling it is
+enough for the language to become available.

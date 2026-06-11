@@ -36,8 +36,8 @@ uv run pytest -q tests/test_manager.py::TestModManager::test_import_mod_reloads_
 uv run pytest -q tests/test_cli_main.py::test_status_lines_use_state_surface
 
 # docs build
-uv run --group docs mkdocs build
-uv run --group docs mkdocs serve
+uv run --group docs zensical build
+uv run --group docs zensical serve
 
 # release-style build helper
 uv run python scripts/build_app.py
