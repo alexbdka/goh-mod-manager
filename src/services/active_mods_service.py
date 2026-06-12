@@ -80,6 +80,79 @@ class ActiveModsService:
             return None
         return self._active_mod_refs.index(ref) + 1
 
+    def normalize_mod_refs(self, mod_identifiers: list[str]) -> list[str]:
+        """Resolve mod IDs or reference keys into canonical active reference keys."""
+        refs: list[str] = []
+        for mod_identifier in mod_identifiers:
+            reference = self._reference_from_identifier(mod_identifier)
+            if reference is None:
+                continue
+            refs.append(to_reference_key(reference.id, reference.is_local))
+        return refs
+
+    def get_active_dependency_refs(self) -> dict[str, list[str]]:
+        """Return active mod references mapped to their active dependency refs."""
+        active_refs = set(self._active_mod_refs)
+        dependency_refs: dict[str, list[str]] = {}
+
+        for mod_ref in self._active_mod_refs:
+            mod = self._get_mod_from_ref(mod_ref)
+            if not mod:
+                dependency_refs[mod_ref] = []
+                continue
+
+            refs: list[str] = []
+            for dep_id in mod.dependencies:
+                dep_reference = self._resolve_dependency_reference(
+                    dep_id, preferred_local=mod.isLocal
+                )
+                if dep_reference is None:
+                    continue
+
+                dep_ref = to_reference_key(dep_reference.id, dep_reference.is_local)
+                if dep_ref in active_refs:
+                    refs.append(dep_ref)
+
+            dependency_refs[mod_ref] = refs
+
+        return dependency_refs
+
+    def get_active_dependent_refs(self) -> dict[str, list[str]]:
+        """Return active mod references mapped to active mods that require them."""
+        dependency_refs = self.get_active_dependency_refs()
+        dependent_refs = {mod_ref: [] for mod_ref in self._active_mod_refs}
+
+        for mod_ref, dependencies in dependency_refs.items():
+            for dep_ref in dependencies:
+                dependent_refs.setdefault(dep_ref, []).append(mod_ref)
+
+        return dependent_refs
+
+    def get_dependents_for_active_mod(self, mod_identifier: str) -> list[str]:
+        """Return active mods that depend on the given active mod reference."""
+        ref = self._resolve_existing_reference(mod_identifier)
+        if not ref:
+            return []
+        return self.get_active_dependent_refs().get(ref, [])
+
+    def find_order_dependency_violations(self, refs: list[str]) -> list[str]:
+        """Return refs whose dependencies would load after them in the given order."""
+        dependency_refs = self.get_active_dependency_refs()
+        positions = {ref: index for index, ref in enumerate(refs)}
+        violations: list[str] = []
+
+        for mod_ref, dependencies in dependency_refs.items():
+            mod_index = positions.get(mod_ref)
+            if mod_index is None:
+                continue
+            for dep_ref in dependencies:
+                dep_index = positions.get(dep_ref)
+                if dep_index is not None and dep_index > mod_index:
+                    violations.append(mod_ref)
+                    break
+
+        return violations
+
     def activate_mod(
         self, mod_identifier: str, _visited: set[str] | None = None
     ) -> list[str]:

@@ -1,5 +1,5 @@
 from PySide6.QtCore import QRect, QSize, Qt
-from PySide6.QtGui import QIcon, QPainter, QPalette
+from PySide6.QtGui import QColor, QIcon, QPainter, QPalette
 from PySide6.QtWidgets import (
     QApplication,
     QStyle,
@@ -13,6 +13,9 @@ ROLE_ORDER = Qt.ItemDataRole.UserRole + 1
 ROLE_TITLE = Qt.ItemDataRole.UserRole + 2
 ROLE_SOURCE = Qt.ItemDataRole.UserRole + 3
 ROLE_MOD_REF = Qt.ItemDataRole.UserRole + 4
+ROLE_ACTIVE_DEPENDENCY_REFS = Qt.ItemDataRole.UserRole + 5
+ROLE_ACTIVE_DEPENDENT_REFS = Qt.ItemDataRole.UserRole + 6
+ROLE_RELATION_KIND = Qt.ItemDataRole.UserRole + 7
 
 
 class ActiveModsItemDelegate(QStyledItemDelegate):
@@ -36,6 +39,7 @@ class ActiveModsItemDelegate(QStyledItemDelegate):
         order_text = str(index.data(ROLE_ORDER) or "")
         title = str(index.data(ROLE_TITLE) or "")
         source_text = str(index.data(ROLE_SOURCE) or "")
+        relation_kind = str(index.data(ROLE_RELATION_KIND) or "")
 
         content_rect = opt.rect.adjusted(8, 4, -8, -4)
         badge_rect = QRect(
@@ -78,6 +82,12 @@ class ActiveModsItemDelegate(QStyledItemDelegate):
 
         painter.save()
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        if relation_kind and not selected:
+            if relation_kind == "dependency":
+                painter.fillRect(opt.rect, QColor(38, 128, 82, 46))
+            elif relation_kind == "dependent":
+                painter.fillRect(opt.rect, QColor(196, 91, 67, 50))
+
         painter.setPen(Qt.PenStyle.NoPen)
         painter.setBrush(badge_background)
         painter.drawRoundedRect(badge_rect, 6, 6)

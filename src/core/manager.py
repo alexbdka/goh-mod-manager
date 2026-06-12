@@ -250,6 +250,8 @@ class ModManager:
         result = self.load_order.reorder(mod_ids)
         if result.changed:
             self.events.emit(EventType.ACTIVE_MODS_CHANGED)
+        elif result.blocked_reason:
+            self.events.emit(EventType.ACTIVE_MODS_CHANGED)
         return result
 
     def clear_active_mods(self) -> LoadOrderMutationResult:

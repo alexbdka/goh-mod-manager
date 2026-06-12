@@ -101,6 +101,7 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
             move_mod_down=self.app_model.move_mod_down,
             set_active_mods_order=self.app_model.set_active_mods_order,
             status_message=self.statusBar().showMessage,
+            show_warning_message=self._show_warning_message,
             show_missing_mods_dialog=self._show_missing_mods_dialog,
             handle_profile_write_error=self._handle_profile_write_error,
             get_mod_by_id=self._get_mod_by_id,

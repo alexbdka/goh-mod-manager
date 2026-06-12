@@ -9,6 +9,7 @@ from src.core.exceptions import ProfileWriteError
 from src.core.mod_reference import parse_reference_key
 from src.ui.widgets.active_mods_widget import ActiveModsWidget
 from src.ui.widgets.catalogue_widget import CatalogueWidget
+from src.utils import markup_parser
 
 
 class LoadOrderController:
@@ -27,6 +28,7 @@ class LoadOrderController:
         move_mod_down: Callable[[str], LoadOrderMutationResult],
         set_active_mods_order: Callable[[list[str]], LoadOrderMutationResult],
         status_message: Callable[[str, int], None],
+        show_warning_message: Callable[[str, str], None],
         show_missing_mods_dialog: Callable[
             [str, str, list[str] | list[dict[str, str]]], None
         ],
@@ -43,6 +45,7 @@ class LoadOrderController:
         self._move_mod_down = move_mod_down
         self._set_active_mods_order = set_active_mods_order
         self._status_message = status_message
+        self._show_warning_message = show_warning_message
         self._show_missing_mods_dialog = show_missing_mods_dialog
         self._handle_profile_write_error = handle_profile_write_error
         self._get_mod_by_id = get_mod_by_id
@@ -112,6 +115,11 @@ class LoadOrderController:
 
         if result.changed:
             self._status_message(self._tr("Deactivated mod: {0}").format(mod_id), 3000)
+        elif result.blocked_reason == "required_by_active_mods":
+            self._show_warning_message(
+                self._tr("Dependency In Use"),
+                self._format_dependency_removal_block(mod_id, result.blocking_mod_refs),
+            )
 
     def clear_mods(self) -> None:
         try:
@@ -131,6 +139,11 @@ class LoadOrderController:
             return
         if result.changed:
             self._status_message(self._tr("Moved mod {0} up").format(mod_id), 3000)
+        elif result.blocked_reason == "invalid_dependency_order":
+            self._status_message(
+                self._tr("Invalid order: dependencies must load before dependents."),
+                5000,
+            )
 
     def move_down(self, mod_id: str) -> None:
         try:
@@ -140,6 +153,11 @@ class LoadOrderController:
             return
         if result.changed:
             self._status_message(self._tr("Moved mod {0} down").format(mod_id), 3000)
+        elif result.blocked_reason == "invalid_dependency_order":
+            self._status_message(
+                self._tr("Invalid order: dependencies must load before dependents."),
+                5000,
+            )
 
     def reorder(self, new_order: list[str]) -> None:
         try:
@@ -149,3 +167,31 @@ class LoadOrderController:
             return
         if result.changed:
             self._status_message(self._tr("Mod load order updated"), 3000)
+        elif result.blocked_reason == "invalid_dependency_order":
+            self._status_message(
+                self._tr("Invalid order: dependencies must load before dependents."),
+                5000,
+            )
+
+    def _format_dependency_removal_block(
+        self, mod_ref: str, blocking_mod_refs: list[str]
+    ) -> str:
+        mod_name = self._display_name_for_ref(mod_ref)
+        if len(blocking_mod_refs) == 1:
+            dependent_name = self._display_name_for_ref(blocking_mod_refs[0])
+            return self._tr("Cannot remove '{0}': required by '{1}'.").format(
+                mod_name, dependent_name
+            )
+
+        return self._tr("Cannot remove '{0}': required by {1} active mods.").format(
+            mod_name, len(blocking_mod_refs)
+        )
+
+    def _display_name_for_ref(self, mod_ref: str) -> str:
+        reference = parse_reference_key(mod_ref)
+        if reference is None:
+            mod = self._get_mod_by_id(mod_ref, None)
+            return markup_parser.strip_markup(mod.name) if mod else mod_ref
+
+        mod = self._get_mod_by_id(reference.id, reference.is_local)
+        return markup_parser.strip_markup(mod.name) if mod else reference.id

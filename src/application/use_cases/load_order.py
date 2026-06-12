@@ -65,6 +65,17 @@ class ApplicationLoadOrderUseCase:
 
     def deactivate_mod(self, mod_identifier: str) -> LoadOrderMutationResult:
         before = list(self._active_mods_service.active_mod_refs)
+        dependents = self._active_mods_service.get_dependents_for_active_mod(
+            mod_identifier
+        )
+        if dependents:
+            return LoadOrderMutationResult(
+                changed=False,
+                active_mod_ids=list(self._active_mods_service.active_mods_ids),
+                blocked_reason="required_by_active_mods",
+                blocking_mod_refs=dependents,
+            )
+
         profile_path = self._require_profile_path()
         self._active_mods_service.deactivate_mod(mod_identifier)
         return self._persist_if_changed(before, profile_path)
@@ -82,25 +93,62 @@ class ApplicationLoadOrderUseCase:
         before = list(self._active_mods_service.active_mod_refs)
         profile_path = self._require_profile_path()
         self._active_mods_service.move_mod_up(mod_identifier)
+        blocked = self._rollback_if_dependency_order_invalid(before)
+        if blocked:
+            return blocked
         return self._persist_if_changed(before, profile_path)
 
     def move_down(self, mod_identifier: str) -> LoadOrderMutationResult:
         before = list(self._active_mods_service.active_mod_refs)
         profile_path = self._require_profile_path()
         self._active_mods_service.move_mod_down(mod_identifier)
+        blocked = self._rollback_if_dependency_order_invalid(before)
+        if blocked:
+            return blocked
         return self._persist_if_changed(before, profile_path)
 
     def reorder(self, mod_identifiers: list[str]) -> LoadOrderMutationResult:
         before = list(self._active_mods_service.active_mod_refs)
-        if list(mod_identifiers) == before:
+        normalized_refs = self._active_mods_service.normalize_mod_refs(
+            list(mod_identifiers)
+        )
+        if normalized_refs == before:
             return LoadOrderMutationResult(
                 changed=False,
                 active_mod_ids=list(self._active_mods_service.active_mods_ids),
             )
 
+        violations = self._active_mods_service.find_order_dependency_violations(
+            normalized_refs
+        )
+        if violations:
+            return LoadOrderMutationResult(
+                changed=False,
+                active_mod_ids=list(self._active_mods_service.active_mods_ids),
+                blocked_reason="invalid_dependency_order",
+                blocking_mod_refs=violations,
+            )
+
         profile_path = self._require_profile_path()
-        self._active_mods_service.active_mod_refs = list(mod_identifiers)
+        self._active_mods_service.active_mod_refs = normalized_refs
         return self._persist_if_changed(before, profile_path)
+
+    def _rollback_if_dependency_order_invalid(
+        self, before: list[str]
+    ) -> LoadOrderMutationResult | None:
+        violations = self._active_mods_service.find_order_dependency_violations(
+            self._active_mods_service.active_mod_refs
+        )
+        if not violations:
+            return None
+
+        self._active_mods_service.active_mod_refs = before
+        return LoadOrderMutationResult(
+            changed=False,
+            active_mod_ids=list(self._active_mods_service.active_mods_ids),
+            blocked_reason="invalid_dependency_order",
+            blocking_mod_refs=violations,
+        )
 
     def _persist_if_changed(
         self, before: list[str], profile_path: str

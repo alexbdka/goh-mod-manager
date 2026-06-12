@@ -59,8 +59,20 @@ class ApplicationQueryService:
 
     def get_active_mods_state(self) -> ActiveModsState:
         """Return active mods in the same order used by the game profile."""
+        dependency_refs = self._active_mods_service.get_active_dependency_refs()
+        dependent_refs = self._active_mods_service.get_active_dependent_refs()
         items = [
-            self._to_mod_state(mod, is_active=True, load_order=index + 1)
+            self._to_mod_state(
+                mod,
+                is_active=True,
+                load_order=index + 1,
+                active_dependency_refs=dependency_refs.get(
+                    self._active_ref_for_mod(mod), []
+                ),
+                active_dependent_refs=dependent_refs.get(
+                    self._active_ref_for_mod(mod), []
+                ),
+            )
             for index, mod in enumerate(self._active_mods_service.get_active_mods())
         ]
         return ActiveModsState(items=items)
@@ -131,6 +143,8 @@ class ApplicationQueryService:
         is_active: bool = False,
         load_order: int | None = None,
         missing_dependencies: list[str] | None = None,
+        active_dependency_refs: list[str] | None = None,
+        active_dependent_refs: list[str] | None = None,
     ) -> ModState:
         """Convert a domain ``ModInfo`` object into a view-neutral ``ModState``."""
         return ModState(
@@ -148,4 +162,11 @@ class ApplicationQueryService:
             image_path=mod.image_path,
             is_active=is_active,
             load_order=load_order,
+            active_dependency_refs=list(active_dependency_refs or []),
+            active_dependent_refs=list(active_dependent_refs or []),
         )
+
+    @staticmethod
+    def _active_ref_for_mod(mod: ModInfo) -> str:
+        source = "local" if mod.isLocal else "workshop"
+        return f"{source}::{mod.id}"

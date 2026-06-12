@@ -41,6 +41,8 @@ class LoadOrderActivationResult:
 class LoadOrderMutationResult:
     changed: bool = False
     active_mod_ids: list[str] = field(default_factory=list)
+    blocked_reason: str | None = None
+    blocking_mod_refs: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -59,6 +61,8 @@ class ModState:
     image_path: str | None = None
     is_active: bool = False
     load_order: int | None = None
+    active_dependency_refs: list[str] = field(default_factory=list)
+    active_dependent_refs: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)

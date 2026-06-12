@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, QTimer, Signal
+from PySide6.QtCore import QEvent, Qt, QTimer, Signal
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QHBoxLayout,
@@ -16,9 +16,12 @@ from src.ui.appearance_manager import AppearanceManager
 from src.ui.language_change_mixin import LanguageChangeMixin
 from src.ui.qtawesome_compat import qta
 from src.ui.widgets.active_mods_item_delegate import (
+    ROLE_ACTIVE_DEPENDENCY_REFS,
+    ROLE_ACTIVE_DEPENDENT_REFS,
     ROLE_MOD_ID,
     ROLE_MOD_REF,
     ROLE_ORDER,
+    ROLE_RELATION_KIND,
     ROLE_SOURCE,
     ROLE_TITLE,
     ActiveModsItemDelegate,
@@ -91,6 +94,8 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
         self.list_widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.list_widget.setItemDelegate(ActiveModsItemDelegate(self.list_widget))
         self.list_widget.setAccessibleName("activeModsList")
+        self.list_widget.setMouseTracking(True)
+        self.list_widget.viewport().installEventFilter(self)
         layout.addWidget(self.list_widget)
 
         self.empty_label = QLabel(self.list_widget.viewport())
@@ -120,7 +125,8 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
         self.btn_down.clicked.connect(self._on_move_down)
         self.btn_clear.clicked.connect(self._on_clear)
         self.list_widget.order_dropped.connect(self._on_reorder)
-        self.list_widget.itemSelectionChanged.connect(self.selection_changed.emit)
+        self.list_widget.itemSelectionChanged.connect(self._on_selection_changed)
+        self.list_widget.itemEntered.connect(self._on_item_hovered)
         self.list_widget.customContextMenuRequested.connect(
             self.context_menu_requested.emit
         )
@@ -147,6 +153,9 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
             item.setData(0, ROLE_ORDER, order_text)
             item.setData(0, ROLE_TITLE, clean_name)
             item.setData(0, ROLE_SOURCE, source_text)
+            item.setData(0, ROLE_ACTIVE_DEPENDENCY_REFS, mod.active_dependency_refs)
+            item.setData(0, ROLE_ACTIVE_DEPENDENT_REFS, mod.active_dependent_refs)
+            item.setData(0, ROLE_RELATION_KIND, "")
             item.setToolTip(0, source_text)
 
             self.list_widget.addTopLevelItem(item)
@@ -180,6 +189,7 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
 
     def clear_selection(self):
         self.list_widget.clearSelection()
+        self._clear_relation_highlights()
 
     def block_list_signals(self, block: bool):
         return self.list_widget.blockSignals(block)
@@ -205,6 +215,15 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
         if mod_ref:
             self.mod_double_clicked.emit(mod_ref)
 
+    def _on_selection_changed(self):
+        self._apply_relation_highlights(self.list_widget.selectedItems())
+        self.selection_changed.emit()
+
+    def _on_item_hovered(self, item, _column):
+        if self.list_widget.selectedItems():
+            return
+        self._apply_relation_highlights([item] if item is not None else [])
+
     def _on_reorder(self):
         new_order = []
         for i in range(self.list_widget.topLevelItemCount()):
@@ -216,6 +235,42 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
             if mod_ref:
                 new_order.append(mod_ref)
         self.order_changed.emit(new_order)
+
+    def _apply_relation_highlights(self, source_items):
+        self._clear_relation_highlights()
+        if not source_items:
+            return
+
+        source_item = source_items[0]
+        dependency_refs = set(source_item.data(0, ROLE_ACTIVE_DEPENDENCY_REFS) or [])
+        dependent_refs = set(source_item.data(0, ROLE_ACTIVE_DEPENDENT_REFS) or [])
+        if not dependency_refs and not dependent_refs:
+            return
+
+        for i in range(self.list_widget.topLevelItemCount()):
+            item = self.list_widget.topLevelItem(i)
+            if item is None or item is source_item:
+                continue
+            mod_ref = item.data(0, ROLE_MOD_REF)
+            if mod_ref in dependency_refs:
+                item.setData(0, ROLE_RELATION_KIND, "dependency")
+            elif mod_ref in dependent_refs:
+                item.setData(0, ROLE_RELATION_KIND, "dependent")
+
+        self.list_widget.viewport().update()
+
+    def _clear_relation_highlights(self):
+        for i in range(self.list_widget.topLevelItemCount()):
+            item = self.list_widget.topLevelItem(i)
+            if item is not None:
+                item.setData(0, ROLE_RELATION_KIND, "")
+        self.list_widget.viewport().update()
+
+    def eventFilter(self, watched, event):
+        if watched is self.list_widget.viewport() and event.type() == QEvent.Type.Leave:
+            if not self.list_widget.selectedItems():
+                self._clear_relation_highlights()
+        return super().eventFilter(watched, event)
 
     def retranslate_ui(self):
         self.title_label.setText(self.tr("Load Order (Active Mods)"))
