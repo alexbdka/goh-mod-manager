@@ -6,6 +6,7 @@ from src.application.state import (
     SettingsState,
 )
 from src.core.mod import ModInfo
+from src.core.mod_reference import to_reference_key
 from src.services.active_mods_service import ActiveModsService
 from src.services.config_service import ConfigService
 from src.services.mods_catalogue_service import ModsCatalogueService
@@ -59,8 +60,20 @@ class ApplicationQueryService:
 
     def get_active_mods_state(self) -> ActiveModsState:
         """Return active mods in the same order used by the game profile."""
+        dependency_refs = self._active_mods_service.get_active_dependency_refs()
+        dependent_refs = self._active_mods_service.get_active_dependent_refs()
         items = [
-            self._to_mod_state(mod, is_active=True, load_order=index + 1)
+            self._to_mod_state(
+                mod,
+                is_active=True,
+                load_order=index + 1,
+                active_dependency_refs=dependency_refs.get(
+                    self._active_ref_for_mod(mod), []
+                ),
+                active_dependent_refs=dependent_refs.get(
+                    self._active_ref_for_mod(mod), []
+                ),
+            )
             for index, mod in enumerate(self._active_mods_service.get_active_mods())
         ]
         return ActiveModsState(items=items)
@@ -101,18 +114,22 @@ class ApplicationQueryService:
         selection even when the active load order no longer matches it exactly.
         """
         config = self._config_service.get_config()
-        active_mod_ids = list(self._active_mods_service.active_mods_ids)
+        active_mod_refs = list(self._active_mods_service.active_mod_refs)
         preset_names = list(config.presets.keys())
 
         if selected_preset_name and selected_preset_name in config.presets:
             current_preset_name = selected_preset_name
-            is_unsaved = config.presets[selected_preset_name] != active_mod_ids
+            selected_refs = self._preset_service.normalize_preset_mods(
+                config.presets[selected_preset_name]
+            )
+            is_unsaved = selected_refs != active_mod_refs
         else:
             current_preset_name = next(
                 (
                     preset_name
                     for preset_name, preset_mod_ids in config.presets.items()
-                    if preset_mod_ids == active_mod_ids
+                    if self._preset_service.normalize_preset_mods(preset_mod_ids)
+                    == active_mod_refs
                 ),
                 None,
             )
@@ -131,6 +148,8 @@ class ApplicationQueryService:
         is_active: bool = False,
         load_order: int | None = None,
         missing_dependencies: list[str] | None = None,
+        active_dependency_refs: list[str] | None = None,
+        active_dependent_refs: list[str] | None = None,
     ) -> ModState:
         """Convert a domain ``ModInfo`` object into a view-neutral ``ModState``."""
         return ModState(
@@ -148,4 +167,10 @@ class ApplicationQueryService:
             image_path=mod.image_path,
             is_active=is_active,
             load_order=load_order,
+            active_dependency_refs=list(active_dependency_refs or []),
+            active_dependent_refs=list(active_dependent_refs or []),
         )
+
+    @staticmethod
+    def _active_ref_for_mod(mod: ModInfo) -> str:
+        return to_reference_key(mod.id, mod.isLocal)

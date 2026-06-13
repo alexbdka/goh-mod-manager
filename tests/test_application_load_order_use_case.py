@@ -42,6 +42,17 @@ def test_activate_mods_resolves_dependencies_and_persists_once(tmp_path):
     assert active_mods.active_mods_ids == ["dep", "main"]
 
 
+def test_activate_mods_reports_no_change_when_ref_is_already_active(tmp_path):
+    use_case, active_mods = _make_use_case(tmp_path)
+    active_mods.active_mod_refs = ["local::dep"]
+
+    result = use_case.activate_mods(["dep"])
+
+    assert result.changed is False
+    assert result.activated_mod_ids == []
+    assert active_mods.active_mod_refs == ["local::dep"]
+
+
 def test_deactivate_mod_reports_no_change_when_mod_is_not_active(tmp_path):
     use_case, active_mods = _make_use_case(tmp_path)
 
@@ -55,13 +66,71 @@ def test_move_and_reorder_return_changed_state(tmp_path):
     use_case, active_mods = _make_use_case(tmp_path)
     active_mods.active_mods_ids = ["dep", "main", "other"]
 
-    move_result = use_case.move_down("dep")
+    move_result = use_case.move_up("other")
     assert move_result.changed is True
-    assert active_mods.active_mods_ids == ["main", "dep", "other"]
+    assert active_mods.active_mods_ids == ["dep", "other", "main"]
 
-    reorder_result = use_case.reorder(["other", "main", "dep"])
+    reorder_result = use_case.reorder(["other", "dep", "main"])
     assert reorder_result.changed is True
-    assert active_mods.active_mods_ids == ["other", "main", "dep"]
+    assert active_mods.active_mods_ids == ["other", "dep", "main"]
+
+
+def test_deactivate_mod_blocks_active_dependency_removal(tmp_path):
+    use_case, active_mods = _make_use_case(tmp_path)
+    active_mods.active_mods_ids = ["dep", "main", "other"]
+
+    result = use_case.deactivate_mod("dep")
+
+    assert result.changed is False
+    assert result.blocked_reason == "required_by_active_mods"
+    assert result.blocking_mod_refs == ["local::main"]
+    assert active_mods.active_mods_ids == ["dep", "main", "other"]
+
+
+def test_reorder_blocks_dependency_after_dependent(tmp_path):
+    use_case, active_mods = _make_use_case(tmp_path)
+    active_mods.active_mods_ids = ["dep", "main", "other"]
+
+    result = use_case.reorder(["main", "dep", "other"])
+
+    assert result.changed is False
+    assert result.blocked_reason == "invalid_dependency_order"
+    assert result.blocking_mod_refs == ["local::main"]
+    assert active_mods.active_mods_ids == ["dep", "main", "other"]
+
+
+def test_reorder_blocks_payload_missing_active_mod(tmp_path):
+    use_case, active_mods = _make_use_case(tmp_path)
+    active_mods.active_mods_ids = ["dep", "main", "other"]
+
+    result = use_case.reorder(["dep", "main"])
+
+    assert result.changed is False
+    assert result.blocked_reason == "invalid_order_payload"
+    assert active_mods.active_mods_ids == ["dep", "main", "other"]
+
+
+def test_reorder_blocks_payload_with_unknown_mod(tmp_path):
+    use_case, active_mods = _make_use_case(tmp_path)
+    active_mods.active_mods_ids = ["dep", "main", "other"]
+
+    result = use_case.reorder(["dep", "main", "ghost"])
+
+    assert result.changed is False
+    assert result.blocked_reason == "invalid_order_payload"
+    assert active_mods.active_mods_ids == ["dep", "main", "other"]
+
+
+def test_move_blocks_dependency_after_dependent(tmp_path):
+    use_case, active_mods = _make_use_case(tmp_path)
+    active_mods.active_mods_ids = ["dep", "main", "other"]
+
+    result = use_case.move_down("dep")
+
+    assert result.changed is False
+    assert result.blocked_reason == "invalid_dependency_order"
+    assert result.blocking_mod_refs == ["local::main"]
+    assert active_mods.active_mods_ids == ["dep", "main", "other"]
 
 
 def test_clear_returns_changed_only_when_needed(tmp_path):

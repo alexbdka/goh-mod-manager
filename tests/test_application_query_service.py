@@ -74,6 +74,18 @@ def test_get_active_mods_state_keeps_load_order():
     assert [item.load_order for item in state.items] == [1, 2]
 
 
+def test_get_active_mods_state_exposes_active_dependency_relations():
+    queries = _build_queries()
+
+    state = queries.get_active_mods_state()
+    by_id = {item.id: item for item in state.items}
+
+    assert by_id["dep"].active_dependency_refs == []
+    assert by_id["dep"].active_dependent_refs == ["local::main"]
+    assert by_id["main"].active_dependency_refs == ["local::dep"]
+    assert by_id["main"].active_dependent_refs == []
+
+
 def test_get_mod_state_returns_active_mod_snapshot():
     queries = _build_queries()
 

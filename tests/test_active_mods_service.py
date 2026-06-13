@@ -154,6 +154,31 @@ class TestActiveModsService:
         assert len(active) == 1
         assert active[0].name == "Local Variant"
 
+    def test_active_dependencies_prefer_already_active_source_variant(self):
+        self.catalogue._local_mods["dep"] = ModInfo(
+            id="dep", name="Local Dependency", desc="", isLocal=True
+        )
+        self.catalogue._workshop_mods["dep"] = ModInfo(
+            id="dep", name="Workshop Dependency", desc="", isLocal=False
+        )
+        self.catalogue._local_mods["main"] = ModInfo(
+            id="main",
+            name="Main",
+            desc="",
+            dependencies=["dep"],
+            isLocal=True,
+        )
+        self.service.active_mod_refs = ["workshop::dep"]
+
+        missing = self.service.activate_mod("local::main")
+
+        assert missing == []
+        assert self.service.active_mod_refs == ["workshop::dep", "local::main"]
+        assert self.service.get_active_dependency_refs() == {
+            "workshop::dep": [],
+            "local::main": ["workshop::dep"],
+        }
+
     def test_save_profile_preserves_nested_blocks_after_mods(self):
         with tempfile.NamedTemporaryFile(
             mode="w", delete=False, suffix=".set", encoding="utf-8"

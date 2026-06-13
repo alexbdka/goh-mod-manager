@@ -33,12 +33,14 @@ class PresetService:
 
     def save_preset(self, name: str, mod_ids: list[str] | None = None) -> None:
         """
-        Saves a list of mod IDs as a preset.
-        If mod_ids is not provided, saves the currently active mods.
+        Saves a list of mod references as a preset.
+        If mod_ids is not provided, saves the currently active source-aware refs.
         """
         if mod_ids is None:
             # Create a copy of the list so it's not by reference
-            mod_ids = list(self.active_mods.active_mods_ids)
+            mod_ids = list(self.active_mods.active_mod_refs)
+        else:
+            mod_ids = self.normalize_preset_mods(mod_ids)
 
         config = self.config_service.get_config()
         config.presets[name] = mod_ids
@@ -79,3 +81,27 @@ class PresetService:
             logger.info(f"Successfully applied preset '{name}'.")
 
         return True, missing_mods
+
+    def normalize_preset_mods(self, mod_ids: list[str]) -> list[str]:
+        """
+        Convert installed preset entries to source-aware refs.
+
+        Unknown entries are preserved verbatim so legacy presets can still report
+        missing mods by the original ID instead of inventing a source prefix.
+        """
+        normalized: list[str] = []
+        for mod_id in mod_ids:
+            refs = self.active_mods.normalize_mod_refs([mod_id])
+            if refs and self._is_installed_ref(refs[0]):
+                normalized.append(refs[0])
+            else:
+                normalized.append(mod_id)
+        return normalized
+
+    def _is_installed_ref(self, mod_ref: str) -> bool:
+        reference = self.active_mods.reference_from_identifier(mod_ref)
+        if reference is None:
+            return False
+        return bool(
+            self.catalogue.get_mod_by_source(reference.id, is_local=reference.is_local)
+        )
