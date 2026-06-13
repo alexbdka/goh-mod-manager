@@ -6,6 +6,7 @@ from src.application.state import (
     SettingsState,
 )
 from src.core.mod import ModInfo
+from src.core.mod_reference import to_reference_key
 from src.services.active_mods_service import ActiveModsService
 from src.services.config_service import ConfigService
 from src.services.mods_catalogue_service import ModsCatalogueService
@@ -113,18 +114,22 @@ class ApplicationQueryService:
         selection even when the active load order no longer matches it exactly.
         """
         config = self._config_service.get_config()
-        active_mod_ids = list(self._active_mods_service.active_mods_ids)
+        active_mod_refs = list(self._active_mods_service.active_mod_refs)
         preset_names = list(config.presets.keys())
 
         if selected_preset_name and selected_preset_name in config.presets:
             current_preset_name = selected_preset_name
-            is_unsaved = config.presets[selected_preset_name] != active_mod_ids
+            selected_refs = self._preset_service.normalize_preset_mods(
+                config.presets[selected_preset_name]
+            )
+            is_unsaved = selected_refs != active_mod_refs
         else:
             current_preset_name = next(
                 (
                     preset_name
                     for preset_name, preset_mod_ids in config.presets.items()
-                    if preset_mod_ids == active_mod_ids
+                    if self._preset_service.normalize_preset_mods(preset_mod_ids)
+                    == active_mod_refs
                 ),
                 None,
             )
@@ -168,5 +173,4 @@ class ApplicationQueryService:
 
     @staticmethod
     def _active_ref_for_mod(mod: ModInfo) -> str:
-        source = "local" if mod.isLocal else "workshop"
-        return f"{source}::{mod.id}"
+        return to_reference_key(mod.id, mod.isLocal)

@@ -84,7 +84,7 @@ class ActiveModsService:
         """Resolve mod IDs or reference keys into canonical active reference keys."""
         refs: list[str] = []
         for mod_identifier in mod_identifiers:
-            reference = self._reference_from_identifier(mod_identifier)
+            reference = self.reference_from_identifier(mod_identifier)
             if reference is None:
                 continue
             refs.append(to_reference_key(reference.id, reference.is_local))
@@ -103,7 +103,7 @@ class ActiveModsService:
 
             refs: list[str] = []
             for dep_id in mod.dependencies:
-                dep_reference = self._resolve_dependency_reference(
+                dep_reference = self._resolve_active_dependency_reference(
                     dep_id, preferred_local=mod.isLocal
                 )
                 if dep_reference is None:
@@ -195,7 +195,7 @@ class ActiveModsService:
         )
         if mod and mod.dependencies:
             for dep in mod.dependencies:
-                dep_reference = self._resolve_dependency_reference(
+                dep_reference = self._resolve_active_dependency_reference(
                     dep, preferred_local=mod.isLocal
                 )
                 if dep_reference is None:
@@ -424,6 +424,21 @@ class ActiveModsService:
             return ModReference(id=mod_id, is_local=not preferred_local)
         return None
 
+    def _resolve_active_dependency_reference(
+        self, mod_id: str, *, preferred_local: bool
+    ) -> ModReference | None:
+        preferred_ref = to_reference_key(mod_id, preferred_local)
+        if preferred_ref in self._active_mod_refs:
+            return ModReference(id=mod_id, is_local=preferred_local)
+
+        fallback_ref = to_reference_key(mod_id, not preferred_local)
+        if fallback_ref in self._active_mod_refs:
+            return ModReference(id=mod_id, is_local=not preferred_local)
+
+        return self._resolve_dependency_reference(
+            mod_id, preferred_local=preferred_local
+        )
+
     def _resolve_existing_reference(self, mod_identifier: str) -> str | None:
         parsed = parse_reference_key(mod_identifier)
         if parsed:
@@ -437,7 +452,7 @@ class ActiveModsService:
                 return ref
         return None
 
-    def _reference_from_identifier(self, mod_identifier: str) -> ModReference | None:
+    def reference_from_identifier(self, mod_identifier: str) -> ModReference | None:
         parsed = parse_reference_key(mod_identifier)
         if parsed:
             if not parsed.id:
@@ -454,6 +469,9 @@ class ActiveModsService:
             return ModReference(id=mod_identifier, is_local=False)
 
         return ModReference(id=mod_identifier, is_local=not mod_identifier.isdigit())
+
+    def _reference_from_identifier(self, mod_identifier: str) -> ModReference | None:
+        return self.reference_from_identifier(mod_identifier)
 
     @staticmethod
     def _reference_from_key(key: str) -> ModReference:

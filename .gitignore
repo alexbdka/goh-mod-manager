@@ -18,6 +18,7 @@ logs/
 legacy/
 
 # Tool caches
+.cache/
 .pytest_cache/
 .uv-cache/
 .ruff_cache/

@@ -1,7 +1,7 @@
 # GoH Mod Manager
 
 GoH Mod Manager is a PySide6 desktop app for managing mods for
-[Call to Arms: Gates of Hell](https://www.barbed-wire.eu/we-are-barbedwire-studios/our-game-development/).
+[Call to Arms - Gates of Hell](https://www.barbed-wire.eu/we-are-barbedwire-studios/our-game-development/).
 
 It is built for the everyday Gates of Hell modding loop: find installed mods,
 shape a load order, save presets, share setups with friends, and get back into

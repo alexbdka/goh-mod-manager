@@ -44,11 +44,11 @@ class TestPresetService:
         # Check if it was saved
         presets = self.preset_service.get_all_presets()
         assert "TestPreset" in presets
-        assert presets["TestPreset"] == ["mod_1", "mod_3"]
+        assert presets["TestPreset"] == ["local::mod_1", "local::mod_3"]
 
         # Check retrieval
         preset_data = self.preset_service.get_preset("TestPreset")
-        assert preset_data == ["mod_1", "mod_3"]
+        assert preset_data == ["local::mod_1", "local::mod_3"]
 
     def test_save_from_active_mods(self):
         self.active_mods.activate_mod("mod_2")
@@ -58,7 +58,7 @@ class TestPresetService:
         self.preset_service.save_preset("ActivePreset")
 
         preset_data = self.preset_service.get_preset("ActivePreset")
-        assert preset_data == ["mod_2", "mod_1"]
+        assert preset_data == ["local::mod_2", "local::mod_1"]
 
     def test_delete_preset(self):
         self.preset_service.save_preset("ToDelete", ["mod_1"])
@@ -111,3 +111,25 @@ class TestPresetService:
 
         # Only the valid mod should have been applied
         assert self.active_mods.active_mods_ids == ["mod_1"]
+
+    def test_save_preset_preserves_active_workshop_source(self):
+        self.catalogue._workshop_mods["mod_1"] = ModInfo(
+            id="mod_1", name="Mod 1 Workshop", desc="", isLocal=False
+        )
+        self.active_mods.active_mod_refs = ["workshop::mod_1"]
+
+        self.preset_service.save_preset("WorkshopPreset")
+
+        assert self.preset_service.get_preset("WorkshopPreset") == ["workshop::mod_1"]
+
+    def test_apply_preset_preserves_source_aware_refs(self):
+        self.catalogue._workshop_mods["mod_1"] = ModInfo(
+            id="mod_1", name="Mod 1 Workshop", desc="", isLocal=False
+        )
+        self.preset_service.save_preset("WorkshopPreset", ["workshop::mod_1"])
+
+        success, missing = self.preset_service.apply_preset("WorkshopPreset")
+
+        assert success
+        assert missing == []
+        assert self.active_mods.active_mod_refs == ["workshop::mod_1"]

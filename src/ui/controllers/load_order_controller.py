@@ -172,6 +172,11 @@ class LoadOrderController:
                 self._tr("Invalid order: dependencies must load before dependents."),
                 5000,
             )
+        elif result.blocked_reason == "invalid_order_payload":
+            self._status_message(
+                self._tr("Cannot apply load order: active mods are out of sync."),
+                5000,
+            )
 
     def _format_dependency_removal_block(
         self, mod_ref: str, blocking_mod_refs: list[str]

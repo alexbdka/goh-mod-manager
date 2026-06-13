@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-This is a Python 3.12 PySide6 desktop app for managing Call to Arms - Gates of Hell mods. Runtime code lives in `src/`: `main.py` launches the GUI, `core/` contains domain objects and orchestration, `services/` handles persistence and file operations, `application/` exposes use cases and query surfaces, `ui/` contains Qt windows, dialogs, widgets, controllers, workers, and translations, and `utils/` holds shared helpers. CLI entry points are in `src/cli/`. Tests live in `tests/`, with fixtures under `tests/resources/`. Static resources are in `assets/`, docs in `docs/`, and helper scripts in `scripts/`.
+This is a Python 3.12 PySide6 desktop app for managing Call to Arms - Gates of Hell mods. Runtime code lives in `src/`: `main.py` launches the GUI, `core/` contains domain objects and orchestration, `services/` handles persistence and file operations, `application/` exposes use cases and query surfaces, `ui/` contains Qt windows, dialogs, widgets, controllers, workers, and translations, and `utils/` holds shared helpers. CLI entry points are in `src/cli/`. Tests live in `tests/`, with fixtures under `tests/resources/`. Static resources are in `assets/`, hand-written docs live in `docs/`, the Zensical config is `zensical.toml`, the GitHub Pages site root is `www/`, and helper scripts are in `scripts/`.
 
 ## Build, Test, and Lint Commands
 
@@ -48,12 +48,14 @@ uv run python scripts/build_app.py
 - `src/main.py` (GUI) and `src/cli/main.py` (CLI) both go through `src.core.manager.ModManager` as the application facade.
 - `ModManager` composes services (`src/services/*`), read queries (`src/application/queries/query_service.py`), and mutating use cases (`src/application/use_cases/*`), then emits coarse-grained `EventBus` events (`CATALOGUE_CHANGED`, `ACTIVE_MODS_CHANGED`, `PRESETS_CHANGED`) for UI refresh.
 - Read flow: services/domain objects → `ApplicationQueryService` → immutable UI-facing dataclasses in `src/application/state.py` (`SettingsState`, `CatalogueState`, `ActiveModsState`, `PresetsState`, etc.).
-- Write flow: UI controllers → `ModManager` facade methods → application use cases (`load_order`, `settings`, `share_code`) → services → facade events only when change flags indicate state changed.
+- Write flow: UI controllers → `ModManager` facade methods → application use cases (`load_order`, `settings`, `share_code`) → services → facade events when change flags indicate state changed. Some blocked UI corrections, such as invalid drag/drop load-order rollback, may also emit `ACTIVE_MODS_CHANGED` to force a view refresh without a persisted state transition.
 - The UI (`src/ui/main_window.py`) is thin orchestration: it wires widgets and controllers, injects facade callables into controllers, subscribes to facade events, and repopulates widgets from query-state snapshots.
 - Domain parsing/serialization lives in services and utils:
   - `ModsCatalogueService` parses `mod.info` files into `ModInfo`
   - `ActiveModsService` loads/saves `options.set` and preserves block structure when writing
   - `src/utils/gem_parser.py` handles GEM format parsing
+- Active mod dependency safety is enforced in the application/service layer: dependencies are activated before dependents, active dependencies cannot be removed while required by another active mod, and load-order mutations must keep dependencies before their dependents. UI widgets may highlight these relationships, but they must not be the only enforcement point.
+- The public static site is under `www/`; Zensical writes generated docs to `www/doc/`, which is ignored by Git and rebuilt in CI before Pages uploads `www/`.
 - Runtime/resource paths differ for dev vs frozen builds; always resolve through `src/utils/app_paths.py`.
 
 ## Coding Style & Naming Conventions
@@ -64,10 +66,11 @@ Use standard Python style with 4-space indentation, descriptive snake_case funct
 
 - Keep business logic out of Qt widgets: UI controllers should depend on injected callables/use cases, not reach directly into low-level services.
 - Use explicit mutation result objects (`LoadOrderMutationResult`, `LoadOrderActivationResult`, `SettingsUpdateResult`, `ShareCodeImportResult`) and rely on their `changed`/delta fields to drive UI behavior.
-- Emit facade events only for real state transitions (`if result.changed: emit(...)` pattern in `ModManager`).
+- Emit facade events for real state transitions (`if result.changed: emit(...)` pattern in `ModManager`). If a blocked mutation leaves a widget temporarily out of sync, prefer an explicit refresh event over mutating state just to satisfy the UI.
 - Configuration is machine-local JSON managed through `ConfigService`; do not hardcode user-specific paths.
 - For writes affecting config/profile data, use existing atomic paths (`atomic_write_text`) rather than direct writes.
 - Translation files in `src/ui/i18n` must follow Qt/Weblate locale naming (`en.ts`, `en_US.ts`, `fr.ts`, `zh_Hans.ts`, etc.) and valid `<TS language="...">` metadata; run `scripts/validate_translations.py` before/with translation updates.
+- Mod names can contain GEM/engine markup from modders; use `src/utils/markup_parser.py` before showing names in plain-text UI surfaces such as toasts, logs intended for users, or status messages.
 
 ## Testing Guidelines
 
