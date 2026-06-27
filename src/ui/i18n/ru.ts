@@ -44,12 +44,12 @@
     <message>
         <location filename="../widgets/active_mods_widget.py" line="143"/>
         <source>Workshop Mod</source>
-        <translation>Мод из Workshop</translation>
+        <translation>Мод из Мастерской</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="221"/>
         <source>Load Order (Active Mods)</source>
-        <translation>Порядок загрузки (активные моды)</translation>
+        <translation>Порядок Загрузки (Активные Моды)</translation>
     </message>
     <message>
         <location filename="../widgets/active_mods_widget.py" line="222"/>
@@ -133,7 +133,7 @@
     <message>
         <location filename="../widgets/catalogue_widget.py" line="144"/>
         <source>Workshop</source>
-        <translation>Workshop</translation>
+        <translation>Мастерская</translation>
     </message>
     <message>
         <location filename="../widgets/catalogue_widget.py" line="145"/>
@@ -228,7 +228,7 @@ Already active in the load order.</source>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="147"/>
         <source>Archives (*.zip *.rar *.7z *.tar *.gz);;All Files (*)</source>
-        <translation>Archives (*.zip *.rar *.7z *.tar *.gz);;All Files (*)</translation>
+        <translation>Архивы (*.zip *.rar *.7z *.tar *.gz);;Все Файлы(*)</translation>
     </message>
     <message>
         <location filename="../dialogs/import_mod_dialog.py" line="155"/>
@@ -413,7 +413,7 @@ Already active in the load order.</source>
     <message>
         <location filename="../widgets/main_tool_bar.py" line="64"/>
         <source>Launch Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Запустить Редактор</translation>
     </message>
 </context>
 <context>
@@ -468,7 +468,7 @@ Technical details:
     <message>
         <location filename="../main_window.py" line="469"/>
         <source>Export Failed</source>
-        <translation>Ошибка экспорта</translation>
+        <translation>Неудачный Экспорт</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="470"/>
@@ -503,7 +503,7 @@ You can now paste it to your friends.</source>
         <location filename="../main_window.py" line="505"/>
         <location filename="../main_window.py" line="512"/>
         <source>Import Error</source>
-        <translation>Ошибка импорта</translation>
+        <translation>Ошибка Импорта</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="506"/>
@@ -755,7 +755,7 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../onboarding_overlay.py" line="114"/>
         <source>Done</source>
-        <translation>Готово</translation>
+        <translation>Сделано</translation>
     </message>
     <message>
         <location filename="../onboarding_overlay.py" line="114"/>
@@ -987,17 +987,17 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="78"/>
         <source>Launching Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Запуск Редактора</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="79"/>
         <source>Launching editor...</source>
-        <translation type="unfinished"></translation>
+        <translation>Запуск редактора...</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="84"/>
         <source>Failed to launch the editor.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось запустить редактор.</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="95"/>
@@ -1047,7 +1047,7 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="112"/>
         <source>Import Failed</source>
-        <translation>Ошибка импорта</translation>
+        <translation>Неудачный Импорт</translation>
     </message>
     <message>
         <location filename="../controllers/mod_import_controller.py" line="113"/>
@@ -1157,7 +1157,7 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../controllers/preset_controller.py" line="139"/>
         <source>Deleted preset: {0}</source>
-        <translation>Пресет удалён: {0}</translation>
+        <translation>Удалён пресет: {0}</translation>
     </message>
     <message>
         <location filename="../controllers/preset_controller.py" line="145"/>
@@ -1195,7 +1195,7 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../controllers/selection_controller.py" line="130"/>
         <source>Open in Steam Workshop</source>
-        <translation>Открыть в Steam Workshop</translation>
+        <translation>Открыть в Мастерской Steam</translation>
     </message>
 </context>
 <context>

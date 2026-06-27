@@ -413,7 +413,7 @@ Already active in the load order.</source>
     <message>
         <location filename="../widgets/main_tool_bar.py" line="64"/>
         <source>Launch Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>启动编辑器</translation>
     </message>
 </context>
 <context>
@@ -987,17 +987,17 @@ You can now paste it to your friends.</source>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="78"/>
         <source>Launching Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>正在启动编辑器</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="79"/>
         <source>Launching editor...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在启动编辑器...</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="84"/>
         <source>Failed to launch the editor.</source>
-        <translation type="unfinished"></translation>
+        <translation>未能启动编辑器。</translation>
     </message>
     <message>
         <location filename="../controllers/app_actions_controller.py" line="95"/>
