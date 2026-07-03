@@ -6,7 +6,7 @@ from src.application.state import (
     SettingsState,
 )
 from src.core.mod import ModInfo
-from src.core.mod_reference import to_reference_key
+from src.core.mod_reference import parse_reference_key, to_reference_key
 from src.services.active_mods_service import ActiveModsService
 from src.services.config_service import ConfigService
 from src.services.mods_catalogue_service import ModsCatalogueService
@@ -62,20 +62,24 @@ class ApplicationQueryService:
         """Return active mods in the same order used by the game profile."""
         dependency_refs = self._active_mods_service.get_active_dependency_refs()
         dependent_refs = self._active_mods_service.get_active_dependent_refs()
-        items = [
-            self._to_mod_state(
-                mod,
-                is_active=True,
-                load_order=index + 1,
-                active_dependency_refs=dependency_refs.get(
-                    self._active_ref_for_mod(mod), []
-                ),
-                active_dependent_refs=dependent_refs.get(
-                    self._active_ref_for_mod(mod), []
-                ),
+        items: list[ModState] = []
+        for index, mod_ref in enumerate(self._active_mods_service.active_mod_refs):
+            mod = self._mod_from_ref(mod_ref)
+            if mod is None:
+                items.append(
+                    self._missing_active_mod_state(mod_ref, load_order=index + 1)
+                )
+                continue
+
+            items.append(
+                self._to_mod_state(
+                    mod,
+                    is_active=True,
+                    load_order=index + 1,
+                    active_dependency_refs=dependency_refs.get(mod_ref, []),
+                    active_dependent_refs=dependent_refs.get(mod_ref, []),
+                )
             )
-            for index, mod in enumerate(self._active_mods_service.get_active_mods())
-        ]
         return ActiveModsState(items=items)
 
     def get_mod_state(
@@ -87,18 +91,26 @@ class ApplicationQueryService:
             if is_local is not None
             else self._catalogue_service.get_mod(mod_id)
         )
-        if not mod:
-            return None
-
         known_mod_ids = {item.id for item in self._catalogue_service.all_mods}
-        load_order = self._active_mods_service.get_load_order(
-            mod.id, is_local=mod.isLocal
-        )
+        if not mod:
+            if is_local is None:
+                return None
+
+            mod_ref = to_reference_key(mod_id, is_local)
+            if mod_ref not in self._active_mods_service.active_mod_refs:
+                return None
+
+            return self._missing_active_mod_state(
+                mod_ref,
+                load_order=self._active_mods_service.active_mod_refs.index(mod_ref) + 1,
+            )
 
         return self._to_mod_state(
             mod,
             is_active=self._active_mods_service.is_active(mod.id, is_local=mod.isLocal),
-            load_order=load_order,
+            load_order=self._active_mods_service.get_load_order(
+                mod.id, is_local=mod.isLocal
+            ),
             missing_dependencies=[
                 dep_id for dep_id in mod.dependencies if dep_id not in known_mod_ids
             ],
@@ -166,6 +178,7 @@ class ApplicationQueryService:
             path=mod.path,
             image_path=mod.image_path,
             is_active=is_active,
+            is_missing=False,
             load_order=load_order,
             active_dependency_refs=list(active_dependency_refs or []),
             active_dependent_refs=list(active_dependent_refs or []),
@@ -174,3 +187,34 @@ class ApplicationQueryService:
     @staticmethod
     def _active_ref_for_mod(mod: ModInfo) -> str:
         return to_reference_key(mod.id, mod.isLocal)
+
+    def _mod_from_ref(self, mod_ref: str) -> ModInfo | None:
+        reference = parse_reference_key(mod_ref)
+        if reference is None:
+            return None
+        return self._catalogue_service.get_mod_by_source(
+            reference.id, is_local=reference.is_local
+        )
+
+    @staticmethod
+    def _missing_active_mod_state(mod_ref: str, *, load_order: int) -> ModState:
+        reference = parse_reference_key(mod_ref)
+        if reference is None:
+            return ModState(
+                id=mod_ref,
+                name=mod_ref,
+                description="",
+                is_active=True,
+                is_missing=True,
+                load_order=load_order,
+            )
+
+        return ModState(
+            id=reference.id,
+            name=reference.id,
+            description="",
+            is_local=reference.is_local,
+            is_active=True,
+            is_missing=True,
+            load_order=load_order,
+        )

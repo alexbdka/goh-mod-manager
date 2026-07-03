@@ -28,6 +28,8 @@ class ShareCodeExportResult:
 class ShareCodeImportResult:
     success: bool = False
     missing_mods: list[dict[str, str]] = field(default_factory=list)
+    blocked_reason: str | None = None
+    blocking_mod_refs: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -35,6 +37,8 @@ class LoadOrderActivationResult:
     changed: bool = False
     activated_mod_ids: list[str] = field(default_factory=list)
     missing_dependencies: list[str] = field(default_factory=list)
+    blocked_reason: str | None = None
+    blocking_mod_refs: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -60,6 +64,7 @@ class ModState:
     path: str = ""
     image_path: str | None = None
     is_active: bool = False
+    is_missing: bool = False
     load_order: int | None = None
     active_dependency_refs: list[str] = field(default_factory=list)
     active_dependent_refs: list[str] = field(default_factory=list)

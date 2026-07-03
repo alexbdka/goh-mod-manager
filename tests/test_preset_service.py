@@ -74,9 +74,9 @@ class TestPresetService:
         assert len(self.active_mods.active_mods_ids) == 1
 
         # Apply
-        success, missing = self.preset_service.apply_preset("ApplyMe")
-        assert success
-        assert len(missing) == 0
+        result = self.preset_service.apply_preset("ApplyMe")
+        assert result.success
+        assert result.missing_mods == []
 
         # Check if active mods were fully replaced and ordered correctly
         assert self.active_mods.active_mods_ids == ["mod_3", "mod_2"]
@@ -94,20 +94,19 @@ class TestPresetService:
         )
         self.preset_service.save_preset("WithDeps", ["main_mod"])
 
-        success, missing = self.preset_service.apply_preset("WithDeps")
+        result = self.preset_service.apply_preset("WithDeps")
 
-        assert success
-        assert missing == []
+        assert result.success
+        assert result.missing_mods == []
         assert self.active_mods.active_mods_ids == ["dep_mod", "main_mod"]
 
     def test_apply_preset_with_missing_mods(self):
         # Save a preset with a mod that isn't in our mock catalogue
         self.preset_service.save_preset("MissingModPreset", ["mod_1", "ghost_mod"])
 
-        success, missing = self.preset_service.apply_preset("MissingModPreset")
-        assert success
-        assert len(missing) == 1
-        assert missing[0] == "ghost_mod"
+        result = self.preset_service.apply_preset("MissingModPreset")
+        assert result.success
+        assert result.missing_mods == ["ghost_mod"]
 
         # Only the valid mod should have been applied
         assert self.active_mods.active_mods_ids == ["mod_1"]
@@ -128,8 +127,8 @@ class TestPresetService:
         )
         self.preset_service.save_preset("WorkshopPreset", ["workshop::mod_1"])
 
-        success, missing = self.preset_service.apply_preset("WorkshopPreset")
+        result = self.preset_service.apply_preset("WorkshopPreset")
 
-        assert success
-        assert missing == []
+        assert result.success
+        assert result.missing_mods == []
         assert self.active_mods.active_mod_refs == ["workshop::mod_1"]

@@ -27,7 +27,7 @@ from src.services.active_mods_service import ActiveModsService
 from src.services.config_service import ConfigService
 from src.services.mod_import_service import ModImportService
 from src.services.mods_catalogue_service import ModsCatalogueService
-from src.services.preset_service import PresetService
+from src.services.preset_service import PresetApplyResult, PresetService
 from src.services.share_code_service import ShareCodeService
 from src.utils import steam_utils, system_actions
 
@@ -292,12 +292,12 @@ class ModManager:
             self.events.emit(EventType.PRESETS_CHANGED)
         return result
 
-    def apply_preset(self, name: str) -> tuple[bool, list[str]]:
-        success, missing = self.preset_service.apply_preset(name)
-        if success:
+    def apply_preset(self, name: str) -> PresetApplyResult:
+        result = self.preset_service.apply_preset(name)
+        if result.success:
             self._persist_active_mods()
             self.events.emit(EventType.ACTIVE_MODS_CHANGED)
-        return success, missing
+        return result
 
     # --- Share Codes ---
 

@@ -18,6 +18,7 @@ from src.ui.qtawesome_compat import qta
 from src.ui.widgets.active_mods_item_delegate import (
     ROLE_ACTIVE_DEPENDENCY_REFS,
     ROLE_ACTIVE_DEPENDENT_REFS,
+    ROLE_IS_MISSING,
     ROLE_MOD_ID,
     ROLE_MOD_REF,
     ROLE_ORDER,
@@ -148,6 +149,9 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
             source_text = (
                 self.tr("Local Mod") if mod.is_local else self.tr("Workshop Mod")
             )
+            tooltip = source_text
+            if mod.is_missing:
+                tooltip = self.tr("{0} - missing from catalogue").format(source_text)
             item.setData(0, ROLE_MOD_ID, mod.id)
             item.setData(0, ROLE_MOD_REF, to_reference_key(mod.id, mod.is_local))
             item.setData(0, ROLE_ORDER, order_text)
@@ -156,7 +160,8 @@ class ActiveModsWidget(LanguageChangeMixin, QWidget):
             item.setData(0, ROLE_ACTIVE_DEPENDENCY_REFS, mod.active_dependency_refs)
             item.setData(0, ROLE_ACTIVE_DEPENDENT_REFS, mod.active_dependent_refs)
             item.setData(0, ROLE_RELATION_KIND, "")
-            item.setToolTip(0, source_text)
+            item.setData(0, ROLE_IS_MISSING, mod.is_missing)
+            item.setToolTip(0, tooltip)
 
             self.list_widget.addTopLevelItem(item)
 

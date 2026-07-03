@@ -1,7 +1,7 @@
 import logging
 
 from src.application.state import LoadOrderActivationResult, LoadOrderMutationResult
-from src.core.exceptions import ProfileWriteError
+from src.core.exceptions import CircularDependencyError, ProfileWriteError
 from src.core.mod_reference import parse_reference_key
 from src.services.active_mods_service import ActiveModsService
 from src.services.config_service import ConfigService
@@ -28,6 +28,7 @@ class ApplicationLoadOrderUseCase:
     def activate_mods(self, mod_identifiers: list[str]) -> LoadOrderActivationResult:
         activated_mod_ids: list[str] = []
         missing_dependencies: list[str] = []
+        circular_dependency_refs: list[str] = []
         active_refs = set(self._active_mods_service.active_mod_refs)
         mod_ids_to_activate: list[str] = []
         for mod_identifier in mod_identifiers:
@@ -49,7 +50,11 @@ class ApplicationLoadOrderUseCase:
 
         for mod_identifier in mod_ids_to_activate:
             before_refs = list(self._active_mods_service.active_mod_refs)
-            missing = self._active_mods_service.activate_mod(mod_identifier)
+            try:
+                missing = self._active_mods_service.activate_mod(mod_identifier)
+            except CircularDependencyError as error:
+                circular_dependency_refs.extend(error.mod_refs)
+                continue
             if missing:
                 missing_dependencies.extend(missing)
                 continue
@@ -63,10 +68,13 @@ class ApplicationLoadOrderUseCase:
             self._persist_changes(profile_path)
 
         unique_missing = list(dict.fromkeys(missing_dependencies))
+        unique_cycle_refs = list(dict.fromkeys(circular_dependency_refs))
         return LoadOrderActivationResult(
             changed=changed,
             activated_mod_ids=activated_mod_ids,
             missing_dependencies=unique_missing,
+            blocked_reason="circular_dependency" if unique_cycle_refs else None,
+            blocking_mod_refs=unique_cycle_refs,
         )
 
     def deactivate_mod(self, mod_identifier: str) -> LoadOrderMutationResult:

@@ -49,12 +49,12 @@ class ApplicationShareCodeUseCase:
             decoded_data, self._catalogue_service.all_mods
         )
 
-        dependency_missing_ids = self._active_mods_service.replace_active_mods(
+        replace_result = self._active_mods_service.replace_active_mods(
             [to_reference_key(mod.id, mod.isLocal) for mod in found_mods]
         )
 
         known_missing_ids = {str(item.get("id", "")) for item in missing_mods}
-        for mod_id in dependency_missing_ids:
+        for mod_id in replace_result.missing_mods:
             if mod_id not in known_missing_ids:
                 missing_mods.append({"id": mod_id, "name": mod_id, "source": ""})
                 known_missing_ids.add(mod_id)
@@ -63,7 +63,12 @@ class ApplicationShareCodeUseCase:
             profile_path, catalogue_service=self._catalogue_service
         )
 
-        return ShareCodeImportResult(success=True, missing_mods=missing_mods)
+        return ShareCodeImportResult(
+            success=True,
+            missing_mods=missing_mods,
+            blocked_reason=replace_result.blocked_reason,
+            blocking_mod_refs=replace_result.blocking_mod_refs,
+        )
 
     def _require_profile_path(self) -> str:
         config = self._config_service.get_config()

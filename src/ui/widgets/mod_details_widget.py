@@ -128,6 +128,8 @@ class ModDetailsWidget(LanguageChangeMixin, QFrame):
 
         # Meta Info
         meta_lines = [self.tr("ID: {0}").format(mod.id)]
+        if mod.is_missing:
+            meta_lines.append(self.tr("Missing from catalogue"))
 
         if mod.min_game_version:
             version_text = self.tr("Game Version: {0}").format(mod.min_game_version)

@@ -61,6 +61,15 @@ class ProfileWriteError(ModManagerError):
         super().__init__(f"Failed to update profile file '{path}': {reason}")
 
 
+class CircularDependencyError(ModManagerError):
+    """Raised when a mod dependency graph contains a cycle."""
+
+    def __init__(self, mod_refs: list[str]):
+        self.mod_refs = mod_refs
+        cycle = " -> ".join(mod_refs)
+        super().__init__(f"Circular dependency detected: {cycle}")
+
+
 class ConfigError(ModManagerError):
     """Raised when application configuration cannot be loaded or saved."""
 

@@ -3,6 +3,7 @@ from collections.abc import Callable
 from PySide6.QtWidgets import QInputDialog, QMessageBox, QWidget
 
 from src.core.exceptions import ConfigWriteError, ProfileWriteError
+from src.core.mod_reference import parse_reference_key
 from src.ui.widgets.preset_selector_widget import PresetSelectorWidget
 
 
@@ -16,7 +17,7 @@ class PresetController:
         self,
         parent: QWidget,
         preset_selector: PresetSelectorWidget,
-        apply_preset: Callable[[str], tuple[bool, list[str]]],
+        apply_preset: Callable,
         save_preset: Callable[[str], None],
         delete_preset: Callable[[str], bool],
         get_all_presets: Callable[[], dict[str, list[str]]],
@@ -40,11 +41,12 @@ class PresetController:
 
     def apply_preset(self, name: str):
         try:
-            success, missing = self._apply_preset(name)
+            result = self._apply_preset(name)
         except ProfileWriteError as error:
             self._handle_profile_write_error(error)
             return
 
+        success, missing = result
         if success:
             self._preset_selector.set_current_preset(name)
             self._show_info_message(
@@ -61,6 +63,20 @@ class PresetController:
                         "them on the Workshop:"
                     ),
                     missing,
+                )
+            if getattr(result, "blocked_reason", None) == "circular_dependency":
+                QMessageBox.warning(
+                    self._parent,
+                    self._parent.tr("Preset Applied with Warnings"),
+                    self._parent.tr(
+                        "Some preset entries were skipped because their "
+                        "dependencies form a cycle: {0}."
+                    ).format(
+                        " -> ".join(
+                            self._display_name_for_ref(ref)
+                            for ref in result.blocking_mod_refs
+                        )
+                    ),
                 )
 
     def save_preset(self, name: str):
@@ -147,3 +163,8 @@ class PresetController:
                 error.path, error.reason
             ),
         )
+
+    @staticmethod
+    def _display_name_for_ref(mod_ref: str) -> str:
+        reference = parse_reference_key(mod_ref)
+        return reference.id if reference is not None else mod_ref

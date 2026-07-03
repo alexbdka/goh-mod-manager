@@ -1,7 +1,8 @@
 import logging
 import os
+from dataclasses import dataclass, field
 
-from src.core.exceptions import ProfileWriteError
+from src.core.exceptions import CircularDependencyError, ProfileWriteError
 from src.core.mod import ModInfo
 from src.core.mod_reference import (
     ModReference,
@@ -21,6 +22,13 @@ from src.utils.gem_parser import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class ActiveModsReplaceResult:
+    missing_mods: list[str] = field(default_factory=list)
+    blocked_reason: str | None = None
+    blocking_mod_refs: list[str] = field(default_factory=list)
 
 
 class ActiveModsService:
@@ -165,7 +173,14 @@ class ActiveModsService:
         root_call = _visited is None
         snapshot = list(self._active_mod_refs) if root_call else None
         visited = _visited if _visited is not None else set()
-        missing_deps = self._activate_mod_recursive(mod_identifier, visited)
+        try:
+            missing_deps = self._activate_mod_recursive(
+                mod_identifier, visited, stack=[]
+            )
+        except CircularDependencyError:
+            if root_call:
+                self._active_mod_refs = snapshot if snapshot is not None else []
+            raise
 
         if root_call and missing_deps:
             self._active_mod_refs = snapshot if snapshot is not None else []
@@ -173,7 +188,7 @@ class ActiveModsService:
         return missing_deps
 
     def _activate_mod_recursive(
-        self, mod_identifier: str, visited: set[str]
+        self, mod_identifier: str, visited: set[str], stack: list[str]
     ) -> list[str]:
         missing_deps: list[str] = []
         reference = self._reference_from_identifier(mod_identifier)
@@ -182,54 +197,63 @@ class ActiveModsService:
             return [mod_identifier]
 
         mod_ref = to_reference_key(reference.id, reference.is_local)
+        if mod_ref in self._active_mod_refs:
+            return missing_deps
+        if mod_ref in stack:
+            cycle_start = stack.index(mod_ref)
+            raise CircularDependencyError(stack[cycle_start:] + [mod_ref])
         if mod_ref in visited:
             return missing_deps
 
-        visited.add(mod_ref)
-
-        if mod_ref in self._active_mod_refs:
-            return missing_deps
-
+        stack.append(mod_ref)
         mod = self.catalogue.get_mod_by_source(
             reference.id, is_local=reference.is_local
         )
-        if mod and mod.dependencies:
-            for dep in mod.dependencies:
-                dep_reference = self._resolve_active_dependency_reference(
-                    dep, preferred_local=mod.isLocal
-                )
-                if dep_reference is None:
-                    missing_deps.append(dep)
-                    logger.warning(
-                        f"Dependency {dep} for mod "
-                        f"{reference.id} not found in catalogue."
+        try:
+            if mod and mod.dependencies:
+                for dep in mod.dependencies:
+                    dep_reference = self._resolve_active_dependency_reference(
+                        dep, preferred_local=mod.isLocal
                     )
-                    continue
+                    if dep_reference is None:
+                        missing_deps.append(dep)
+                        logger.warning(
+                            f"Dependency {dep} for mod "
+                            f"{reference.id} not found in catalogue."
+                        )
+                        continue
 
-                dep_ref = to_reference_key(dep_reference.id, dep_reference.is_local)
-                if dep_ref in self._active_mod_refs:
-                    continue
+                    dep_ref = to_reference_key(dep_reference.id, dep_reference.is_local)
+                    if dep_ref in self._active_mod_refs:
+                        continue
 
-                missing_deps.extend(self._activate_mod_recursive(dep_ref, visited))
+                    missing_deps.extend(
+                        self._activate_mod_recursive(dep_ref, visited, stack)
+                    )
+        finally:
+            stack.pop()
 
         if missing_deps:
             return missing_deps
 
+        visited.add(mod_ref)
         self._active_mod_refs.append(mod_ref)
         source = "local" if reference.is_local else "workshop"
         logger.info(f"Activated mod: {reference.id} ({source})")
         return missing_deps
 
-    def replace_active_mods(self, mod_ids: list[str]) -> list[str]:
+    def replace_active_mods(self, mod_ids: list[str]) -> ActiveModsReplaceResult:
         """
         Replace the current load order while resolving dependencies consistently.
 
-        Returns a de-duplicated list of missing mod or dependency IDs.
+        Returns missing mods and any non-fatal blocker encountered while applying
+        the requested load order.
         """
         self._active_mod_refs.clear()
 
         missing_mods: list[str] = []
         seen_missing: set[str] = set()
+        circular_dependency_refs: list[str] = []
 
         for mod_id in mod_ids:
             if not self._is_installed(mod_id):
@@ -239,12 +263,24 @@ class ActiveModsService:
                 logger.warning(f"Requested mod {mod_id} not found in catalogue.")
                 continue
 
-            for missing_id in self.activate_mod(mod_id):
+            try:
+                missing_dependencies = self.activate_mod(mod_id)
+            except CircularDependencyError as error:
+                circular_dependency_refs.extend(error.mod_refs)
+                logger.warning("Skipped mod with circular dependencies: %s", mod_id)
+                continue
+
+            for missing_id in missing_dependencies:
                 if missing_id not in seen_missing:
                     missing_mods.append(missing_id)
                     seen_missing.add(missing_id)
 
-        return missing_mods
+        unique_cycle_refs = list(dict.fromkeys(circular_dependency_refs))
+        return ActiveModsReplaceResult(
+            missing_mods=missing_mods,
+            blocked_reason="circular_dependency" if unique_cycle_refs else None,
+            blocking_mod_refs=unique_cycle_refs,
+        )
 
     def deactivate_mod(self, mod_identifier: str) -> None:
         """Removes a mod from the active list."""

@@ -16,6 +16,7 @@ ROLE_MOD_REF = Qt.ItemDataRole.UserRole + 4
 ROLE_ACTIVE_DEPENDENCY_REFS = Qt.ItemDataRole.UserRole + 5
 ROLE_ACTIVE_DEPENDENT_REFS = Qt.ItemDataRole.UserRole + 6
 ROLE_RELATION_KIND = Qt.ItemDataRole.UserRole + 7
+ROLE_IS_MISSING = Qt.ItemDataRole.UserRole + 8
 
 
 class ActiveModsItemDelegate(QStyledItemDelegate):
@@ -40,6 +41,7 @@ class ActiveModsItemDelegate(QStyledItemDelegate):
         title = str(index.data(ROLE_TITLE) or "")
         source_text = str(index.data(ROLE_SOURCE) or "")
         relation_kind = str(index.data(ROLE_RELATION_KIND) or "")
+        is_missing = bool(index.data(ROLE_IS_MISSING) or False)
 
         content_rect = opt.rect.adjusted(8, 4, -8, -4)
         badge_rect = QRect(
@@ -82,7 +84,9 @@ class ActiveModsItemDelegate(QStyledItemDelegate):
 
         painter.save()
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        if relation_kind and not selected:
+        if is_missing and not selected:
+            painter.fillRect(opt.rect, QColor(196, 91, 67, 36))
+        elif relation_kind and not selected:
             if relation_kind == "dependency":
                 painter.fillRect(opt.rect, QColor(38, 128, 82, 46))
             elif relation_kind == "dependent":

@@ -98,6 +98,13 @@ class LoadOrderController:
             )
             return
 
+        if result.blocked_reason == "circular_dependency":
+            self._show_warning_message(
+                self._tr("Circular Dependency"),
+                self._format_circular_dependency_block(result.blocking_mod_refs),
+            )
+            return
+
         if not result.changed:
             return
 
@@ -191,6 +198,12 @@ class LoadOrderController:
         return self._tr("Cannot remove '{0}': required by {1} active mods.").format(
             mod_name, len(blocking_mod_refs)
         )
+
+    def _format_circular_dependency_block(self, mod_refs: list[str]) -> str:
+        cycle = " -> ".join(self._display_name_for_ref(ref) for ref in mod_refs)
+        return self._tr(
+            "Cannot activate this mod because its dependencies form a cycle: {0}."
+        ).format(cycle)
 
     def _display_name_for_ref(self, mod_ref: str) -> str:
         reference = parse_reference_key(mod_ref)

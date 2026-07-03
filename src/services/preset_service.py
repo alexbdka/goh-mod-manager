@@ -1,10 +1,23 @@
 import logging
+from dataclasses import dataclass, field
 
-from src.services.active_mods_service import ActiveModsService
+from src.services.active_mods_service import ActiveModsReplaceResult, ActiveModsService
 from src.services.config_service import ConfigService
 from src.services.mods_catalogue_service import ModsCatalogueService
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class PresetApplyResult:
+    success: bool = False
+    missing_mods: list[str] = field(default_factory=list)
+    blocked_reason: str | None = None
+    blocking_mod_refs: list[str] = field(default_factory=list)
+
+    def __iter__(self):
+        yield self.success
+        yield self.missing_mods
 
 
 class PresetService:
@@ -60,27 +73,41 @@ class PresetService:
         logger.warning(f"Failed to delete preset '{name}': Not found.")
         return False
 
-    def apply_preset(self, name: str) -> tuple[bool, list[str]]:
+    def apply_preset(self, name: str) -> PresetApplyResult:
         """
         Applies a preset, completely replacing the currently active mods.
-        Returns a tuple: (Success bool, List of missing mod IDs).
+        The result remains tuple-unpackable as ``(success, missing_mods)`` for
+        compatibility with the pre-refactor call sites.
         """
         preset_mod_ids = self.get_preset(name)
         if preset_mod_ids is None:
             logger.error(f"Attempted to apply unknown preset: '{name}'")
-            return False, []
+            return PresetApplyResult(success=False)
 
-        missing_mods = self.active_mods.replace_active_mods(preset_mod_ids)
+        replace_result: ActiveModsReplaceResult = self.active_mods.replace_active_mods(
+            preset_mod_ids
+        )
 
-        if missing_mods:
+        if replace_result.missing_mods:
             logger.warning(
-                f"Applied preset '{name}' but {len(missing_mods)} mods "
+                f"Applied preset '{name}' but {len(replace_result.missing_mods)} mods "
                 "are missing from the catalogue."
+            )
+        elif replace_result.blocked_reason:
+            logger.warning(
+                "Applied preset '%s' with blocked entries: %s",
+                name,
+                replace_result.blocked_reason,
             )
         else:
             logger.info(f"Successfully applied preset '{name}'.")
 
-        return True, missing_mods
+        return PresetApplyResult(
+            success=True,
+            missing_mods=replace_result.missing_mods,
+            blocked_reason=replace_result.blocked_reason,
+            blocking_mod_refs=replace_result.blocking_mod_refs,
+        )
 
     def normalize_preset_mods(self, mod_ids: list[str]) -> list[str]:
         """
