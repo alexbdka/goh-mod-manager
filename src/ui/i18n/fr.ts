@@ -37,62 +37,67 @@
 <context>
     <name>ActiveModsWidget</name>
     <message>
-        <location filename="../widgets/active_mods_widget.py" line="143"/>
+        <location filename="../widgets/active_mods_widget.py" line="150"/>
         <source>Local Mod</source>
         <translation>Mod Local</translation>
     </message>
     <message>
-        <location filename="../widgets/active_mods_widget.py" line="143"/>
+        <location filename="../widgets/active_mods_widget.py" line="150"/>
         <source>Workshop Mod</source>
         <translation>Mod Workshop</translation>
     </message>
     <message>
-        <location filename="../widgets/active_mods_widget.py" line="221"/>
+        <location filename="../widgets/active_mods_widget.py" line="154"/>
+        <source>{0} - missing from catalogue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/active_mods_widget.py" line="281"/>
         <source>Load Order (Active Mods)</source>
         <translation>Ordre de chargement (Mods Actifs)</translation>
     </message>
     <message>
-        <location filename="../widgets/active_mods_widget.py" line="222"/>
+        <location filename="../widgets/active_mods_widget.py" line="282"/>
         <source>Move selected mod up</source>
         <translation>Déplacer le mod sélectionné vers le haut</translation>
     </message>
     <message>
-        <location filename="../widgets/active_mods_widget.py" line="223"/>
+        <location filename="../widgets/active_mods_widget.py" line="283"/>
         <source>Move selected mod down</source>
         <translation>Déplacer le mod sélectionné vers le bas</translation>
     </message>
     <message>
-        <location filename="../widgets/active_mods_widget.py" line="224"/>
+        <location filename="../widgets/active_mods_widget.py" line="284"/>
         <source>Clear active load order</source>
         <translation>Effacer l&apos;ordre de chargement actif</translation>
     </message>
     <message>
-        <location filename="../widgets/active_mods_widget.py" line="225"/>
+        <location filename="../widgets/active_mods_widget.py" line="285"/>
         <source>Move the selected mod up.</source>
         <translation>Déplace le mod sélectionné vers le haut.</translation>
     </message>
     <message>
-        <location filename="../widgets/active_mods_widget.py" line="226"/>
+        <location filename="../widgets/active_mods_widget.py" line="286"/>
         <source>Move the selected mod down.</source>
         <translation>Déplace le mod sélectionné vers le bas.</translation>
     </message>
     <message>
-        <location filename="../widgets/active_mods_widget.py" line="227"/>
+        <location filename="../widgets/active_mods_widget.py" line="287"/>
         <source>Remove all active mods.</source>
         <translation>Supprime tous les mods actifs.</translation>
     </message>
     <message>
-        <location filename="../widgets/active_mods_widget.py" line="229"/>
+        <location filename="../widgets/active_mods_widget.py" line="289"/>
         <source>List of active mods in load order.</source>
         <translation>Liste des mods actifs dans l&apos;ordre de chargement.</translation>
     </message>
     <message>
-        <location filename="../widgets/active_mods_widget.py" line="237"/>
+        <location filename="../widgets/active_mods_widget.py" line="297"/>
         <source>{0} active</source>
         <translation>{0} actif(s)</translation>
     </message>
     <message>
-        <location filename="../widgets/active_mods_widget.py" line="246"/>
+        <location filename="../widgets/active_mods_widget.py" line="306"/>
         <source>No active mods yet. Add mods from the catalogue to build a load order.</source>
         <translation>Aucun mod actif pour l&apos;instant. Ajoutez des mods depuis le catalogue pour établir un ordre de chargement.</translation>
     </message>
@@ -298,92 +303,92 @@ Déjà actif dans l&apos;ordre de chargement.</translation>
 <context>
     <name>MainMenuBar</name>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="86"/>
+        <location filename="../widgets/main_menu_bar.py" line="85"/>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="87"/>
+        <location filename="../widgets/main_menu_bar.py" line="86"/>
         <source>Import Share Code...</source>
         <translation>Importer le code de partage...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="88"/>
+        <location filename="../widgets/main_menu_bar.py" line="87"/>
         <source>Export Share Code...</source>
         <translation>Exporter le code de partage...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="89"/>
+        <location filename="../widgets/main_menu_bar.py" line="88"/>
         <source>Import Mod...</source>
         <translation>Importer Mod...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="90"/>
+        <location filename="../widgets/main_menu_bar.py" line="89"/>
         <source>Open...</source>
         <translation>Ouvrir...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="91"/>
+        <location filename="../widgets/main_menu_bar.py" line="90"/>
         <source>Game Directory</source>
         <translation>Répertoire du jeu</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="92"/>
+        <location filename="../widgets/main_menu_bar.py" line="91"/>
         <source>Config Folder</source>
         <translation>Dossier de configuration</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="93"/>
+        <location filename="../widgets/main_menu_bar.py" line="92"/>
         <source>Profile (options.set)</source>
         <translation>Profil (options.set)</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="94"/>
+        <location filename="../widgets/main_menu_bar.py" line="93"/>
         <source>Log File</source>
         <translation>Fichier journal</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="95"/>
+        <location filename="../widgets/main_menu_bar.py" line="94"/>
         <source>E&amp;xit</source>
         <translation>&amp;Quitter</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="96"/>
+        <location filename="../widgets/main_menu_bar.py" line="95"/>
         <source>&amp;Edit</source>
         <translation>&amp;Modifier</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="97"/>
+        <location filename="../widgets/main_menu_bar.py" line="96"/>
         <source>Preferences...</source>
         <translation>Préférences...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="98"/>
+        <location filename="../widgets/main_menu_bar.py" line="97"/>
         <source>&amp;View</source>
         <translation>&amp;Afficher</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="99"/>
+        <location filename="../widgets/main_menu_bar.py" line="98"/>
         <source>Refresh</source>
         <translation>Actualiser</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="100"/>
+        <location filename="../widgets/main_menu_bar.py" line="99"/>
         <source>&amp;Help</source>
         <translation>&amp;Aide</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="101"/>
+        <location filename="../widgets/main_menu_bar.py" line="100"/>
         <source>Generate Debug Report...</source>
         <translation>Générer un rapport de débogage...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="102"/>
+        <location filename="../widgets/main_menu_bar.py" line="101"/>
         <source>Interface Tour...</source>
         <translation>Présentation de l&apos;interface...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="103"/>
+        <location filename="../widgets/main_menu_bar.py" line="102"/>
         <source>About</source>
         <translation>À propos</translation>
     </message>
@@ -419,32 +424,32 @@ Déjà actif dans l&apos;ordre de chargement.</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../main_window.py" line="247"/>
+        <location filename="../main_window.py" line="248"/>
         <source>GoH Mod Manager</source>
         <translation>GoH Mod Manager</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="248"/>
+        <location filename="../main_window.py" line="249"/>
         <source>Add selected mod</source>
         <translation>Ajouter le mod sélectionné</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="249"/>
+        <location filename="../main_window.py" line="250"/>
         <source>Remove selected mod</source>
         <translation>Supprimer le mod sélectionné</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="251"/>
+        <location filename="../main_window.py" line="252"/>
         <source>Ready</source>
         <translation>Prêt</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="277"/>
+        <location filename="../main_window.py" line="278"/>
         <source>Profile Update Failed</source>
         <translation>Échec de la mise à jour du profil</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="279"/>
+        <location filename="../main_window.py" line="280"/>
         <source>Could not update the game&apos;s profile file:
 {0}
 
@@ -461,27 +466,27 @@ Détails techniques&#xa0;:
 {1}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="284"/>
+        <location filename="../main_window.py" line="285"/>
         <source>Profile update failed.</source>
         <translation>La mise à jour du profil a échoué.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="469"/>
+        <location filename="../main_window.py" line="470"/>
         <source>Export Failed</source>
         <translation>Échec de l&apos;exportation</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="470"/>
+        <location filename="../main_window.py" line="471"/>
         <source>There are no active mods to export.</source>
         <translation>Il n&apos;y a aucun mod actif à exporter.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="479"/>
+        <location filename="../main_window.py" line="480"/>
         <source>Export Success</source>
         <translation>Succès de l&apos;exportation</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="481"/>
+        <location filename="../main_window.py" line="482"/>
         <source>Share Code has been copied to your clipboard!
 
 You can now paste it to your friends.</source>
@@ -490,70 +495,70 @@ You can now paste it to your friends.</source>
 Vous pouvez désormais le coller pour le partager avec vos amis.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="487"/>
+        <location filename="../main_window.py" line="488"/>
         <source>Export Error</source>
         <translation>Erreur d&apos;exportation</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="487"/>
+        <location filename="../main_window.py" line="488"/>
         <source>Failed to generate Share Code.</source>
         <translation>Échec de la génération du code de partage.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="505"/>
-        <location filename="../main_window.py" line="512"/>
+        <location filename="../main_window.py" line="506"/>
+        <location filename="../main_window.py" line="513"/>
         <source>Import Error</source>
         <translation>Erreur d&apos;importation</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="506"/>
+        <location filename="../main_window.py" line="507"/>
         <source>Invalid or corrupted Share Code.</source>
         <translation>Code de partage non valide ou corrompu.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="513"/>
+        <location filename="../main_window.py" line="514"/>
         <source>An unexpected error occurred:
 {0}</source>
         <translation>Une erreur inattendue s&apos;est produite&#xa0;:
 {0}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="527"/>
+        <location filename="../main_window.py" line="528"/>
         <source>Imported with Missing Mods</source>
         <translation>Importé avec des mods manquants</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="529"/>
-        <source>The load order was imported, but you are missing the following mods. You must subscribe to them on the Workshop for the preset to work perfectly:</source>
-        <translation>L&apos;ordre de chargement a été importé, mais il vous manque les mods suivants. Vous devez vous y abonner sur le Workshop pour que le préréglage fonctionne correctement&#xa0;:</translation>
+        <location filename="../main_window.py" line="530"/>
+        <source>The load order was imported, but you are missing the following mods. Workshop mods can be opened from the links below; local mods must be installed manually:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="538"/>
+        <location filename="../main_window.py" line="539"/>
         <source>Import Success</source>
         <translation>Importation réussie</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="539"/>
+        <location filename="../main_window.py" line="540"/>
         <source>Share Code successfully applied!</source>
         <translation>Le code de partage a été correctement appliqué&#x202f;!</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="566"/>
+        <location filename="../main_window.py" line="567"/>
         <source>All data refreshed from disk.</source>
         <translation>Toutes les données ont été actualisées à partir du disque.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="568"/>
+        <location filename="../main_window.py" line="569"/>
         <source>Refresh Complete</source>
         <translation>Actualisation terminée</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="597"/>
+        <location filename="../main_window.py" line="598"/>
         <source>Settings Save Failed</source>
         <translation>Échec de l&apos;enregistrement des paramètres</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="598"/>
+        <location filename="../main_window.py" line="599"/>
         <source>Could not save settings:
 {0}
 
@@ -564,51 +569,51 @@ Vous pouvez désormais le coller pour le partager avec vos amis.</translation>
 {1}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="602"/>
+        <location filename="../main_window.py" line="603"/>
         <source>Settings save failed.</source>
         <translation>L&apos;enregistrement des paramètres a échoué.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="613"/>
+        <location filename="../main_window.py" line="614"/>
         <source>Settings saved and data reloaded.</source>
         <translation>Les paramètres ont été enregistrés et les données ont été rechargées.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="615"/>
-        <location filename="../main_window.py" line="623"/>
-        <location filename="../main_window.py" line="631"/>
-        <location filename="../main_window.py" line="639"/>
-        <location filename="../main_window.py" line="647"/>
+        <location filename="../main_window.py" line="616"/>
+        <location filename="../main_window.py" line="624"/>
+        <location filename="../main_window.py" line="632"/>
+        <location filename="../main_window.py" line="640"/>
+        <location filename="../main_window.py" line="648"/>
         <source>Settings Updated</source>
         <translation>Paramètres mis à jour</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="621"/>
+        <location filename="../main_window.py" line="622"/>
         <source>Language and appearance settings applied.</source>
         <translation>Les paramètres de langue et d&apos;affichage ont été appliqués.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="629"/>
+        <location filename="../main_window.py" line="630"/>
         <source>Language settings applied.</source>
         <translation>Les paramètres de langue ont été appliqués.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="637"/>
+        <location filename="../main_window.py" line="638"/>
         <source>Appearance settings applied.</source>
         <translation>Les paramètres d&apos;apparence ont été appliqués.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="645"/>
+        <location filename="../main_window.py" line="646"/>
         <source>Settings saved.</source>
         <translation>Les paramètres ont été enregistrés.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="712"/>
+        <location filename="../main_window.py" line="713"/>
         <source>Onboarding Save Failed</source>
         <translation>Échec de l&apos;enregistrement de l&apos;écran d&apos;introduction</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="713"/>
+        <location filename="../main_window.py" line="714"/>
         <source>Could not save onboarding progress:
 {0}
 
@@ -619,67 +624,67 @@ Vous pouvez désormais le coller pour le partager avec vos amis.</translation>
 {1}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="718"/>
+        <location filename="../main_window.py" line="719"/>
         <source>Onboarding progress was not saved.</source>
         <translation>La progression de l&apos;écran d&apos;introduction n&apos;a pas été enregistrée.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="727"/>
+        <location filename="../main_window.py" line="728"/>
         <source>Available Mods</source>
         <translation>Mods Disponibles</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="729"/>
+        <location filename="../main_window.py" line="730"/>
         <source>This catalogue lists the mods detected in your local mods folder and subscribed Workshop content.</source>
         <translation>Ce catalogue répertorie les mods détectés dans votre dossier de mods local ainsi que le contenu du Workshop auquel vous êtes abonné.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="738"/>
+        <location filename="../main_window.py" line="739"/>
         <source>Find What You Need</source>
         <translation>Trouvez ce qu&apos;il vous faut</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="740"/>
+        <location filename="../main_window.py" line="741"/>
         <source>Use search and filters to narrow the catalogue by name and by source.</source>
         <translation>Utilisez la fonction de recherche et les filtres pour affiner votre sélection dans le catalogue par titre et par source.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="746"/>
+        <location filename="../main_window.py" line="747"/>
         <source>Manage the Load Order</source>
         <translation>Gérer l&apos;ordre de chargement</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="748"/>
+        <location filename="../main_window.py" line="749"/>
         <source>Use these controls, double-click, or drag and drop to move mods between the catalogue and the active load order.</source>
         <translation>Utilisez ces commandes, double-cliquez ou glissez-déposez pour déplacer les mods entre le catalogue et l&apos;ordre de chargement actif.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="755"/>
+        <location filename="../main_window.py" line="756"/>
         <source>Active Mods</source>
         <translation>Mods Actifs</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="757"/>
+        <location filename="../main_window.py" line="758"/>
         <source>This list is the load order that will be written to the game&apos;s profile. Lower entries load later and can override earlier ones.</source>
         <translation>Cette liste correspond à l&apos;ordre de chargement qui sera enregistré dans le profil du jeu. Les entrées situées plus bas dans la liste sont chargées en dernier et peuvent remplacer celles qui les précèdent.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="764"/>
+        <location filename="../main_window.py" line="765"/>
         <source>Presets</source>
         <translation>Préréglages</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="766"/>
+        <location filename="../main_window.py" line="767"/>
         <source>Save the current load order as a preset, reapply it later, or compare the current state against a saved setup.</source>
         <translation>Enregistrez l&apos;ordre de chargement actuel sous forme de préréglage, réappliquez-le ultérieurement ou comparez l&apos;état actuel à une configuration enregistrée.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="773"/>
+        <location filename="../main_window.py" line="774"/>
         <source>Mod Details</source>
         <translation>Détails du mod</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="775"/>
+        <location filename="../main_window.py" line="776"/>
         <source>The details panel shows the selected mod&apos;s description, metadata, and dependency status.</source>
         <translation>Le panneau de détails affiche la description du mod sélectionné, ses métadonnées et l&apos;état de ses dépendances.</translation>
     </message>
@@ -687,22 +692,32 @@ Vous pouvez désormais le coller pour le partager avec vos amis.</translation>
 <context>
     <name>MissingModsDialog</name>
     <message>
-        <location filename="../dialogs/missing_mods_dialog.py" line="55"/>
+        <location filename="../dialogs/missing_mods_dialog.py" line="53"/>
+        <source>Local mod</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/missing_mods_dialog.py" line="54"/>
+        <source>Install this local mod manually.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/missing_mods_dialog.py" line="64"/>
         <source>Open in Steam</source>
         <translation>Ouvrir dans Steam</translation>
     </message>
     <message>
-        <location filename="../dialogs/missing_mods_dialog.py" line="56"/>
+        <location filename="../dialogs/missing_mods_dialog.py" line="65"/>
         <source>Browser</source>
         <translation>Navigateur</translation>
     </message>
     <message>
-        <location filename="../dialogs/missing_mods_dialog.py" line="63"/>
-        <source>(Local/Unknown ID)</source>
-        <translation>(Local/Identifiant inconnu)</translation>
+        <location filename="../dialogs/missing_mods_dialog.py" line="72"/>
+        <source>(Local or unknown ID)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/missing_mods_dialog.py" line="79"/>
+        <location filename="../dialogs/missing_mods_dialog.py" line="88"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -720,22 +735,27 @@ Vous pouvez désormais le coller pour le partager avec vos amis.</translation>
         <translation>ID&#xa0;: {0}</translation>
     </message>
     <message>
-        <location filename="../widgets/mod_details_widget.py" line="133"/>
+        <location filename="../widgets/mod_details_widget.py" line="132"/>
+        <source>Missing from catalogue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/mod_details_widget.py" line="135"/>
         <source>Game Version: {0}</source>
         <translation>Version du jeu&#xa0;: {0}</translation>
     </message>
     <message>
-        <location filename="../widgets/mod_details_widget.py" line="139"/>
+        <location filename="../widgets/mod_details_widget.py" line="141"/>
         <source>Tags: {0}</source>
         <translation>Tags&#xa0;: {0}</translation>
     </message>
     <message>
-        <location filename="../widgets/mod_details_widget.py" line="143"/>
+        <location filename="../widgets/mod_details_widget.py" line="145"/>
         <source>Requires: {0}</source>
         <translation>Nécessite&#xa0;: {0}</translation>
     </message>
     <message>
-        <location filename="../widgets/mod_details_widget.py" line="151"/>
+        <location filename="../widgets/mod_details_widget.py" line="153"/>
         <source>No description available.</source>
         <translation>Aucune description disponible.</translation>
     </message>
@@ -1084,88 +1104,94 @@ Vous pouvez désormais le coller pour le partager avec vos amis.</translation>
         <translation>Passer</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="51"/>
+        <location filename="../controllers/preset_controller.py" line="53"/>
         <source>Preset Applied</source>
         <translation>Préréglage appliqué</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="52"/>
+        <location filename="../controllers/preset_controller.py" line="54"/>
         <source>Applied preset: {0}</source>
         <translation>Préréglage appliqué&#xa0;: {0}</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="57"/>
+        <location filename="../controllers/preset_controller.py" line="59"/>
+        <location filename="../controllers/preset_controller.py" line="70"/>
         <source>Preset Applied with Warnings</source>
         <translation>Préréglage appliqué avec des avertissements</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="59"/>
+        <location filename="../controllers/preset_controller.py" line="61"/>
         <source>The preset was applied, but the following mods are missing from your catalogue. You must subscribe to them on the Workshop:</source>
         <translation>Le préréglage a été appliqué, mais les mods suivants ne figurent pas dans votre catalogue. Vous devez vous y abonner sur le Workshop&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="79"/>
-        <location filename="../controllers/preset_controller.py" line="116"/>
+        <location filename="../controllers/preset_controller.py" line="72"/>
+        <source>Some preset entries were skipped because their dependencies form a cycle: {0}.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/preset_controller.py" line="95"/>
+        <location filename="../controllers/preset_controller.py" line="132"/>
         <source>Preset Saved</source>
         <translation>Préréglage enregistré</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="80"/>
+        <location filename="../controllers/preset_controller.py" line="96"/>
         <source>Saved preset: {0}</source>
         <translation>Préréglage enregistré&#xa0;: {0}</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="86"/>
+        <location filename="../controllers/preset_controller.py" line="102"/>
         <source>Save Preset</source>
         <translation>Enregistrer le préréglage</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="87"/>
+        <location filename="../controllers/preset_controller.py" line="103"/>
         <source>Enter a name for the new preset:</source>
         <translation>Entrez un nom pour le nouveau préréglage&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="95"/>
+        <location filename="../controllers/preset_controller.py" line="111"/>
         <source>Overwrite Preset?</source>
         <translation>Remplacer le préréglage&#x202f;?</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="97"/>
+        <location filename="../controllers/preset_controller.py" line="113"/>
         <source>A preset named &apos;{0}&apos; already exists. Overwrite?</source>
         <translation>Un préréglage nommé « {0} » existe déjà. Voulez-vous le remplacer&#x202f;?</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="117"/>
+        <location filename="../controllers/preset_controller.py" line="133"/>
         <source>Saved new preset: {0}</source>
         <translation>Nouveau préréglage enregistré&#xa0;: {0}</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="123"/>
+        <location filename="../controllers/preset_controller.py" line="139"/>
         <source>Delete Preset</source>
         <translation>Supprimer le préréglage</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="124"/>
+        <location filename="../controllers/preset_controller.py" line="140"/>
         <source>Are you sure you want to delete the preset &apos;{0}&apos;?</source>
         <translation>Êtes-vous sûr de vouloir supprimer le préréglage « {0} »&#x202f;?</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="138"/>
+        <location filename="../controllers/preset_controller.py" line="154"/>
         <source>Preset Deleted</source>
         <translation>Préréglage supprimé</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="139"/>
+        <location filename="../controllers/preset_controller.py" line="155"/>
         <source>Deleted preset: {0}</source>
         <translation>Préréglage supprimé&#xa0;: {0}</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="145"/>
+        <location filename="../controllers/preset_controller.py" line="161"/>
         <source>Preset Update Failed</source>
         <translation>Échec de la mise à jour du préréglage</translation>
     </message>
     <message>
-        <location filename="../controllers/preset_controller.py" line="146"/>
+        <location filename="../controllers/preset_controller.py" line="162"/>
         <source>Could not save presets:
 {0}
 

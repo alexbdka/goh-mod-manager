@@ -153,3 +153,45 @@ def test_mutating_load_order_requires_profile_path(tmp_path):
         use_case.activate_mods(["main"])
 
     assert active_mods.active_mods_ids == []
+
+
+def test_deactivate_mod_allows_dependency_removal_when_enforcement_disabled(
+    tmp_path,
+):
+    use_case, active_mods = _make_use_case(tmp_path)
+    use_case._config_service.get_config().enforce_dependency_order = False
+    active_mods.active_mods_ids = ["dep", "main", "other"]
+
+    result = use_case.deactivate_mod("dep")
+
+    assert result.changed is True
+    assert result.blocked_reason is None
+    assert active_mods.active_mods_ids == ["main", "other"]
+
+
+def test_reorder_allows_dependency_after_dependent_when_enforcement_disabled(
+    tmp_path,
+):
+    use_case, active_mods = _make_use_case(tmp_path)
+    use_case._config_service.get_config().enforce_dependency_order = False
+    active_mods.active_mods_ids = ["dep", "main", "other"]
+
+    result = use_case.reorder(["main", "dep", "other"])
+
+    assert result.changed is True
+    assert result.blocked_reason is None
+    assert active_mods.active_mods_ids == ["main", "dep", "other"]
+
+
+def test_move_allows_dependency_after_dependent_when_enforcement_disabled(
+    tmp_path,
+):
+    use_case, active_mods = _make_use_case(tmp_path)
+    use_case._config_service.get_config().enforce_dependency_order = False
+    active_mods.active_mods_ids = ["dep", "main", "other"]
+
+    result = use_case.move_down("dep")
+
+    assert result.changed is True
+    assert result.blocked_reason is None
+    assert active_mods.active_mods_ids == ["main", "dep", "other"]

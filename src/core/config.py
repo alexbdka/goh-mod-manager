@@ -12,7 +12,8 @@ class AppConfig:
     workshop_path: str | None = None
     profile_path: str | None = None
     presets: dict[str, list[str]] = field(default_factory=dict)
-    language: str = "en_US"
+    language: str = "en"
     theme: str = "auto"
     font: str = "Inter"
     onboarding_seen: bool = False
+    enforce_dependency_order: bool = True

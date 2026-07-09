@@ -1,6 +1,7 @@
 import os
 
 from PySide6.QtWidgets import (
+    QCheckBox,
     QComboBox,
     QDialog,
     QDialogButtonBox,
@@ -40,7 +41,7 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
             game_path="",
             workshop_path="",
             profile_path="",
-            language="en_US",
+            language="en",
             theme="auto",
             font="Inter",
         )
@@ -50,6 +51,7 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         self.current_language = settings_state.language
         self.current_theme = settings_state.theme
         self.current_font = settings_state.font
+        self.current_enforce_dependency_order = settings_state.enforce_dependency_order
 
         self._setup_ui()
         self.retranslate_ui()
@@ -72,6 +74,10 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         self.language_tab = QWidget()
         self._setup_language_tab()
         self.tabs.addTab(self.language_tab, "")
+
+        self.features_tab = QWidget()
+        self._setup_features_tab()
+        self.tabs.addTab(self.features_tab, "")
 
         self.button_box = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
@@ -178,6 +184,23 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         layout.addLayout(self.language_form_layout)
         layout.addStretch()
 
+    def _setup_features_tab(self):
+        layout = QVBoxLayout(self.features_tab)
+
+        self.features_info_label = QLabel()
+        layout.addWidget(self.features_info_label)
+
+        self.enforce_dependency_order_checkbox = QCheckBox()
+        self.enforce_dependency_order_checkbox.setAccessibleName(
+            "settingsEnforceDependencyOrder"
+        )
+        self.enforce_dependency_order_checkbox.setChecked(
+            self.current_enforce_dependency_order
+        )
+
+        layout.addWidget(self.enforce_dependency_order_checkbox)
+        layout.addStretch()
+
     def _browse_game_path(self):
         dir_path = QFileDialog.getExistingDirectory(
             self, self.tr("Select Game Directory"), self.game_path_input.text() or ""
@@ -218,6 +241,9 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
             "language": self.language_combo.currentData(),
             "theme": self.theme_combo.currentData(),
             "font": self.font_combo.currentData(),
+            "enforce_dependency_order": (
+                self.enforce_dependency_order_checkbox.isChecked()
+            ),
         }
 
     def _populate_language_options(self) -> None:
@@ -254,6 +280,9 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
             language=self.language_combo.currentData(),
             theme=self.theme_combo.currentData(),
             font=self.font_combo.currentData(),
+            enforce_dependency_order=(
+                self.enforce_dependency_order_checkbox.isChecked()
+            ),
         )
 
     def retranslate_ui(self):
@@ -261,6 +290,7 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         self.tabs.setTabText(0, self.tr("Paths"))
         self.tabs.setTabText(1, self.tr("Appearance"))
         self.tabs.setTabText(2, self.tr("Language"))
+        self.tabs.setTabText(3, self.tr("Features"))
 
         self.paths_info_label.setText(
             self.tr(
@@ -298,3 +328,18 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         )
         self._populate_language_options()
         self.language_label.setText(self.tr("Language:"))
+
+        self.features_info_label.setText(
+            self.tr(
+                "Enable or disable experimental or safety features. Use with caution."
+            )
+        )
+        self.enforce_dependency_order_checkbox.setText(
+            self.tr("Enforce active mod dependency order")
+        )
+        self.enforce_dependency_order_checkbox.setAccessibleDescription(
+            self.tr(
+                "When enabled, required dependencies cannot be moved below their "
+                "dependents or deactivated while in use."
+            )
+        )

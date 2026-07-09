@@ -38,6 +38,7 @@ class ApplicationQueryService:
             language=config.language,
             theme=config.theme,
             font=config.font,
+            enforce_dependency_order=config.enforce_dependency_order,
         )
 
     def get_catalogue_state(self) -> CatalogueState:

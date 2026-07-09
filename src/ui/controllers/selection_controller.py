@@ -3,7 +3,7 @@ from contextlib import AbstractContextManager
 from typing import Any
 
 try:
-    from PySide6.QtWidgets import QMenu, QWidget  # type: ignore
+    from PySide6.QtWidgets import QMenu, QMessageBox, QWidget  # type: ignore
 except Exception:  # pragma: no cover - headless CI may lack Qt/graphics libs
     # Provide minimal stand-ins so module imports in CI/tests don't fail.
     class _DummyAction:
@@ -24,6 +24,20 @@ except Exception:  # pragma: no cover - headless CI may lack Qt/graphics libs
             # Simulate no action selected in headless contexts.
             return None
 
+    class _DummyMessageBox:
+        class StandardButton:
+            Yes = 1
+            No = 2
+
+        @staticmethod
+        def question(*_args, **_kwargs):
+            return None
+
+        @staticmethod
+        def critical(*_args, **_kwargs):
+            return None
+
+    QMessageBox = _DummyMessageBox  # type: ignore
     QMenu = _DummyWidget  # type: ignore
     QWidget = _DummyWidget  # type: ignore
 
@@ -32,7 +46,7 @@ from src.core.mod_reference import parse_reference_key
 from src.ui.widgets.active_mods_widget import ActiveModsWidget
 from src.ui.widgets.catalogue_widget import CatalogueWidget
 from src.ui.widgets.mod_details_widget import ModDetailsWidget
-from src.utils import system_actions
+from src.utils import markup_parser, system_actions
 
 
 class SelectionController:
@@ -50,6 +64,8 @@ class SelectionController:
         get_mod_by_id: Callable[[str, bool | None], ModState | None],
         signals_blocked: Callable[..., AbstractContextManager],
         show_warning_message: Callable[[str, str], None],
+        show_info_message: Callable[[str, str], None],
+        delete_local_mod: Callable[[str], bool],
     ):
         self._parent = parent
         self._catalogue_widget = catalogue_widget
@@ -58,6 +74,8 @@ class SelectionController:
         self._get_mod_by_id = get_mod_by_id
         self._signals_blocked = signals_blocked
         self._show_warning_message = show_warning_message
+        self._show_info_message = show_info_message
+        self._delete_local_mod = delete_local_mod
 
     def show_catalogue_context_menu(self, pos):
         mod_ref = self._catalogue_widget.get_mod_ref_at(pos)
@@ -130,6 +148,11 @@ class SelectionController:
                 self._parent.tr("Open in Steam Workshop")
             )
 
+        delete_action = None
+        if mod.is_local:
+            menu.addSeparator()
+            delete_action = menu.addAction(self._parent.tr("Delete Mod"))
+
         action = menu.exec(global_pos)
 
         if action is None:
@@ -139,3 +162,34 @@ class SelectionController:
             self.open_existing_path(mod.path)
         elif open_workshop_action is not None and action == open_workshop_action:
             system_actions.open_url(f"steam://url/CommunityFilePage/{mod.id}")
+        elif action == delete_action:
+            self._confirm_and_delete_local_mod(mod)
+
+    def _confirm_and_delete_local_mod(self, mod: ModState):
+        clean_name = markup_parser.strip_markup(mod.name)
+        reply = QMessageBox.question(
+            self._parent,
+            self._parent.tr("Delete Mod"),
+            self._parent.tr(
+                "Are you sure you want to delete the local mod '{0}'?\n\n"
+                "This will permanently remove its folder from your mods directory."
+            ).format(clean_name),
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,  # type: ignore[arg-type]
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
+        success = self._delete_local_mod(mod.id)
+        if success:
+            self._show_info_message(
+                self._parent.tr("Mod Deleted"),
+                self._parent.tr("Deleted local mod: {0}").format(clean_name),
+            )
+        else:
+            self._show_warning_message(
+                self._parent.tr("Delete Failed"),
+                self._parent.tr(
+                    "Could not delete '{0}'. "
+                    "Make sure the mod folder is not in use and try again."
+                ).format(clean_name),
+            )

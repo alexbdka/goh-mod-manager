@@ -17,6 +17,7 @@ from src.application.state import (
 from src.application.use_cases import (
     ApplicationDebugReportUseCase,
     ApplicationLoadOrderUseCase,
+    ApplicationModDeleteUseCase,
     ApplicationSettingsUseCase,
     ApplicationShareCodeUseCase,
 )
@@ -72,6 +73,12 @@ class ModManager:
             self._active_mods,
             self._catalogue,
             self._config_service,
+        )
+        self.mod_delete = ApplicationModDeleteUseCase(
+            self._active_mods,
+            self._catalogue,
+            self._config_service,
+            self.events,
         )
 
     @property
@@ -230,6 +237,10 @@ class ModManager:
         if result.changed:
             self.events.emit(EventType.ACTIVE_MODS_CHANGED)
         return result
+
+    def delete_local_mod(self, mod_id: str) -> bool:
+        """Delete a locally installed mod and refresh the catalogue."""
+        return self.mod_delete.delete_local_mod(mod_id)
 
     def move_mod_up(self, mod_id: str) -> LoadOrderMutationResult:
         """Increases the load priority of a mod and saves."""

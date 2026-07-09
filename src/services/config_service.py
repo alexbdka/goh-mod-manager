@@ -73,10 +73,14 @@ class ConfigService:
             self._config.workshop_path = data.get("workshop_path")
             self._config.profile_path = data.get("profile_path")
             self._config.presets = data.get("presets", {})
-            self._config.language = data.get("language", "en_US")
+            self._config.language = data.get("language", "en")
             self._config.theme = data.get("theme", "auto")
             self._config.font = data.get("font", "Inter")
+
             self._config.onboarding_seen = bool(data.get("onboarding_seen", False))
+            self._config.enforce_dependency_order = bool(
+                data.get("enforce_dependency_order", True)
+            )
 
             if self._is_effectively_empty_payload(data):
                 self._migrate_from_legacy_qsettings_if_possible()
@@ -150,6 +154,7 @@ class ConfigService:
             "theme": self._config.theme,
             "font": self._config.font,
             "onboarding_seen": self._config.onboarding_seen,
+            "enforce_dependency_order": self._config.enforce_dependency_order,
         }
 
         try:
@@ -169,6 +174,7 @@ class ConfigService:
         theme: str | None = None,
         font: str | None = None,
         onboarding_seen: bool | None = None,
+        enforce_dependency_order: bool | None = None,
     ) -> None:
         """Update selected config fields and save only when something changed."""
         config = self.get_config()
@@ -200,6 +206,13 @@ class ConfigService:
 
         if onboarding_seen is not None and config.onboarding_seen != onboarding_seen:
             config.onboarding_seen = onboarding_seen
+            modified = True
+
+        if (
+            enforce_dependency_order is not None
+            and config.enforce_dependency_order != enforce_dependency_order
+        ):
+            config.enforce_dependency_order = enforce_dependency_order
             modified = True
 
         if modified:

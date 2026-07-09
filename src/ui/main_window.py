@@ -90,6 +90,8 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
             get_mod_by_id=self._get_mod_by_id,
             signals_blocked=self._signals_blocked,
             show_warning_message=self._show_warning_message,
+            show_info_message=self._show_info_message,
+            delete_local_mod=self.app_model.delete_local_mod,
         )
         self.load_order_controller = LoadOrderController(
             catalogue_widget=self.catalogue_widget,
@@ -609,6 +611,9 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         if result.language_changed:
             self._apply_language_settings(settings_state, previous_settings)
 
+        if result.dependency_enforcement_changed:
+            self._apply_dependency_enforcement_settings(settings_state)
+
         if result.path_changed:
             self._refresh_data(notify=False)
             message = self.tr("Settings saved and data reloaded.")
@@ -681,6 +686,23 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
                 app,
                 settings_state.language or previous_settings.language,
             )
+
+    def _apply_dependency_enforcement_settings(
+        self, settings_state: SettingsState
+    ) -> None:
+        if settings_state.enforce_dependency_order:
+            message = self.tr("Active mod dependency enforcement enabled.")
+        else:
+            message = self.tr(
+                "Active mod dependency enforcement disabled. "
+                "You can now reorder and remove required mods freely."
+            )
+        self.toast_manager.show_toast(
+            title=self.tr("Feature Toggled"),
+            message=message,
+            level="info",
+        )
+        self.statusBar().showMessage(message, 4000)
 
     def _on_generate_report(self):
         self.app_actions_controller.generate_report()

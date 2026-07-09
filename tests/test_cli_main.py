@@ -17,9 +17,10 @@ class _FakeManager:
             game_path="C:/game",
             workshop_path="C:/workshop",
             profile_path="C:/profile/options.set",
-            language="en_US",
+            language="en",
             theme="dark",
             font="Inter",
+            enforce_dependency_order=True,
         )
 
     def get_catalogue_state(self) -> CatalogueState:

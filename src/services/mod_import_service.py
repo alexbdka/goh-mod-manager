@@ -1,14 +1,7 @@
 import logging
 import os
 import shutil
-import tarfile
 import tempfile
-import zipfile
-from collections.abc import Iterable
-from pathlib import Path
-
-import rarfile
-from py7zr import py7zr
 
 from src.core import constants
 from src.core.exceptions import (
@@ -18,6 +11,7 @@ from src.core.exceptions import (
     ModImportError,
     ModInfoNotFoundError,
 )
+from src.utils.seven_zip import extract_archive
 
 logger = logging.getLogger(__name__)
 
@@ -186,69 +180,10 @@ class ModImportService:
 
     @staticmethod
     def _extract_archive(archive_path: str, extract_to: str) -> None:
-        """Extract an archive after validating that all members stay in bounds."""
-        ext = Path(archive_path).suffix.lower()
-        os.makedirs(extract_to, exist_ok=True)
-
+        """Extract an archive into ``extract_to`` using the bundled 7-Zip."""
         try:
-            if ext == ".zip":
-                with zipfile.ZipFile(archive_path, "r") as archive:
-                    ModImportService._validate_archive_members(
-                        extract_to, (info.filename for info in archive.infolist())
-                    )
-                    archive.extractall(extract_to)
-            elif ext == ".7z":
-                with py7zr.SevenZipFile(archive_path, mode="r") as archive:
-                    ModImportService._validate_archive_members(
-                        extract_to, archive.getnames()
-                    )
-                    archive.extractall(path=extract_to)
-            elif ext == ".rar":
-                with rarfile.RarFile(archive_path) as archive:
-                    ModImportService._validate_archive_members(
-                        extract_to, archive.namelist()
-                    )
-                    archive.extractall(path=extract_to)
-            elif ext in [".tar", ".gz", ".tgz", ".xz"]:
-                with tarfile.open(archive_path, "r:*") as tar:
-                    members = tar.getmembers()
-                    ModImportService._validate_archive_members(
-                        extract_to, (member.name for member in members)
-                    )
-                    for member in members:
-                        if member.issym() or member.islnk():
-                            raise ArchiveExtractionError(
-                                "Archive contains unsupported link entry: "
-                                f"{member.name}"
-                            )
-                    tar.extractall(path=extract_to)
-            else:
-                raise ValueError(f"Unsupported archive format: {ext}")
+            extract_archive(archive_path, extract_to)
         except ArchiveExtractionError:
             raise
         except Exception as e:
             raise ArchiveExtractionError(f"Failed to extract archive: {e}") from e
-
-    @staticmethod
-    def _validate_archive_members(extract_to: str, member_names: Iterable[str]) -> None:
-        """Reject archive members that would escape the extraction directory."""
-        base_path = Path(extract_to).resolve()
-
-        for raw_name in member_names:
-            member_name = str(raw_name).replace("\\", "/").strip()
-            if not member_name:
-                continue
-
-            member_path = Path(member_name)
-            if member_path.is_absolute():
-                raise ArchiveExtractionError(
-                    f"Archive contains an absolute path entry: {member_name}"
-                )
-
-            destination = (base_path / member_path).resolve()
-            try:
-                destination.relative_to(base_path)
-            except ValueError as exc:
-                raise ArchiveExtractionError(
-                    f"Archive contains an unsafe path entry: {member_name}"
-                ) from exc

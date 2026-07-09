@@ -79,16 +79,18 @@ class ApplicationLoadOrderUseCase:
 
     def deactivate_mod(self, mod_identifier: str) -> LoadOrderMutationResult:
         before = list(self._active_mods_service.active_mod_refs)
-        dependents = self._active_mods_service.get_dependents_for_active_mod(
-            mod_identifier
-        )
-        if dependents:
-            return LoadOrderMutationResult(
-                changed=False,
-                active_mod_ids=list(self._active_mods_service.active_mods_ids),
-                blocked_reason="required_by_active_mods",
-                blocking_mod_refs=dependents,
+        config = self._config_service.get_config()
+        if config.enforce_dependency_order:
+            dependents = self._active_mods_service.get_dependents_for_active_mod(
+                mod_identifier
             )
+            if dependents:
+                return LoadOrderMutationResult(
+                    changed=False,
+                    active_mod_ids=list(self._active_mods_service.active_mods_ids),
+                    blocked_reason="required_by_active_mods",
+                    blocking_mod_refs=dependents,
+                )
 
         profile_path = self._require_profile_path()
         self._active_mods_service.deactivate_mod(mod_identifier)
@@ -141,16 +143,18 @@ class ApplicationLoadOrderUseCase:
                 active_mod_ids=list(self._active_mods_service.active_mods_ids),
             )
 
-        violations = self._active_mods_service.find_order_dependency_violations(
-            normalized_refs
-        )
-        if violations:
-            return LoadOrderMutationResult(
-                changed=False,
-                active_mod_ids=list(self._active_mods_service.active_mods_ids),
-                blocked_reason="invalid_dependency_order",
-                blocking_mod_refs=violations,
+        config = self._config_service.get_config()
+        if config.enforce_dependency_order:
+            violations = self._active_mods_service.find_order_dependency_violations(
+                normalized_refs
             )
+            if violations:
+                return LoadOrderMutationResult(
+                    changed=False,
+                    active_mod_ids=list(self._active_mods_service.active_mods_ids),
+                    blocked_reason="invalid_dependency_order",
+                    blocking_mod_refs=violations,
+                )
 
         profile_path = self._require_profile_path()
         self._active_mods_service.active_mod_refs = normalized_refs
@@ -159,6 +163,10 @@ class ApplicationLoadOrderUseCase:
     def _rollback_if_dependency_order_invalid(
         self, before: list[str]
     ) -> LoadOrderMutationResult | None:
+        config = self._config_service.get_config()
+        if not config.enforce_dependency_order:
+            return None
+
         violations = self._active_mods_service.find_order_dependency_violations(
             self._active_mods_service.active_mod_refs
         )

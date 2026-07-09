@@ -147,10 +147,7 @@ class LoadOrderController:
         if result.changed:
             self._status_message(self._tr("Moved mod {0} up").format(mod_id), 3000)
         elif result.blocked_reason == "invalid_dependency_order":
-            self._status_message(
-                self._tr("Invalid order: dependencies must load before dependents."),
-                5000,
-            )
+            self._show_invalid_dependency_order_warning()
 
     def move_down(self, mod_id: str) -> None:
         try:
@@ -161,10 +158,7 @@ class LoadOrderController:
         if result.changed:
             self._status_message(self._tr("Moved mod {0} down").format(mod_id), 3000)
         elif result.blocked_reason == "invalid_dependency_order":
-            self._status_message(
-                self._tr("Invalid order: dependencies must load before dependents."),
-                5000,
-            )
+            self._show_invalid_dependency_order_warning()
 
     def reorder(self, new_order: list[str]) -> None:
         try:
@@ -175,15 +169,17 @@ class LoadOrderController:
         if result.changed:
             self._status_message(self._tr("Mod load order updated"), 3000)
         elif result.blocked_reason == "invalid_dependency_order":
-            self._status_message(
-                self._tr("Invalid order: dependencies must load before dependents."),
-                5000,
-            )
+            self._show_invalid_dependency_order_warning()
         elif result.blocked_reason == "invalid_order_payload":
             self._status_message(
                 self._tr("Cannot apply load order: active mods are out of sync."),
                 5000,
             )
+
+    def _show_invalid_dependency_order_warning(self) -> None:
+        message = self._tr("Invalid order: dependencies must load before dependents.")
+        self._status_message(message, 5000)
+        self._show_warning_message(self._tr("Dependency Order"), message)
 
     def _format_dependency_removal_block(
         self, mod_ref: str, blocking_mod_refs: list[str]

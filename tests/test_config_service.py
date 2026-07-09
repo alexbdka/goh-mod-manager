@@ -89,6 +89,25 @@ class TestConfigService:
 
         assert loaded_config.onboarding_seen is True
 
+    def test_enforce_dependency_order_defaults_to_true(self):
+        config = self.service.get_config()
+        assert config.enforce_dependency_order is True
+
+    def test_update_paths_persists_enforce_dependency_order(self):
+        self.service.get_config()
+        self.service.update_paths(enforce_dependency_order=False)
+
+        config = self.service.get_config()
+        assert config.enforce_dependency_order is False
+
+        with open(self.config_path, encoding="utf-8") as f:
+            data = json.load(f)
+        assert data["enforce_dependency_order"] is False
+
+        new_service = ConfigService(config_path=self.config_path)
+        loaded_config = new_service.get_config()
+        assert loaded_config.enforce_dependency_order is False
+
     def test_default_config_path_uses_app_paths(self, monkeypatch):
         expected_path = app_paths.Path("X:/workspace/config.json")
         monkeypatch.setattr(app_paths, "get_config_file_path", lambda: expected_path)
@@ -140,7 +159,7 @@ class TestConfigService:
         assert loaded.workshop_path == "C:/Legacy/Workshop"
         assert loaded.profile_path == "C:/Legacy/Profile/options.set"
         assert loaded.presets == {"Main": ["101", "202"], "Skirmish": ["303", "404"]}
-        assert loaded.language == "en_US"
+        assert loaded.language == "en"
         assert loaded.font == "Inter"
 
         reloaded = ConfigService(config_path=self.config_path).get_config()

@@ -9,6 +9,7 @@ class SettingsState:
     language: str
     theme: str
     font: str
+    enforce_dependency_order: bool = True
 
 
 @dataclass(frozen=True)
@@ -16,6 +17,7 @@ class SettingsUpdateResult:
     path_changed: bool = False
     language_changed: bool = False
     appearance_changed: bool = False
+    dependency_enforcement_changed: bool = False
 
 
 @dataclass(frozen=True)

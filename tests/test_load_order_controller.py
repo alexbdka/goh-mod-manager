@@ -87,3 +87,45 @@ def test_reorder_invalid_payload_shows_status_message():
     assert status_messages == [
         ("Cannot apply load order: active mods are out of sync.", 5000)
     ]
+
+
+def test_reorder_invalid_dependency_order_shows_status_and_warning():
+    status_messages: list[tuple[str, int]] = []
+    warning_messages: list[tuple[str, str]] = []
+
+    controller = LoadOrderController(
+        catalogue_widget=cast(Any, _DummyCatalogueWidget()),
+        active_mods_widget=cast(Any, _DummyActiveModsWidget()),
+        activate_mods=lambda _refs: None,  # type: ignore[arg-type, return-value]
+        deactivate_mod=lambda _ref: LoadOrderMutationResult(),
+        clear_active_mods=lambda: LoadOrderMutationResult(),
+        move_mod_up=lambda _ref: LoadOrderMutationResult(),
+        move_mod_down=lambda _ref: LoadOrderMutationResult(),
+        set_active_mods_order=lambda _refs: LoadOrderMutationResult(
+            changed=False,
+            blocked_reason="invalid_dependency_order",
+            blocking_mod_refs=["local::main"],
+        ),
+        status_message=lambda message, timeout: status_messages.append(
+            (message, timeout)
+        ),
+        show_warning_message=lambda title, message: warning_messages.append(
+            (title, message)
+        ),
+        show_missing_mods_dialog=lambda _title, _desc, _items: None,
+        handle_profile_write_error=lambda _error: None,
+        get_mod_by_id=lambda _mod_id, _is_local: None,
+        tr=lambda text: text,
+    )
+
+    controller.reorder(["local::main", "local::dep"])
+
+    assert status_messages == [
+        ("Invalid order: dependencies must load before dependents.", 5000)
+    ]
+    assert warning_messages == [
+        (
+            "Dependency Order",
+            "Invalid order: dependencies must load before dependents.",
+        )
+    ]

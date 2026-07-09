@@ -40,6 +40,13 @@ class ModsCatalogueService:
             return self._local_mods.get(mod_id)
         return self._workshop_mods.get(mod_id)
 
+    def remove_local_mod(self, mod_id: str) -> bool:
+        """Remove a local mod from the in-memory catalogue."""
+        if mod_id in self._local_mods:
+            del self._local_mods[mod_id]
+            return True
+        return False
+
     def load_catalogue(self, local_mods_path: str, workshop_path: str) -> None:
         """
         Scans the provided directories and populates the local and workshop catalogues.

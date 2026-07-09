@@ -4,6 +4,9 @@ from src.application.use_cases.debug_report import (
 from src.application.use_cases.load_order import (
     ApplicationLoadOrderUseCase as ApplicationLoadOrderUseCase,
 )
+from src.application.use_cases.mod_delete import (
+    ApplicationModDeleteUseCase as ApplicationModDeleteUseCase,
+)
 from src.application.use_cases.settings import (
     ApplicationSettingsUseCase as ApplicationSettingsUseCase,
 )
@@ -14,6 +17,7 @@ from src.application.use_cases.share_code import (
 __all__ = [
     "ApplicationDebugReportUseCase",
     "ApplicationLoadOrderUseCase",
+    "ApplicationModDeleteUseCase",
     "ApplicationSettingsUseCase",
     "ApplicationShareCodeUseCase",
 ]

@@ -9,7 +9,7 @@ def test_apply_settings_returns_change_flags_and_updates_config(tmp_path):
     config.game_path = "C:/game"
     config.workshop_path = "C:/workshop"
     config.profile_path = "C:/profile/options.set"
-    config.language = "en_US"
+    config.language = "en"
     config.theme = "dark"
     config.font = "Inter"
 
@@ -23,12 +23,14 @@ def test_apply_settings_returns_change_flags_and_updates_config(tmp_path):
             language="fr_FR",
             theme="light",
             font="OpenDyslexic",
+            enforce_dependency_order=False,
         )
     )
 
     assert result.path_changed is True
     assert result.language_changed is True
     assert result.appearance_changed is True
+    assert result.dependency_enforcement_changed is True
 
     updated = config_service.get_config()
     assert updated.game_path == "D:/game"
@@ -45,7 +47,7 @@ def test_apply_settings_reports_no_changes_when_state_is_identical(tmp_path):
     config.game_path = "C:/game"
     config.workshop_path = "C:/workshop"
     config.profile_path = "C:/profile/options.set"
-    config.language = "en_US"
+    config.language = "en"
     config.theme = "dark"
     config.font = "Inter"
 
@@ -56,12 +58,14 @@ def test_apply_settings_reports_no_changes_when_state_is_identical(tmp_path):
             game_path="C:/game",
             workshop_path="C:/workshop",
             profile_path="C:/profile/options.set",
-            language="en_US",
+            language="en",
             theme="dark",
             font="Inter",
+            enforce_dependency_order=True,
         )
     )
 
     assert result.path_changed is False
     assert result.language_changed is False
     assert result.appearance_changed is False
+    assert result.dependency_enforcement_changed is False

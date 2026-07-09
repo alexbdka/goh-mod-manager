@@ -27,6 +27,9 @@ class ApplicationSettingsUseCase:
                 settings.font != config.font,
             ]
         )
+        dependency_enforcement_changed = (
+            settings.enforce_dependency_order != config.enforce_dependency_order
+        )
 
         self._config_service.update_paths(
             game_path=settings.game_path,
@@ -35,10 +38,12 @@ class ApplicationSettingsUseCase:
             language=settings.language,
             theme=settings.theme,
             font=settings.font,
+            enforce_dependency_order=settings.enforce_dependency_order,
         )
 
         return SettingsUpdateResult(
             path_changed=path_changed,
             language_changed=language_changed,
             appearance_changed=appearance_changed,
+            dependency_enforcement_changed=dependency_enforcement_changed,
         )
