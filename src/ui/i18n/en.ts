@@ -423,32 +423,32 @@ Already active in the load order.</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../main_window.py" line="248"/>
+        <location filename="../main_window.py" line="250"/>
         <source>GoH Mod Manager</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="249"/>
+        <location filename="../main_window.py" line="251"/>
         <source>Add selected mod</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="250"/>
+        <location filename="../main_window.py" line="252"/>
         <source>Remove selected mod</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="252"/>
+        <location filename="../main_window.py" line="254"/>
         <source>Ready</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="278"/>
+        <location filename="../main_window.py" line="280"/>
         <source>Profile Update Failed</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="280"/>
+        <location filename="../main_window.py" line="282"/>
         <source>Could not update the game&apos;s profile file:
 {0}
 
@@ -459,96 +459,96 @@ Technical details:
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="285"/>
+        <location filename="../main_window.py" line="287"/>
         <source>Profile update failed.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="470"/>
+        <location filename="../main_window.py" line="472"/>
         <source>Export Failed</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="471"/>
+        <location filename="../main_window.py" line="473"/>
         <source>There are no active mods to export.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="480"/>
+        <location filename="../main_window.py" line="482"/>
         <source>Export Success</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="482"/>
+        <location filename="../main_window.py" line="484"/>
         <source>Share Code has been copied to your clipboard!
 
 You can now paste it to your friends.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="488"/>
+        <location filename="../main_window.py" line="490"/>
         <source>Export Error</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="488"/>
+        <location filename="../main_window.py" line="490"/>
         <source>Failed to generate Share Code.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="506"/>
-        <location filename="../main_window.py" line="513"/>
+        <location filename="../main_window.py" line="508"/>
+        <location filename="../main_window.py" line="515"/>
         <source>Import Error</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="507"/>
+        <location filename="../main_window.py" line="509"/>
         <source>Invalid or corrupted Share Code.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="514"/>
+        <location filename="../main_window.py" line="516"/>
         <source>An unexpected error occurred:
 {0}</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="528"/>
+        <location filename="../main_window.py" line="530"/>
         <source>Imported with Missing Mods</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="530"/>
+        <location filename="../main_window.py" line="532"/>
         <source>The load order was imported, but you are missing the following mods. Workshop mods can be opened from the links below; local mods must be installed manually:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="539"/>
+        <location filename="../main_window.py" line="541"/>
         <source>Import Success</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="540"/>
+        <location filename="../main_window.py" line="542"/>
         <source>Share Code successfully applied!</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="567"/>
+        <location filename="../main_window.py" line="569"/>
         <source>All data refreshed from disk.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="569"/>
+        <location filename="../main_window.py" line="571"/>
         <source>Refresh Complete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="598"/>
+        <location filename="../main_window.py" line="600"/>
         <source>Settings Save Failed</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="599"/>
+        <location filename="../main_window.py" line="601"/>
         <source>Could not save settings:
 {0}
 
@@ -556,51 +556,66 @@ You can now paste it to your friends.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="603"/>
+        <location filename="../main_window.py" line="605"/>
         <source>Settings save failed.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="614"/>
+        <location filename="../main_window.py" line="619"/>
         <source>Settings saved and data reloaded.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="616"/>
-        <location filename="../main_window.py" line="624"/>
-        <location filename="../main_window.py" line="632"/>
-        <location filename="../main_window.py" line="640"/>
-        <location filename="../main_window.py" line="648"/>
+        <location filename="../main_window.py" line="621"/>
+        <location filename="../main_window.py" line="629"/>
+        <location filename="../main_window.py" line="637"/>
+        <location filename="../main_window.py" line="645"/>
+        <location filename="../main_window.py" line="653"/>
         <source>Settings Updated</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="622"/>
+        <location filename="../main_window.py" line="627"/>
         <source>Language and appearance settings applied.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="630"/>
+        <location filename="../main_window.py" line="635"/>
         <source>Language settings applied.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="638"/>
+        <location filename="../main_window.py" line="643"/>
         <source>Appearance settings applied.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="646"/>
+        <location filename="../main_window.py" line="651"/>
         <source>Settings saved.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="713"/>
+        <location filename="../main_window.py" line="694"/>
+        <source>Active mod dependency enforcement enabled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="697"/>
+        <source>Active mod dependency enforcement disabled. You can now reorder and remove required mods freely.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="701"/>
+        <source>Feature Toggled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="735"/>
         <source>Onboarding Save Failed</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="714"/>
+        <location filename="../main_window.py" line="736"/>
         <source>Could not save onboarding progress:
 {0}
 
@@ -608,67 +623,67 @@ You can now paste it to your friends.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="719"/>
+        <location filename="../main_window.py" line="741"/>
         <source>Onboarding progress was not saved.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="728"/>
+        <location filename="../main_window.py" line="750"/>
         <source>Available Mods</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="730"/>
+        <location filename="../main_window.py" line="752"/>
         <source>This catalogue lists the mods detected in your local mods folder and subscribed Workshop content.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="739"/>
+        <location filename="../main_window.py" line="761"/>
         <source>Find What You Need</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="741"/>
+        <location filename="../main_window.py" line="763"/>
         <source>Use search and filters to narrow the catalogue by name and by source.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="747"/>
+        <location filename="../main_window.py" line="769"/>
         <source>Manage the Load Order</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="749"/>
+        <location filename="../main_window.py" line="771"/>
         <source>Use these controls, double-click, or drag and drop to move mods between the catalogue and the active load order.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="756"/>
+        <location filename="../main_window.py" line="778"/>
         <source>Active Mods</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="758"/>
+        <location filename="../main_window.py" line="780"/>
         <source>This list is the load order that will be written to the game&apos;s profile. Lower entries load later and can override earlier ones.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="765"/>
+        <location filename="../main_window.py" line="787"/>
         <source>Presets</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="767"/>
+        <location filename="../main_window.py" line="789"/>
         <source>Save the current load order as a preset, reapply it later, or compare the current state against a saved setup.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="774"/>
+        <location filename="../main_window.py" line="796"/>
         <source>Mod Details</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="776"/>
+        <location filename="../main_window.py" line="798"/>
         <source>The details panel shows the selected mod&apos;s description, metadata, and dependency status.</source>
         <translation></translation>
     </message>
@@ -813,132 +828,152 @@ You can now paste it to your friends.</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="183"/>
+        <location filename="../dialogs/settings_dialog.py" line="206"/>
         <source>Select Game Directory</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="191"/>
+        <location filename="../dialogs/settings_dialog.py" line="214"/>
         <source>Select Workshop Directory</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="205"/>
+        <location filename="../dialogs/settings_dialog.py" line="228"/>
         <source>Select Preset File</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="207"/>
+        <location filename="../dialogs/settings_dialog.py" line="230"/>
         <source>Options Set (options.set);;All Files (*)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="232"/>
+        <location filename="../dialogs/settings_dialog.py" line="258"/>
         <source>{0} (Unavailable)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="260"/>
+        <location filename="../dialogs/settings_dialog.py" line="289"/>
         <source>Settings</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="261"/>
+        <location filename="../dialogs/settings_dialog.py" line="290"/>
         <source>Paths</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="262"/>
+        <location filename="../dialogs/settings_dialog.py" line="291"/>
         <source>Appearance</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="263"/>
+        <location filename="../dialogs/settings_dialog.py" line="292"/>
         <source>Language</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="267"/>
+        <location filename="../dialogs/settings_dialog.py" line="293"/>
+        <source>Features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/settings_dialog.py" line="297"/>
         <source>Configure the paths used by the Mod Manager to interact with the game.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="270"/>
-        <location filename="../dialogs/settings_dialog.py" line="275"/>
-        <location filename="../dialogs/settings_dialog.py" line="280"/>
+        <location filename="../dialogs/settings_dialog.py" line="300"/>
+        <location filename="../dialogs/settings_dialog.py" line="305"/>
+        <location filename="../dialogs/settings_dialog.py" line="310"/>
         <source>Browse...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="271"/>
+        <location filename="../dialogs/settings_dialog.py" line="301"/>
         <source>Game Directory:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="273"/>
+        <location filename="../dialogs/settings_dialog.py" line="303"/>
         <source>Browse for the game installation folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="276"/>
+        <location filename="../dialogs/settings_dialog.py" line="306"/>
         <source>Workshop Directory:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="278"/>
+        <location filename="../dialogs/settings_dialog.py" line="308"/>
         <source>Browse for the Steam Workshop content folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="281"/>
+        <location filename="../dialogs/settings_dialog.py" line="311"/>
         <source>Profile (options.set):</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="283"/>
+        <location filename="../dialogs/settings_dialog.py" line="313"/>
         <source>Browse for the profile options.set file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="287"/>
+        <location filename="../dialogs/settings_dialog.py" line="317"/>
         <source>Configure the visual appearance of the application.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="289"/>
-        <location filename="../dialogs/settings_dialog.py" line="293"/>
+        <location filename="../dialogs/settings_dialog.py" line="319"/>
+        <location filename="../dialogs/settings_dialog.py" line="323"/>
         <source>System Default</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="290"/>
+        <location filename="../dialogs/settings_dialog.py" line="320"/>
         <source>Dark</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="291"/>
+        <location filename="../dialogs/settings_dialog.py" line="321"/>
         <source>Light</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="292"/>
+        <location filename="../dialogs/settings_dialog.py" line="322"/>
         <source>Theme:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="294"/>
+        <location filename="../dialogs/settings_dialog.py" line="324"/>
         <source>Font:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="297"/>
+        <location filename="../dialogs/settings_dialog.py" line="327"/>
         <source>Select the application language. A restart may be required.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="300"/>
+        <location filename="../dialogs/settings_dialog.py" line="330"/>
         <source>Language:</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/settings_dialog.py" line="334"/>
+        <source>Enable or disable experimental or safety features. Use with caution.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/settings_dialog.py" line="338"/>
+        <source>Enforce active mod dependency order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/settings_dialog.py" line="342"/>
+        <source>When enabled, required dependencies cannot be moved below their dependents or deactivated while in use.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1179,25 +1214,58 @@ You can now paste it to your friends.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../controllers/selection_controller.py" line="111"/>
+        <location filename="../controllers/selection_controller.py" line="129"/>
         <source>Not Found</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../controllers/selection_controller.py" line="112"/>
+        <location filename="../controllers/selection_controller.py" line="130"/>
         <source>Cannot find path:
 {0}</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../controllers/selection_controller.py" line="126"/>
+        <location filename="../controllers/selection_controller.py" line="144"/>
         <source>Open Mod Folder</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../controllers/selection_controller.py" line="130"/>
+        <location filename="../controllers/selection_controller.py" line="148"/>
         <source>Open in Steam Workshop</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../controllers/selection_controller.py" line="154"/>
+        <location filename="../controllers/selection_controller.py" line="172"/>
+        <source>Delete Mod</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/selection_controller.py" line="174"/>
+        <source>Are you sure you want to delete the local mod &apos;{0}&apos;?
+
+This will permanently remove its folder from your mods directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/selection_controller.py" line="185"/>
+        <source>Mod Deleted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/selection_controller.py" line="186"/>
+        <source>Deleted local mod: {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/selection_controller.py" line="190"/>
+        <source>Delete Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/selection_controller.py" line="192"/>
+        <source>Could not delete &apos;{0}&apos;. Make sure the mod folder is not in use and try again.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

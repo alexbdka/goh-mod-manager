@@ -104,6 +104,8 @@ def build_pyinstaller_args(root_dir: Path, args: argparse.Namespace) -> list[str
         add_data("assets/fonts", "assets/fonts", add_data_separator),
         "--add-data",
         add_data(".app-version", ".", add_data_separator),
+        "--add-data",
+        add_data("res/7zip", "res/7zip", add_data_separator),
     ]
 
     if list((root_dir / "src" / "ui" / "i18n").glob("*.qm")):
