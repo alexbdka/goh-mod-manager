@@ -342,6 +342,15 @@ class ActiveModsService:
                     continue
 
                 reference = from_profile_mod_token(mod_token)
+                if reference.is_local:
+                    catalogue_mod = self.catalogue.get_mod_by_source(
+                        reference.id, is_local=True
+                    )
+                    if catalogue_mod is not None:
+                        reference = ModReference(
+                            id=catalogue_mod.id,
+                            is_local=True,
+                        )
                 self._active_mod_refs.append(
                     to_reference_key(reference.id, reference.is_local)
                 )

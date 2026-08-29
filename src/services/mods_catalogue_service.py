@@ -37,7 +37,18 @@ class ModsCatalogueService:
 
     def get_mod_by_source(self, mod_id: str, *, is_local: bool) -> ModInfo | None:
         if is_local:
-            return self._local_mods.get(mod_id)
+            mod = self._local_mods.get(mod_id)
+            if mod is not None:
+                return mod
+            normalized_id = mod_id.casefold()
+            return next(
+                (
+                    local_mod
+                    for local_mod_id, local_mod in self._local_mods.items()
+                    if local_mod_id.casefold() == normalized_id
+                ),
+                None,
+            )
         return self._workshop_mods.get(mod_id)
 
     def remove_local_mod(self, mod_id: str) -> bool:

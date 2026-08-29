@@ -27,7 +27,7 @@ def parse_reference_key(value: str) -> ModReference | None:
 
 def to_profile_mod_token(reference: ModReference) -> str:
     if reference.is_local:
-        return reference.id
+        return reference.id.lower()
     return f"{constants.MOD_PREFIX}{reference.id}"
 
 

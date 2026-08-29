@@ -91,6 +91,31 @@ class TestActiveModsService:
         finally:
             os.remove(temp_path)
 
+    def test_local_mod_profile_tokens_are_lowercase_and_resolve_catalogue_id(self):
+        self.catalogue._local_mods["localOrderTest1"] = ModInfo(
+            id="localOrderTest1",
+            name="Local Order Test",
+            desc="",
+            isLocal=True,
+        )
+        with tempfile.NamedTemporaryFile(
+            mode="w", delete=False, suffix=".set", encoding="utf-8"
+        ) as tf:
+            tf.write('{options\n\t{mods\n\t\t"localordertest1:0"\n\t}\n}')
+            temp_path = tf.name
+
+        try:
+            self.service.load_from_profile(temp_path)
+            assert self.service.active_mod_refs == ["local::localOrderTest1"]
+            assert self.service.get_active_mods()[0].id == "localOrderTest1"
+
+            self.service.save_to_profile(temp_path)
+            with open(temp_path, encoding="utf-8") as profile:
+                content = profile.read()
+            assert '"localordertest1:0"' in content
+        finally:
+            os.remove(temp_path)
+
     def test_load_from_profile_handles_case_mixed_block_names(self):
         with tempfile.NamedTemporaryFile(
             mode="w", delete=False, suffix=".set", encoding="utf-8"
