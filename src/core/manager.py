@@ -352,13 +352,12 @@ class ModManager:
     # --- Game / Editor Launching ---
 
     def launch_game(self) -> bool:
-        """Launch the game through the Steam protocol handler."""
-        launch_url = f"steam://rungameid/{constants.STEAM_APP_ID}"
-        success = system_actions.open_url(launch_url)
+        """Launch the game through Steam."""
+        success = system_actions.launch_steam_game(constants.STEAM_APP_ID)
         if success:
-            logger.info("Launched game via Steam protocol.")
+            logger.info("Launched game through Steam.")
         else:
-            logger.error("Failed to launch game via Steam protocol.")
+            logger.error("Failed to launch game through Steam.")
         return success
 
     def launch_editor(self) -> bool:

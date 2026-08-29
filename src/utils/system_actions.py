@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 import subprocess
 
 logger = logging.getLogger(__name__)
@@ -31,6 +32,30 @@ def launch_executable(executable_path: str, *, cwd: str | None = None) -> bool:
     except Exception:
         logger.exception("Failed to launch executable: %s", executable_path)
         return False
+
+
+def launch_steam_game(app_id: str) -> bool:
+    """Launch a Steam game using the most reliable command for the platform."""
+    if not app_id:
+        return False
+
+    launch_url = f"steam://rungameid/{app_id}"
+    if os.name == "nt":
+        return open_url(launch_url)
+
+    for command in (
+        [shutil.which("steam") or "", "-applaunch", app_id],
+        ["flatpak", "run", "com.valvesoftware.Steam", "-applaunch", app_id],
+    ):
+        if not command[0]:
+            continue
+        try:
+            subprocess.Popen(command)
+            return True
+        except OSError:
+            logger.warning("Steam launch command failed: %s", command)
+
+    return open_url(launch_url)
 
 
 def _open_target(target: str) -> bool:
