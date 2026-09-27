@@ -29,10 +29,10 @@ class MainToolBar(LanguageChangeMixin, QToolBar):
         self.btn_import_share_code = self._create_toolbar_button()
         self.btn_export_share_code = self._create_toolbar_button()
         self.btn_play = self._create_toolbar_button(primary=True)
-        self.btn_editor = self._create_toolbar_button()
+        # self.btn_editor = self._create_toolbar_button()
 
         self.addWidget(self.btn_play)
-        self.addWidget(self.btn_editor)
+        # self.addWidget(self.btn_editor)
         self.addSeparator()
         self.addWidget(self.btn_import_share_code)
         self.addWidget(self.btn_export_share_code)
@@ -46,7 +46,7 @@ class MainToolBar(LanguageChangeMixin, QToolBar):
             self.export_share_code_requested.emit
         )
         self.btn_play.clicked.connect(self.play_requested.emit)
-        self.btn_editor.clicked.connect(self.editor_requested.emit)
+        # self.btn_editor.clicked.connect(self.editor_requested.emit)
 
     def _create_toolbar_button(self, *, primary: bool = False) -> QPushButton:
         button = QPushButton()
@@ -61,7 +61,7 @@ class MainToolBar(LanguageChangeMixin, QToolBar):
         self._set_button_text(self.btn_import_share_code, self.tr("Import Share Code"))
         self._set_button_text(self.btn_export_share_code, self.tr("Export Share Code"))
         self._set_button_text(self.btn_play, self.tr("Launch Game"))
-        self._set_button_text(self.btn_editor, self.tr("Launch Editor"))
+        # self._set_button_text(self.btn_editor, self.tr("Launch Editor"))
 
     def _set_button_text(self, button: QPushButton, text: str):
         button.setText("")
@@ -80,6 +80,6 @@ class MainToolBar(LanguageChangeMixin, QToolBar):
         self.btn_play.setIcon(
             qta.icon("mdi6.play", **icon_colors, scale_factor=SCALE_FACTOR)
         )
-        self.btn_editor.setIcon(
-            qta.icon("mdi6.puzzle", **icon_colors, scale_factor=SCALE_FACTOR)
-        )
+        # self.btn_editor.setIcon(
+        #    qta.icon("mdi6.puzzle", **icon_colors, scale_factor=SCALE_FACTOR)
+        # )

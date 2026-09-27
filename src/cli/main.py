@@ -1,3 +1,8 @@
+"""
+CLI is not intended to be a full-featured interface and may lack some functionality.
+It is primarily intended for testing and debugging the application architecture.
+"""
+
 import argparse
 from collections.abc import Iterable
 from typing import Protocol

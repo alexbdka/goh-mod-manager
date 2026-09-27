@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 from src.application.state import SettingsState
+from src.ui.components.help_button import HelpButton
 from src.ui.i18n_registry import (
     TranslationLocale,
     discover_runtime_languages,
@@ -120,10 +121,21 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         self.profile_path_input.setAccessibleName("settingsProfilePath")
         self.btn_browse_profile = QPushButton()
         self.btn_browse_profile.clicked.connect(self._browse_profile_path)
+        self.btn_help_profile = HelpButton(
+            self.tr(
+                "The 'options.set' file is located either in:\n"
+                "%USERPROFILE%\\My Games\\gates of hell\\"
+                "profiles\\[STEAM_ID]\\options.set\n"
+                "or in:\n"
+                "%LOCALAPPDATA%/digitalmindsoft/gates of hell/"
+                "profiles/[STEAM_ID]\\options.set\n"
+            )
+        )
 
         profile_layout = QHBoxLayout()
         profile_layout.addWidget(self.profile_path_input)
         profile_layout.addWidget(self.btn_browse_profile)
+        profile_layout.addWidget(self.btn_help_profile)
         self.profile_path_label = QLabel()
         self.paths_form_layout.addRow(self.profile_path_label, profile_layout)
 
