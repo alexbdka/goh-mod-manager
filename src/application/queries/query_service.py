@@ -11,6 +11,7 @@ from src.services.active_mods_service import ActiveModsService
 from src.services.config_service import ConfigService
 from src.services.mods_catalogue_service import ModsCatalogueService
 from src.services.preset_service import PresetService
+from src.utils.game_version import get_game_version, is_mod_version_compatible
 
 
 class ApplicationQueryService:
@@ -39,11 +40,17 @@ class ApplicationQueryService:
             theme=config.theme,
             font=config.font,
             enforce_dependency_order=config.enforce_dependency_order,
+            enforce_game_version=config.enforce_game_version,
         )
 
     def get_catalogue_state(self) -> CatalogueState:
         """Return catalogue items annotated with active-state and dependency status."""
+        config = self._config_service.get_config()
         known_mod_ids = {mod.id for mod in self._catalogue_service.all_mods}
+
+        game_version: tuple[int, ...] | None = None
+        if config.enforce_game_version and config.game_path:
+            game_version = get_game_version(config.game_path)
 
         items = [
             self._to_mod_state(
@@ -54,6 +61,12 @@ class ApplicationQueryService:
                 missing_dependencies=[
                     dep_id for dep_id in mod.dependencies if dep_id not in known_mod_ids
                 ],
+                is_version_incompatible=(
+                    game_version is not None
+                    and not is_mod_version_compatible(
+                        game_version, mod.minGameVersion, mod.maxGameVersion
+                    )
+                ),
             )
             for mod in self._catalogue_service.all_mods
         ]
@@ -163,6 +176,7 @@ class ApplicationQueryService:
         missing_dependencies: list[str] | None = None,
         active_dependency_refs: list[str] | None = None,
         active_dependent_refs: list[str] | None = None,
+        is_version_incompatible: bool = False,
     ) -> ModState:
         """Convert a domain ``ModInfo`` object into a view-neutral ``ModState``."""
         return ModState(
@@ -180,6 +194,7 @@ class ApplicationQueryService:
             image_path=mod.image_path,
             is_active=is_active,
             is_missing=False,
+            is_version_incompatible=is_version_incompatible,
             load_order=load_order,
             active_dependency_refs=list(active_dependency_refs or []),
             active_dependent_refs=list(active_dependent_refs or []),

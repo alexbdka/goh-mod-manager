@@ -1,3 +1,6 @@
+import os
+import struct
+
 import pytest
 from src.application.use_cases import ApplicationLoadOrderUseCase
 from src.core.exceptions import ProfileWriteError
@@ -5,6 +8,36 @@ from src.core.mod import ModInfo
 from src.services.active_mods_service import ActiveModsService
 from src.services.config_service import ConfigService
 from src.services.mods_catalogue_service import ModsCatalogueService
+from src.utils.game_version import _VS_FIXED_FILE_INFO_SIGNATURE
+
+GAME_EXE_REL = os.path.join("binaries", "x64", "call_to_arms.exe")
+
+
+def _write_fake_exe(game_root: str, major: int, mod_minor: int) -> None:
+    """
+    Write a fake game exe for a given version in mod format.
+
+    ``mod_minor`` is the minor version as used in mod.info (e.g. 61, 62, 100).
+    It is encoded into the PE Minor/Build/Revision fields using the same
+    split-digit scheme the real game uses:
+        mod_minor=67 → PE (major=1, minor=0, build=6, revision=7)
+    """
+    pe_minor = mod_minor // 100
+    pe_build = (mod_minor % 100) // 10
+    pe_revision = mod_minor % 10
+    exe_path = os.path.join(game_root, GAME_EXE_REL)
+    os.makedirs(os.path.dirname(exe_path), exist_ok=True)
+    ms = (major << 16) | (pe_minor & 0xFFFF)
+    ls = (pe_build << 16) | (pe_revision & 0xFFFF)
+    record = (
+        _VS_FIXED_FILE_INFO_SIGNATURE
+        + struct.pack("<I", 0x00010000)
+        + struct.pack("<I", ms)
+        + struct.pack("<I", ls)
+        + b"\x00" * 36
+    )
+    with open(exe_path, "wb") as f:
+        f.write(b"\x00" * 128 + record + b"\x00" * 64)
 
 
 def _make_use_case(tmp_path):
@@ -195,3 +228,140 @@ def test_move_allows_dependency_after_dependent_when_enforcement_disabled(
     assert result.changed is True
     assert result.blocked_reason is None
     assert active_mods.active_mods_ids == ["main", "dep", "other"]
+
+
+# Game version enforcement tests
+
+
+def _make_use_case_with_versioned_mods(tmp_path):
+    """Use case fixture whose catalogue has mods with minGameVersion constraints."""
+    game_root = str(tmp_path / "game")
+    os.makedirs(game_root, exist_ok=True)
+
+    config_service = ConfigService(config_path=str(tmp_path / "config.json"))
+    config = config_service.get_config()
+    config.profile_path = str(tmp_path / "options.set")
+    config.game_path = game_root
+    (tmp_path / "options.set").write_text("{options\n\t{mods}\n}\n", encoding="utf-8")
+
+    catalogue = ModsCatalogueService()
+    catalogue._local_mods = {
+        # compatible with any game version
+        "no_version": ModInfo(
+            id="no_version", name="No Version", desc="", isLocal=True
+        ),
+        # requires exactly 1.100
+        "needs_100": ModInfo(
+            id="needs_100",
+            name="Needs 1.100",
+            desc="",
+            isLocal=True,
+            minGameVersion="1.100",
+            maxGameVersion="1.100",
+        ),
+        # requires 1.062 or newer (no upper bound)
+        "needs_062_plus": ModInfo(
+            id="needs_062_plus",
+            name="Needs 1.062+",
+            desc="",
+            isLocal=True,
+            minGameVersion="1.062",
+        ),
+        # inline range 1.062 – 1.960
+        "inline_range": ModInfo(
+            id="inline_range",
+            name="Inline Range",
+            desc="",
+            isLocal=True,
+            minGameVersion="1.062.0 - 1.960.0",
+        ),
+    }
+
+    active_mods = ActiveModsService(catalogue)
+    use_case = ApplicationLoadOrderUseCase(active_mods, catalogue, config_service)
+    return use_case, active_mods, config_service, game_root
+
+
+def test_enforce_game_version_blocks_incompatible_mod(tmp_path):
+    use_case, active_mods, config_service, game_root = (
+        _make_use_case_with_versioned_mods(tmp_path)
+    )
+    # Game is version 1.061 — too old for "needs_062_plus" and "needs_100"
+    _write_fake_exe(game_root, 1, 61)
+    config_service.get_config().enforce_game_version = True
+
+    result = use_case.activate_mods(["needs_062_plus"])
+
+    assert result.changed is False
+    assert result.version_incompatible_mods == ["local::needs_062_plus"]
+    assert active_mods.active_mods_ids == []
+
+
+def test_enforce_game_version_allows_compatible_mod(tmp_path):
+    use_case, active_mods, config_service, game_root = (
+        _make_use_case_with_versioned_mods(tmp_path)
+    )
+    # Game is version 1.100 — exactly what "needs_100" requires
+    _write_fake_exe(game_root, 1, 100)
+    config_service.get_config().enforce_game_version = True
+
+    result = use_case.activate_mods(["needs_100"])
+
+    assert result.changed is True
+    assert result.version_incompatible_mods == []
+    assert "needs_100" in active_mods.active_mods_ids
+
+
+def test_enforce_game_version_allows_mod_with_no_version_constraint(tmp_path):
+    use_case, active_mods, config_service, game_root = (
+        _make_use_case_with_versioned_mods(tmp_path)
+    )
+    _write_fake_exe(game_root, 1, 50)  # very old game
+    config_service.get_config().enforce_game_version = True
+
+    result = use_case.activate_mods(["no_version"])
+
+    assert result.changed is True
+    assert result.version_incompatible_mods == []
+
+
+def test_enforce_game_version_inline_range_blocks_too_new(tmp_path):
+    use_case, active_mods, config_service, game_root = (
+        _make_use_case_with_versioned_mods(tmp_path)
+    )
+    # Game 1.961 exceeds the inline range 1.062 – 1.960
+    _write_fake_exe(game_root, 1, 961)
+    config_service.get_config().enforce_game_version = True
+
+    result = use_case.activate_mods(["inline_range"])
+
+    assert result.changed is False
+    assert result.version_incompatible_mods == ["local::inline_range"]
+
+
+def test_enforce_game_version_disabled_allows_all(tmp_path):
+    use_case, active_mods, config_service, game_root = (
+        _make_use_case_with_versioned_mods(tmp_path)
+    )
+    _write_fake_exe(game_root, 1, 50)  # outdated game
+    # Enforcement is OFF by default — incompatible mods should still activate.
+    assert config_service.get_config().enforce_game_version is False
+
+    result = use_case.activate_mods(["needs_062_plus"])
+
+    assert result.changed is True
+    assert result.version_incompatible_mods == []
+
+
+def test_enforce_game_version_skipped_when_exe_missing(tmp_path):
+    use_case, active_mods, config_service, game_root = (
+        _make_use_case_with_versioned_mods(tmp_path)
+    )
+    # Do NOT write the fake exe — version undetectable.
+    config_service.get_config().enforce_game_version = True
+
+    # Should fall through and activate normally.
+    result = use_case.activate_mods(["needs_062_plus"])
+
+    assert result.changed is True
+    assert result.version_incompatible_mods == []

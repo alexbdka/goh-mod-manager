@@ -126,7 +126,17 @@ class CatalogueItemDelegate(QStyledItemDelegate):
         if cached_icon is not None:
             return cached_icon
 
-        if kind == "missing_dependencies":
+        if kind == "version_incompatible":
+            error_color = "#f87171" if theme_mode == "dark" else "#dc2626"
+            icon = qta.icon(
+                "mdi6.alert-octagon",
+                color=error_color,
+                color_active=error_color,
+                color_selected=error_color,
+                color_disabled=error_color,
+                scale_factor=SCALE_FACTOR,
+            )
+        elif kind == "missing_dependencies":
             warning_color = "#f59e0b" if theme_mode == "dark" else "#b45309"
             icon = qta.icon(
                 "mdi6.alert",

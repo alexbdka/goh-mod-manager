@@ -98,6 +98,26 @@ class LoadOrderController:
             )
             return
 
+        if result.version_incompatible_mods:
+            names = [
+                self._display_name_for_ref(ref)
+                for ref in result.version_incompatible_mods
+            ]
+            if len(names) == 1:
+                msg = self._tr(
+                    "The mod '{0}' was not activated because its required game "
+                    "version is not compatible with your installed game version."
+                ).format(names[0])
+            else:
+                formatted = ", ".join(f"'{n}'" for n in names)
+                msg = self._tr(
+                    "The following mods were not activated because their required "
+                    "game version is not compatible with your installed game "
+                    "version: {0}."
+                ).format(formatted)
+            self._show_warning_message(self._tr("Game Version Incompatible"), msg)
+            return
+
         if result.blocked_reason == "circular_dependency":
             self._show_warning_message(
                 self._tr("Circular Dependency"),

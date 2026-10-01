@@ -53,6 +53,7 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
         self.current_theme = settings_state.theme
         self.current_font = settings_state.font
         self.current_enforce_dependency_order = settings_state.enforce_dependency_order
+        self.current_enforce_game_version = settings_state.enforce_game_version
 
         self._setup_ui()
         self.retranslate_ui()
@@ -210,7 +211,14 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
             self.current_enforce_dependency_order
         )
 
+        self.enforce_game_version_checkbox = QCheckBox()
+        self.enforce_game_version_checkbox.setAccessibleName(
+            "settingsEnforceGameVersion"
+        )
+        self.enforce_game_version_checkbox.setChecked(self.current_enforce_game_version)
+
         layout.addWidget(self.enforce_dependency_order_checkbox)
+        layout.addWidget(self.enforce_game_version_checkbox)
         layout.addStretch()
 
     def _browse_game_path(self):
@@ -256,6 +264,7 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
             "enforce_dependency_order": (
                 self.enforce_dependency_order_checkbox.isChecked()
             ),
+            "enforce_game_version": (self.enforce_game_version_checkbox.isChecked()),
         }
 
     def _populate_language_options(self) -> None:
@@ -295,6 +304,7 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
             enforce_dependency_order=(
                 self.enforce_dependency_order_checkbox.isChecked()
             ),
+            enforce_game_version=(self.enforce_game_version_checkbox.isChecked()),
         )
 
     def retranslate_ui(self):
@@ -353,5 +363,14 @@ class SettingsDialog(LanguageChangeMixin, QDialog):
             self.tr(
                 "When enabled, required dependencies cannot be moved below their "
                 "dependents or deactivated while in use."
+            )
+        )
+        self.enforce_game_version_checkbox.setText(
+            self.tr("Block activation of mods incompatible with the game version")
+        )
+        self.enforce_game_version_checkbox.setAccessibleDescription(
+            self.tr(
+                "When enabled, mods whose required game version does not match "
+                "the installed game version cannot be activated."
             )
         )

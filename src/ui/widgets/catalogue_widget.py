@@ -256,6 +256,14 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
         ]
         missing_dependencies = mod.missing_dependencies
 
+        if mod.is_version_incompatible:
+            version_range = self._format_version_range(mod)
+            tooltip_lines.append(
+                self.tr("Incompatible game version (requires: {0})").format(
+                    version_range
+                )
+            )
+
         if missing_dependencies:
             tooltip_lines.append(
                 self.tr("Missing dependencies: {0}").format(
@@ -269,29 +277,35 @@ class CatalogueWidget(LanguageChangeMixin, QWidget):
 
         return "\n".join(tooltip_lines)
 
+    @staticmethod
+    def _format_version_range(mod: ModState) -> str:
+        """Build a human-readable version range string from a mod's version fields."""
+        min_v = mod.min_game_version
+        max_v = mod.max_game_version
+
+        if min_v and " - " in min_v:
+            return min_v
+        if min_v and min_v.lower() != "any" and max_v and max_v.lower() != "any":
+            return f"{min_v} - {max_v}"
+        if min_v and min_v.lower() != "any":
+            return f">= {min_v}"
+        if max_v and max_v.lower() != "any":
+            return f"<= {max_v}"
+        return min_v or max_v or "?"
+
     def _build_status_entries(self, mod: ModState) -> list[dict[str, str]]:
-        if not mod.dependencies:
-            return []
+        entries: list[dict[str, str]] = []
 
-        missing_dependencies = mod.missing_dependencies
-        if missing_dependencies:
-            return [
-                {
-                    "kind": "missing_dependencies",
-                    "tooltip": self.tr("Missing dependencies: {0}").format(
-                        ", ".join(missing_dependencies)
-                    ),
-                }
-            ]
+        if mod.is_version_incompatible:
+            entries.append({"kind": "version_incompatible"})
 
-        return [
-            {
-                "kind": "dependencies",
-                "tooltip": self.tr("Dependencies: {0}").format(
-                    ", ".join(mod.dependencies)
-                ),
-            }
-        ]
+        if mod.dependencies:
+            if mod.missing_dependencies:
+                entries.append({"kind": "missing_dependencies"})
+            else:
+                entries.append({"kind": "dependencies"})
+
+        return entries
 
     def _matches_search(self, mod: ModState, query: str) -> bool:
         if not query:

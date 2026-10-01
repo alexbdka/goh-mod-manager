@@ -2,10 +2,12 @@ import logging
 
 from src.application.state import LoadOrderActivationResult, LoadOrderMutationResult
 from src.core.exceptions import CircularDependencyError, ProfileWriteError
-from src.core.mod_reference import parse_reference_key
+from src.core.mod import ModInfo
+from src.core.mod_reference import parse_reference_key, to_reference_key
 from src.services.active_mods_service import ActiveModsService
 from src.services.config_service import ConfigService
 from src.services.mods_catalogue_service import ModsCatalogueService
+from src.utils.game_version import get_game_version, is_mod_version_compatible
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +26,8 @@ class ApplicationLoadOrderUseCase:
         self._active_mods_service = active_mods_service
         self._catalogue_service = catalogue_service
         self._config_service = config_service
+        self._cached_game_version: tuple[int, ...] | None = None
+        self._cached_game_path: str | None = None
 
     def activate_mods(self, mod_identifiers: list[str]) -> LoadOrderActivationResult:
         activated_mod_ids: list[str] = []
@@ -48,7 +52,36 @@ class ApplicationLoadOrderUseCase:
 
         profile_path = self._require_profile_path()
 
+        # Resolve game version once for the whole batch when enforcement is on.
+        config = self._config_service.get_config()
+        game_version: tuple[int, ...] | None = None
+        if config.enforce_game_version and config.game_path:
+            game_version = self._get_game_version(config.game_path)
+
+        version_incompatible_mods: list[str] = []
+
         for mod_identifier in mod_ids_to_activate:
+            # Version compatibility check (skipped when version is unavailable).
+            if config.enforce_game_version and game_version is not None:
+                mod_info = self._resolve_mod_info(mod_identifier)
+                if mod_info is not None and not is_mod_version_compatible(
+                    game_version,
+                    mod_info.minGameVersion,
+                    mod_info.maxGameVersion,
+                ):
+                    version_incompatible_mods.append(
+                        to_reference_key(mod_info.id, mod_info.isLocal)
+                    )
+                    logger.info(
+                        "Blocked activation of '%s': game version incompatible "
+                        "(game=%s, min=%s, max=%s).",
+                        mod_identifier,
+                        game_version,
+                        mod_info.minGameVersion,
+                        mod_info.maxGameVersion,
+                    )
+                    continue
+
             before_refs = list(self._active_mods_service.active_mod_refs)
             try:
                 missing = self._active_mods_service.activate_mod(mod_identifier)
@@ -69,10 +102,12 @@ class ApplicationLoadOrderUseCase:
 
         unique_missing = list(dict.fromkeys(missing_dependencies))
         unique_cycle_refs = list(dict.fromkeys(circular_dependency_refs))
+        unique_incompatible = list(dict.fromkeys(version_incompatible_mods))
         return LoadOrderActivationResult(
             changed=changed,
             activated_mod_ids=activated_mod_ids,
             missing_dependencies=unique_missing,
+            version_incompatible_mods=unique_incompatible,
             blocked_reason="circular_dependency" if unique_cycle_refs else None,
             blocking_mod_refs=unique_cycle_refs,
         )
@@ -195,6 +230,22 @@ class ApplicationLoadOrderUseCase:
         return LoadOrderMutationResult(
             changed=True, active_mod_ids=list(self._active_mods_service.active_mods_ids)
         )
+
+    def _get_game_version(self, game_path: str) -> tuple[int, ...] | None:
+        """Return the cached game version, re-reading when the path changes."""
+        if self._cached_game_path != game_path:
+            self._cached_game_path = game_path
+            self._cached_game_version = get_game_version(game_path)
+        return self._cached_game_version
+
+    def _resolve_mod_info(self, mod_identifier: str) -> ModInfo | None:
+        """Look up a ``ModInfo`` from a ref-key or plain mod ID."""
+        ref = parse_reference_key(mod_identifier)
+        if ref is not None:
+            return self._catalogue_service.get_mod_by_source(
+                ref.id, is_local=ref.is_local
+            )
+        return self._catalogue_service.get_mod(mod_identifier)
 
     def _require_profile_path(self) -> str:
         config = self._config_service.get_config()

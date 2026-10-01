@@ -10,6 +10,7 @@ class SettingsState:
     theme: str
     font: str
     enforce_dependency_order: bool = True
+    enforce_game_version: bool = False
 
 
 @dataclass(frozen=True)
@@ -18,6 +19,7 @@ class SettingsUpdateResult:
     language_changed: bool = False
     appearance_changed: bool = False
     dependency_enforcement_changed: bool = False
+    game_version_enforcement_changed: bool = False
 
 
 @dataclass(frozen=True)
@@ -39,6 +41,7 @@ class LoadOrderActivationResult:
     changed: bool = False
     activated_mod_ids: list[str] = field(default_factory=list)
     missing_dependencies: list[str] = field(default_factory=list)
+    version_incompatible_mods: list[str] = field(default_factory=list)
     blocked_reason: str | None = None
     blocking_mod_refs: list[str] = field(default_factory=list)
 
@@ -67,6 +70,7 @@ class ModState:
     image_path: str | None = None
     is_active: bool = False
     is_missing: bool = False
+    is_version_incompatible: bool = False
     load_order: int | None = None
     active_dependency_refs: list[str] = field(default_factory=list)
     active_dependent_refs: list[str] = field(default_factory=list)

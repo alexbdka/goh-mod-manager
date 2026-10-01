@@ -81,6 +81,9 @@ class ConfigService:
             self._config.enforce_dependency_order = bool(
                 data.get("enforce_dependency_order", True)
             )
+            self._config.enforce_game_version = bool(
+                data.get("enforce_game_version", False)
+            )
 
             if self._is_effectively_empty_payload(data):
                 self._migrate_from_legacy_qsettings_if_possible()
@@ -155,6 +158,7 @@ class ConfigService:
             "font": self._config.font,
             "onboarding_seen": self._config.onboarding_seen,
             "enforce_dependency_order": self._config.enforce_dependency_order,
+            "enforce_game_version": self._config.enforce_game_version,
         }
 
         try:
@@ -175,6 +179,7 @@ class ConfigService:
         font: str | None = None,
         onboarding_seen: bool | None = None,
         enforce_dependency_order: bool | None = None,
+        enforce_game_version: bool | None = None,
     ) -> None:
         """Update selected config fields and save only when something changed."""
         config = self.get_config()
@@ -213,6 +218,13 @@ class ConfigService:
             and config.enforce_dependency_order != enforce_dependency_order
         ):
             config.enforce_dependency_order = enforce_dependency_order
+            modified = True
+
+        if (
+            enforce_game_version is not None
+            and config.enforce_game_version != enforce_game_version
+        ):
+            config.enforce_game_version = enforce_game_version
             modified = True
 
         if modified:

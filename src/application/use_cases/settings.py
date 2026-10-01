@@ -30,6 +30,9 @@ class ApplicationSettingsUseCase:
         dependency_enforcement_changed = (
             settings.enforce_dependency_order != config.enforce_dependency_order
         )
+        game_version_enforcement_changed = (
+            settings.enforce_game_version != config.enforce_game_version
+        )
 
         self._config_service.update_paths(
             game_path=settings.game_path,
@@ -39,6 +42,7 @@ class ApplicationSettingsUseCase:
             theme=settings.theme,
             font=settings.font,
             enforce_dependency_order=settings.enforce_dependency_order,
+            enforce_game_version=settings.enforce_game_version,
         )
 
         return SettingsUpdateResult(
@@ -46,4 +50,5 @@ class ApplicationSettingsUseCase:
             language_changed=language_changed,
             appearance_changed=appearance_changed,
             dependency_enforcement_changed=dependency_enforcement_changed,
+            game_version_enforcement_changed=game_version_enforcement_changed,
         )

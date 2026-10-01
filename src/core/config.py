@@ -17,3 +17,4 @@ class AppConfig:
     font: str = "Inter"
     onboarding_seen: bool = False
     enforce_dependency_order: bool = True
+    enforce_game_version: bool = False
