@@ -9,6 +9,7 @@ dependencies = [
     "pyqtdarktheme>=2.1.0",
     "pyside6>=6.11.0",
     "qtawesome>=1.4.1",
+    "requests>=2.34.2",
     "vdf>=3.4",
 ]
 

@@ -1,13 +1,3 @@
-"""
-Utilities for reading the game executable version and checking mod compatibility.
-
-The game executable is a Windows PE binary.  On Windows we try ``win32api``
-first (available when *pywin32* is installed); if that fails, or when running
-on Linux / macOS (e.g. Proton / Wine setups), we fall back to scanning the raw
-binary for the ``VS_FIXEDFILEINFO`` signature – a pure-Python approach that
-requires no external dependencies.
-"""
-
 import logging
 import os
 import struct
@@ -26,15 +16,6 @@ def get_game_version(game_path: str) -> tuple[int, ...] | None:
 
     Returns a 4-tuple ``(major, minor, build, revision)`` or ``None`` when the
     version cannot be determined (missing file, unreadable PE, etc.).
-
-    Platform behaviour
-    ------------------
-    - **Windows**: uses the PE-binary parser directly.  This is
-      sufficient because the game executable is always a Windows PE file, even
-      when launched through Proton or Wine.
-    - **Linux / macOS**: uses the PE-binary parser directly.  This is
-      sufficient because the game executable is always a Windows PE file, even
-      when launched through Proton or Wine.
     """
     exe_path = os.path.join(game_path, GAME_EXE_RELATIVE_PATH)
     if not os.path.isfile(exe_path):
@@ -44,12 +25,8 @@ def get_game_version(game_path: str) -> tuple[int, ...] | None:
     raw = _get_version_from_pe(exe_path)
     if raw is not None:
         version = normalize_game_version(raw)
-        logger.info(
-            "Game version (PE): %s (raw: %s)",
-            ".".join(str(x) for x in version),
-            ".".join(str(x) for x in raw),
-        )
         return version
+    logger.warning("Failed to read game version from PE: %s", exe_path)
     return None
 
 

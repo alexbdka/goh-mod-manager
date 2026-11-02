@@ -52,6 +52,7 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
     def __init__(self, app_model: ModManager):
         super().__init__()
         self.app_model = app_model
+        self.app_version = app_paths.get_app_version()
         self._onboarding_overlay: OnboardingOverlay | None = None
         self._shortcuts: list[QShortcut] = []
         screen = QApplication.primaryScreen().availableGeometry()
@@ -393,6 +394,9 @@ class MainWindow(LanguageChangeMixin, QMainWindow):
         self.main_menu_bar.refresh_action.triggered.connect(self._on_refresh_data)
         self.main_menu_bar.generate_report_action.triggered.connect(
             self._on_generate_report
+        )
+        self.main_menu_bar.check_updates_action.triggered.connect(
+            self.app_actions_controller.check_for_updates
         )
         self.main_menu_bar.interface_tour_action.triggered.connect(
             self._show_onboarding_overlay

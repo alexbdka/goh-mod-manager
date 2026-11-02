@@ -1,13 +1,14 @@
 # GoH Mod Manager
 
-GoH Mod Manager is a PySide6 desktop app for managing
+GoH Mod Manager is a PySide6 native desktop app for managing
 [Call to Arms - Gates of Hell](https://www.barbed-wire.eu/we-are-barbedwire-studios/our-game-development/)
-mods, load order, presets, and local/Steam Workshop content.
+mods, load order, presets and more.
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).  
-For translations, **Weblate** kindly hosts our translation platform at [goh-mod-manager/qt-ui](https://hosted.weblate.org/projects/goh-mod-manager/qt-ui/).
+**[Weblate](https://weblate.org/)** kindly hosts our translation platform [here](https://hosted.weblate.org/projects/goh-mod-manager/qt-ui/) :  
+[![Translation status](https://hosted.weblate.org/widget/goh-mod-manager/qt-ui/matrix-auto.svg)](https://hosted.weblate.org/engage/goh-mod-manager/)
 
 ## Build
 
@@ -36,6 +37,4 @@ uv run python scripts/build_app.py
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE.md](LICENSE.md)
-for the project license and [licenses/README.md](licenses/README.md) for
-third-party credits and notices.
+This project is licensed under the MIT License. See [LICENSE.md](LICENSE.md) for the project license and [licenses/README.md](licenses/README.md) for third-party credits and notices.

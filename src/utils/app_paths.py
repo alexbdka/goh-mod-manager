@@ -1,5 +1,7 @@
 import os
 import sys
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as package_version
 from pathlib import Path
 
 
@@ -68,4 +70,16 @@ def read_version(default: str = "Unknown") -> str:
     try:
         return get_version_file_path().read_text(encoding="utf-8").strip()
     except OSError:
+        return default
+
+
+def get_app_version(default: str = "Unknown") -> str:
+    """Return the runtime version, falling back to package metadata if needed."""
+    resource_version = read_version(default="")
+    if resource_version:
+        return resource_version
+
+    try:
+        return package_version("goh-mod-manager")
+    except PackageNotFoundError:
         return default

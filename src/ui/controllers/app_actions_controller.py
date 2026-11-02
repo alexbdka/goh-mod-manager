@@ -1,9 +1,14 @@
 from collections.abc import Callable
+from typing import TYPE_CHECKING, cast
 
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QFileDialog, QStatusBar, QWidget
 
 from src.ui.dialogs.about_dialog import AboutDialog
+from src.ui.dialogs.check_update_dialog import CheckUpdateDialog
+
+if TYPE_CHECKING:
+    from src.ui.main_window import MainWindow
 
 
 class AppActionsController:
@@ -54,6 +59,11 @@ class AppActionsController:
     def show_about(self):
         dialog = AboutDialog(self._parent)
         dialog.exec()
+
+    def check_for_updates(self):
+        main_window = cast("MainWindow", self._parent)
+        dialog = CheckUpdateDialog(self._parent, main_window.app_version)
+        dialog.check_for_updates()
 
     def launch_game(self):
         success = self._launch_game()

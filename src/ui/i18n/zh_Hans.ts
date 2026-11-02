@@ -193,16 +193,70 @@ Already active in the load order.</source>
         <translation>创意工坊模组</translation>
     </message>
     <message>
-        <location filename="../widgets/catalogue_widget.py" line="261"/>
-        <location filename="../widgets/catalogue_widget.py" line="281"/>
+        <location filename="../widgets/catalogue_widget.py" line="262"/>
+        <source>Incompatible game version (requires: {0})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/catalogue_widget.py" line="269"/>
         <source>Missing dependencies: {0}</source>
         <translation>缺少依赖项：{0}</translation>
     </message>
     <message>
-        <location filename="../widgets/catalogue_widget.py" line="267"/>
-        <location filename="../widgets/catalogue_widget.py" line="290"/>
+        <location filename="../widgets/catalogue_widget.py" line="275"/>
         <source>Dependencies: {0}</source>
         <translation>依赖项：{0}</translation>
+    </message>
+</context>
+<context>
+    <name>CheckUpdateDialog</name>
+    <message>
+        <location filename="../dialogs/check_update_dialog.py" line="38"/>
+        <source>Check for Updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/check_update_dialog.py" line="39"/>
+        <source>Checking for updates...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/check_update_dialog.py" line="61"/>
+        <source>Could not fetch update information.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/check_update_dialog.py" line="64"/>
+        <source>Network error: {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/check_update_dialog.py" line="69"/>
+        <source>Update Available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/check_update_dialog.py" line="71"/>
+        <source>A new version ({0}) is available!
+
+Visit the release page:
+{1}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/check_update_dialog.py" line="78"/>
+        <source>Up to Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/check_update_dialog.py" line="79"/>
+        <source>You are using the latest version of the application.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/check_update_dialog.py" line="83"/>
+        <source>Update Check Failed</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -303,92 +357,97 @@ Already active in the load order.</source>
 <context>
     <name>MainMenuBar</name>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="85"/>
+        <location filename="../widgets/main_menu_bar.py" line="87"/>
         <source>&amp;File</source>
         <translation>文件(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="86"/>
+        <location filename="../widgets/main_menu_bar.py" line="88"/>
         <source>Import Share Code...</source>
         <translation>导入分享码...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="87"/>
+        <location filename="../widgets/main_menu_bar.py" line="89"/>
         <source>Export Share Code...</source>
         <translation>导出分享码...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="88"/>
+        <location filename="../widgets/main_menu_bar.py" line="90"/>
         <source>Import Mod...</source>
         <translation>导入模组...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="89"/>
+        <location filename="../widgets/main_menu_bar.py" line="91"/>
         <source>Open...</source>
         <translation>打开...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="90"/>
+        <location filename="../widgets/main_menu_bar.py" line="92"/>
         <source>Game Directory</source>
         <translation>游戏目录</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="91"/>
+        <location filename="../widgets/main_menu_bar.py" line="93"/>
         <source>Config Folder</source>
         <translation>配置文件夹</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="92"/>
+        <location filename="../widgets/main_menu_bar.py" line="94"/>
         <source>Profile (options.set)</source>
         <translation>配置文件 (options.set)</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="93"/>
+        <location filename="../widgets/main_menu_bar.py" line="95"/>
         <source>Log File</source>
         <translation>日志文件</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="94"/>
+        <location filename="../widgets/main_menu_bar.py" line="96"/>
         <source>E&amp;xit</source>
         <translation>退出(&amp;x)</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="95"/>
+        <location filename="../widgets/main_menu_bar.py" line="97"/>
         <source>&amp;Edit</source>
         <translation>编辑(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="96"/>
+        <location filename="../widgets/main_menu_bar.py" line="98"/>
         <source>Preferences...</source>
         <translation>首选项...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="97"/>
+        <location filename="../widgets/main_menu_bar.py" line="99"/>
         <source>&amp;View</source>
         <translation>视图(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="98"/>
+        <location filename="../widgets/main_menu_bar.py" line="100"/>
         <source>Refresh</source>
         <translation>刷新</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="99"/>
+        <location filename="../widgets/main_menu_bar.py" line="101"/>
         <source>&amp;Help</source>
         <translation>帮助(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="100"/>
+        <location filename="../widgets/main_menu_bar.py" line="102"/>
         <source>Generate Debug Report...</source>
         <translation>生成调试报告...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="101"/>
+        <location filename="../widgets/main_menu_bar.py" line="103"/>
+        <source>Check for Updates...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/main_menu_bar.py" line="104"/>
         <source>Interface Tour...</source>
         <translation>界面导览...</translation>
     </message>
     <message>
-        <location filename="../widgets/main_menu_bar.py" line="102"/>
+        <location filename="../widgets/main_menu_bar.py" line="105"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
@@ -415,41 +474,36 @@ Already active in the load order.</source>
         <source>Launch Game</source>
         <translation>启动游戏</translation>
     </message>
-    <message>
-        <location filename="../widgets/main_tool_bar.py" line="64"/>
-        <source>Launch Editor</source>
-        <translation>启动编辑器</translation>
-    </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../main_window.py" line="250"/>
+        <location filename="../main_window.py" line="251"/>
         <source>GoH Mod Manager</source>
         <translation>GoH 模组管理器</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="251"/>
+        <location filename="../main_window.py" line="252"/>
         <source>Add selected mod</source>
         <translation>添加所选模组</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="252"/>
+        <location filename="../main_window.py" line="253"/>
         <source>Remove selected mod</source>
         <translation>移除所选模组</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="254"/>
+        <location filename="../main_window.py" line="255"/>
         <source>Ready</source>
         <translation>就绪</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="280"/>
+        <location filename="../main_window.py" line="281"/>
         <source>Profile Update Failed</source>
         <translation>配置文件更新失败</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="282"/>
+        <location filename="../main_window.py" line="283"/>
         <source>Could not update the game&apos;s profile file:
 {0}
 
@@ -466,27 +520,27 @@ Technical details:
 {1}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="287"/>
+        <location filename="../main_window.py" line="288"/>
         <source>Profile update failed.</source>
         <translation>配置文件更新失败。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="472"/>
+        <location filename="../main_window.py" line="476"/>
         <source>Export Failed</source>
         <translation>导出失败</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="473"/>
+        <location filename="../main_window.py" line="477"/>
         <source>There are no active mods to export.</source>
         <translation>没有已激活的模组可供导出。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="482"/>
+        <location filename="../main_window.py" line="486"/>
         <source>Export Success</source>
         <translation>导出成功</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="484"/>
+        <location filename="../main_window.py" line="488"/>
         <source>Share Code has been copied to your clipboard!
 
 You can now paste it to your friends.</source>
@@ -495,70 +549,70 @@ You can now paste it to your friends.</source>
 您现在可以将其分享给好友。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="490"/>
+        <location filename="../main_window.py" line="494"/>
         <source>Export Error</source>
         <translation>导出错误</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="490"/>
+        <location filename="../main_window.py" line="494"/>
         <source>Failed to generate Share Code.</source>
         <translation>生成分享码失败。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="508"/>
-        <location filename="../main_window.py" line="515"/>
+        <location filename="../main_window.py" line="512"/>
+        <location filename="../main_window.py" line="519"/>
         <source>Import Error</source>
         <translation>导入错误</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="509"/>
+        <location filename="../main_window.py" line="513"/>
         <source>Invalid or corrupted Share Code.</source>
         <translation>分享码无效或已损坏。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="516"/>
+        <location filename="../main_window.py" line="520"/>
         <source>An unexpected error occurred:
 {0}</source>
         <translation>发生了意外错误：
 {0}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="530"/>
+        <location filename="../main_window.py" line="534"/>
         <source>Imported with Missing Mods</source>
         <translation>导入完成，但存在缺失的模组</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="532"/>
+        <location filename="../main_window.py" line="536"/>
         <source>The load order was imported, but you are missing the following mods. Workshop mods can be opened from the links below; local mods must be installed manually:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="541"/>
+        <location filename="../main_window.py" line="545"/>
         <source>Import Success</source>
         <translation>导入成功</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="542"/>
+        <location filename="../main_window.py" line="546"/>
         <source>Share Code successfully applied!</source>
         <translation>分享码已成功应用！</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="569"/>
+        <location filename="../main_window.py" line="573"/>
         <source>All data refreshed from disk.</source>
         <translation>已从磁盘刷新所有数据。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="571"/>
+        <location filename="../main_window.py" line="575"/>
         <source>Refresh Complete</source>
         <translation>刷新完成</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="600"/>
+        <location filename="../main_window.py" line="604"/>
         <source>Settings Save Failed</source>
         <translation>设置保存失败</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="601"/>
+        <location filename="../main_window.py" line="605"/>
         <source>Could not save settings:
 {0}
 
@@ -569,66 +623,66 @@ You can now paste it to your friends.</source>
 {1}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="605"/>
+        <location filename="../main_window.py" line="609"/>
         <source>Settings save failed.</source>
         <translation>设置保存失败。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="619"/>
+        <location filename="../main_window.py" line="623"/>
         <source>Settings saved and data reloaded.</source>
         <translation>设置已保存，数据已重新加载。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="621"/>
-        <location filename="../main_window.py" line="629"/>
-        <location filename="../main_window.py" line="637"/>
-        <location filename="../main_window.py" line="645"/>
-        <location filename="../main_window.py" line="653"/>
+        <location filename="../main_window.py" line="625"/>
+        <location filename="../main_window.py" line="633"/>
+        <location filename="../main_window.py" line="641"/>
+        <location filename="../main_window.py" line="649"/>
+        <location filename="../main_window.py" line="657"/>
         <source>Settings Updated</source>
         <translation>设置已更新</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="627"/>
+        <location filename="../main_window.py" line="631"/>
         <source>Language and appearance settings applied.</source>
         <translation>语言和外观设置已应用。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="635"/>
+        <location filename="../main_window.py" line="639"/>
         <source>Language settings applied.</source>
         <translation>语言设置已应用。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="643"/>
+        <location filename="../main_window.py" line="647"/>
         <source>Appearance settings applied.</source>
         <translation>外观设置已应用。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="651"/>
+        <location filename="../main_window.py" line="655"/>
         <source>Settings saved.</source>
         <translation>设置已保存。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="694"/>
+        <location filename="../main_window.py" line="698"/>
         <source>Active mod dependency enforcement enabled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="697"/>
+        <location filename="../main_window.py" line="701"/>
         <source>Active mod dependency enforcement disabled. You can now reorder and remove required mods freely.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="701"/>
+        <location filename="../main_window.py" line="705"/>
         <source>Feature Toggled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="735"/>
+        <location filename="../main_window.py" line="739"/>
         <source>Onboarding Save Failed</source>
         <translation>引导进度保存失败</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="736"/>
+        <location filename="../main_window.py" line="740"/>
         <source>Could not save onboarding progress:
 {0}
 
@@ -639,67 +693,67 @@ You can now paste it to your friends.</source>
 {1}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="741"/>
+        <location filename="../main_window.py" line="745"/>
         <source>Onboarding progress was not saved.</source>
         <translation>引导进度未保存。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="750"/>
+        <location filename="../main_window.py" line="754"/>
         <source>Available Mods</source>
         <translation>可用模组</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="752"/>
+        <location filename="../main_window.py" line="756"/>
         <source>This catalogue lists the mods detected in your local mods folder and subscribed Workshop content.</source>
         <translation>此目录列出了在本地模组文件夹中检测到的模组以及已订阅的创意工坊内容。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="761"/>
+        <location filename="../main_window.py" line="765"/>
         <source>Find What You Need</source>
         <translation>查找所需内容</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="763"/>
+        <location filename="../main_window.py" line="767"/>
         <source>Use search and filters to narrow the catalogue by name and by source.</source>
         <translation>使用搜索和筛选功能按名称或来源缩小目录范围。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="769"/>
+        <location filename="../main_window.py" line="773"/>
         <source>Manage the Load Order</source>
         <translation>管理加载顺序</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="771"/>
+        <location filename="../main_window.py" line="775"/>
         <source>Use these controls, double-click, or drag and drop to move mods between the catalogue and the active load order.</source>
         <translation>使用这些控件、双击或拖放操作，在目录与已激活的加载顺序之间移动模组。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="778"/>
+        <location filename="../main_window.py" line="782"/>
         <source>Active Mods</source>
         <translation>已激活的模组</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="780"/>
+        <location filename="../main_window.py" line="784"/>
         <source>This list is the load order that will be written to the game&apos;s profile. Lower entries load later and can override earlier ones.</source>
         <translation>此列表为将写入游戏配置文件的加载顺序。位置靠后的条目加载较晚，可覆盖靠前的条目。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="787"/>
+        <location filename="../main_window.py" line="791"/>
         <source>Presets</source>
         <translation>预设</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="789"/>
+        <location filename="../main_window.py" line="793"/>
         <source>Save the current load order as a preset, reapply it later, or compare the current state against a saved setup.</source>
         <translation>将当前加载顺序保存为预设，以便日后重新应用，或将当前状态与已保存的配置进行比较。</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="796"/>
+        <location filename="../main_window.py" line="800"/>
         <source>Mod Details</source>
         <translation>模组详情</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="798"/>
+        <location filename="../main_window.py" line="802"/>
         <source>The details panel shows the selected mod&apos;s description, metadata, and dependency status.</source>
         <translation>详情面板显示所选模组的描述、元数据及依赖项状态。</translation>
     </message>
@@ -844,223 +898,242 @@ You can now paste it to your friends.</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="206"/>
+        <location filename="../dialogs/settings_dialog.py" line="127"/>
+        <source>The &apos;options.set&apos; file is located either in:
+%USERPROFILE%\My Games\gates of hell\profiles\[STEAM_ID]\options.set
+or in:
+%LOCALAPPDATA%/digitalmindsoft/gates of hell/profiles/[STEAM_ID]\options.set
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/settings_dialog.py" line="226"/>
         <source>Select Game Directory</source>
         <translation>选择游戏目录</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="214"/>
+        <location filename="../dialogs/settings_dialog.py" line="234"/>
         <source>Select Workshop Directory</source>
         <translation>选择创意工坊目录</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="228"/>
+        <location filename="../dialogs/settings_dialog.py" line="248"/>
         <source>Select Preset File</source>
         <translation>选择预设文件</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="230"/>
+        <location filename="../dialogs/settings_dialog.py" line="250"/>
         <source>Options Set (options.set);;All Files (*)</source>
         <translation>选项文件 (options.set);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="258"/>
+        <location filename="../dialogs/settings_dialog.py" line="279"/>
         <source>{0} (Unavailable)</source>
         <translation>{0}（不可用）</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="289"/>
+        <location filename="../dialogs/settings_dialog.py" line="311"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="290"/>
+        <location filename="../dialogs/settings_dialog.py" line="312"/>
         <source>Paths</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="291"/>
+        <location filename="../dialogs/settings_dialog.py" line="313"/>
         <source>Appearance</source>
         <translation>外观</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="292"/>
+        <location filename="../dialogs/settings_dialog.py" line="314"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="293"/>
+        <location filename="../dialogs/settings_dialog.py" line="315"/>
         <source>Features</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="297"/>
+        <location filename="../dialogs/settings_dialog.py" line="319"/>
         <source>Configure the paths used by the Mod Manager to interact with the game.</source>
         <translation>配置模组管理器与游戏交互所使用的路径。</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="300"/>
-        <location filename="../dialogs/settings_dialog.py" line="305"/>
-        <location filename="../dialogs/settings_dialog.py" line="310"/>
+        <location filename="../dialogs/settings_dialog.py" line="322"/>
+        <location filename="../dialogs/settings_dialog.py" line="327"/>
+        <location filename="../dialogs/settings_dialog.py" line="332"/>
         <source>Browse...</source>
         <translation>浏览...</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="301"/>
+        <location filename="../dialogs/settings_dialog.py" line="323"/>
         <source>Game Directory:</source>
         <translation>游戏目录：</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="303"/>
+        <location filename="../dialogs/settings_dialog.py" line="325"/>
         <source>Browse for the game installation folder.</source>
         <translation>浏览游戏安装文件夹。</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="306"/>
+        <location filename="../dialogs/settings_dialog.py" line="328"/>
         <source>Workshop Directory:</source>
         <translation>创意工坊目录：</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="308"/>
+        <location filename="../dialogs/settings_dialog.py" line="330"/>
         <source>Browse for the Steam Workshop content folder.</source>
         <translation>浏览 Steam 创意工坊内容文件夹。</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="311"/>
+        <location filename="../dialogs/settings_dialog.py" line="333"/>
         <source>Profile (options.set):</source>
         <translation>配置文件 (options.set)：</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="313"/>
+        <location filename="../dialogs/settings_dialog.py" line="335"/>
         <source>Browse for the profile options.set file.</source>
         <translation>浏览配置文件 options.set。</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="317"/>
+        <location filename="../dialogs/settings_dialog.py" line="339"/>
         <source>Configure the visual appearance of the application.</source>
         <translation>配置应用程序的视觉外观。</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="319"/>
-        <location filename="../dialogs/settings_dialog.py" line="323"/>
+        <location filename="../dialogs/settings_dialog.py" line="341"/>
+        <location filename="../dialogs/settings_dialog.py" line="345"/>
         <source>System Default</source>
         <translation>系统默认</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="320"/>
+        <location filename="../dialogs/settings_dialog.py" line="342"/>
         <source>Dark</source>
         <translation>深色</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="321"/>
+        <location filename="../dialogs/settings_dialog.py" line="343"/>
         <source>Light</source>
         <translation>浅色</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="322"/>
+        <location filename="../dialogs/settings_dialog.py" line="344"/>
         <source>Theme:</source>
         <translation>主题：</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="324"/>
+        <location filename="../dialogs/settings_dialog.py" line="346"/>
         <source>Font:</source>
         <translation>字体：</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="327"/>
+        <location filename="../dialogs/settings_dialog.py" line="349"/>
         <source>Select the application language. A restart may be required.</source>
         <translation>选择应用程序语言。可能需要重启才能生效。</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="330"/>
+        <location filename="../dialogs/settings_dialog.py" line="352"/>
         <source>Language:</source>
         <translation>语言：</translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="334"/>
+        <location filename="../dialogs/settings_dialog.py" line="356"/>
         <source>Enable or disable experimental or safety features. Use with caution.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="338"/>
+        <location filename="../dialogs/settings_dialog.py" line="360"/>
         <source>Enforce active mod dependency order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/settings_dialog.py" line="342"/>
+        <location filename="../dialogs/settings_dialog.py" line="364"/>
         <source>When enabled, required dependencies cannot be moved below their dependents or deactivated while in use.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/settings_dialog.py" line="369"/>
+        <source>Block activation of mods incompatible with the game version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/settings_dialog.py" line="373"/>
+        <source>When enabled, mods whose required game version does not match the installed game version cannot be activated.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>self._parent</name>
     <message>
-        <location filename="../controllers/app_actions_controller.py" line="43"/>
+        <location filename="../controllers/app_actions_controller.py" line="44"/>
         <source>Success</source>
         <translation>成功</translation>
     </message>
     <message>
-        <location filename="../controllers/app_actions_controller.py" line="44"/>
+        <location filename="../controllers/app_actions_controller.py" line="45"/>
         <source>Debug report saved successfully to:
 {0}</source>
         <translation>调试报告已成功保存至：
 {0}</translation>
     </message>
     <message>
-        <location filename="../controllers/app_actions_controller.py" line="50"/>
+        <location filename="../controllers/app_actions_controller.py" line="51"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../controllers/app_actions_controller.py" line="51"/>
+        <location filename="../controllers/app_actions_controller.py" line="52"/>
         <source>Failed to save debug report:
 {0}</source>
         <translation>保存调试报告失败：
 {0}</translation>
     </message>
     <message>
-        <location filename="../controllers/app_actions_controller.py" line="62"/>
+        <location filename="../controllers/app_actions_controller.py" line="67"/>
         <source>Launching Game</source>
         <translation>正在启动游戏</translation>
     </message>
     <message>
-        <location filename="../controllers/app_actions_controller.py" line="63"/>
+        <location filename="../controllers/app_actions_controller.py" line="68"/>
         <source>Launching Call to Arms - Gates of Hell...</source>
         <translation>正在启动《武装突袭：地狱之门》...</translation>
     </message>
     <message>
-        <location filename="../controllers/app_actions_controller.py" line="67"/>
-        <location filename="../controllers/app_actions_controller.py" line="83"/>
+        <location filename="../controllers/app_actions_controller.py" line="72"/>
+        <location filename="../controllers/app_actions_controller.py" line="88"/>
         <source>Launch Failed</source>
         <translation>启动失败</translation>
     </message>
     <message>
-        <location filename="../controllers/app_actions_controller.py" line="69"/>
+        <location filename="../controllers/app_actions_controller.py" line="74"/>
         <source>Failed to launch the game. Make sure Steam is installed and running.</source>
         <translation>启动游戏失败。请确保 Steam 已安装并正在运行。</translation>
     </message>
     <message>
-        <location filename="../controllers/app_actions_controller.py" line="78"/>
+        <location filename="../controllers/app_actions_controller.py" line="83"/>
         <source>Launching Editor</source>
         <translation>正在启动编辑器</translation>
     </message>
     <message>
-        <location filename="../controllers/app_actions_controller.py" line="79"/>
+        <location filename="../controllers/app_actions_controller.py" line="84"/>
         <source>Launching editor...</source>
         <translation>正在启动编辑器...</translation>
     </message>
     <message>
-        <location filename="../controllers/app_actions_controller.py" line="84"/>
+        <location filename="../controllers/app_actions_controller.py" line="89"/>
         <source>Failed to launch the editor.</source>
         <translation>未能启动编辑器。</translation>
     </message>
     <message>
-        <location filename="../controllers/app_actions_controller.py" line="95"/>
+        <location filename="../controllers/app_actions_controller.py" line="100"/>
         <source>Save Debug Report</source>
         <translation>保存调试报告</translation>
     </message>
     <message>
-        <location filename="../controllers/app_actions_controller.py" line="97"/>
+        <location filename="../controllers/app_actions_controller.py" line="102"/>
         <source>Text Files (*.txt);;All Files (*)</source>
         <translation>文本文件 (*.txt);;所有文件 (*)</translation>
     </message>

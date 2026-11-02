@@ -2,8 +2,8 @@
 
 This directory is the home of the app's Qt translation files.
 
-If you are translating the interface, this is the practical reference. The root
-README only gives the short version.
+If you are translating the interface, this is the practical reference.
+The root README only gives the short version.
 
 ## Files
 

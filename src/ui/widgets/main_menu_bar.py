@@ -75,6 +75,8 @@ class MainMenuBar(LanguageChangeMixin, QMenuBar):
         self.help_menu = self.addMenu("")
         self.generate_report_action = QAction(self)
         self.help_menu.addAction(self.generate_report_action)
+        self.check_updates_action = QAction(self)
+        self.help_menu.addAction(self.check_updates_action)
         self.interface_tour_action = QAction(self)
         self.help_menu.addAction(self.interface_tour_action)
         self.help_menu.addSeparator()
@@ -98,6 +100,7 @@ class MainMenuBar(LanguageChangeMixin, QMenuBar):
         self.refresh_action.setText(self.tr("Refresh"))
         self.help_menu.setTitle(self.tr("&Help"))
         self.generate_report_action.setText(self.tr("Generate Debug Report..."))
+        self.check_updates_action.setText(self.tr("Check for Updates..."))
         self.interface_tour_action.setText(self.tr("Interface Tour..."))
         self.about_action.setText(self.tr("About"))
 
@@ -135,6 +138,9 @@ class MainMenuBar(LanguageChangeMixin, QMenuBar):
         )
         self.generate_report_action.setIcon(
             qta.icon("mdi6.bug", **icon_colors, scale_factor=SCALE_FACTOR)
+        )
+        self.check_updates_action.setIcon(
+            qta.icon("mdi6.update", **icon_colors, scale_factor=SCALE_FACTOR)
         )
         self.interface_tour_action.setIcon(
             qta.icon("mdi6.help", **icon_colors, scale_factor=SCALE_FACTOR)
